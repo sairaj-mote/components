@@ -455,23 +455,36 @@ customElements.define('sm-tabs', class extends HTMLElement {
             easing: 'ease'
         }
         this.prevTab
+        this.allTabs
         this.shadowRoot.querySelector('slot[name="panel"]').addEventListener('slotchange', () => {
             this.shadowRoot.querySelector('slot[name="panel"]').assignedElements().forEach((panel, index) => {
                 panel.classList.add('hide-completely')
             })
         })
         this.shadowRoot.querySelector('slot[name="tab"]').addEventListener('slotchange', () => {
+            this.allTabs = this.shadowRoot.querySelector('slot[name="tab"]').assignedElements();
             this.shadowRoot.querySelector('slot[name="tab"]').assignedElements().forEach((panel, index) => {
                 panel.setAttribute('rank', index + 1)
             })
         })
-        this.tabSlot.addEventListener('click', e => {
+        this._targetBodyFlyRight = (targetBody) => {
+            targetBody.classList.remove('hide-completely')
+            targetBody.animate(flyInRight, animationOptions)
+        }
+        this._targetBodyFlyLeft = (targetBody) => {
+            targetBody.classList.remove('hide-completely')
+            targetBody.animate(flyInLeft, animationOptions)
+        }
+        this.tabHeader.addEventListener('click', e => {
             if (e.target === this.prevTab)
                 return
             if (this.prevTab)
                 this.prevTab.classList.remove('active')
             e.target.classList.add('active')
 
+            e.target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+            this.indicator.setAttribute('style', `width: ${e.target.getBoundingClientRect().width}px; transform: translateX(${e.target.getBoundingClientRect().left - e.target.parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+            
             if (this.prevTab) {
                 let targetBody = e.target.nextElementSibling,
                     currentBody = this.prevTab.nextElementSibling;
@@ -482,14 +495,12 @@ customElements.define('sm-tabs', class extends HTMLElement {
                             currentBody.classList.add('hide-completely')
                         }
                     else if (targetBody && !currentBody) {
-                        targetBody.classList.remove('hide-completely')
-                        targetBody.animate(flyInRight, animationOptions)
+                        this._targetBodyFlyRight(targetBody)
                     }
                     else if (currentBody && targetBody) {
                         currentBody.animate(flyOutLeft, animationOptions).onfinish = () => {
                             currentBody.classList.add('hide-completely')
-                            targetBody.classList.remove('hide-completely')
-                            targetBody.animate(flyInRight, animationOptions)
+                            this._targetBodyFlyRight(targetBody)
                         }
                     }
                 } else {
@@ -498,22 +509,18 @@ customElements.define('sm-tabs', class extends HTMLElement {
                             currentBody.classList.add('hide-completely')
                         }
                     else if (targetBody && !currentBody) {
-                        targetBody.classList.remove('hide-completely')
-                        targetBody.animate(flyInLeft, animationOptions)
+                        this._targetBodyFlyLeft(targetBody)
                     }
                     else if (currentBody && targetBody) {
                         currentBody.animate(flyOutRight, animationOptions).onfinish = () => {
                             currentBody.classList.add('hide-completely')
-                            targetBody.classList.remove('hide-completely')
-                            targetBody.animate(flyInLeft, animationOptions)
+                            this._targetBodyFlyLeft(targetBody)
                         }
                     }
                 }
             } else {
                 e.target.nextElementSibling.classList.remove('hide-completely')
             }
-            e.target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
-            this.indicator.setAttribute('style', `width: ${e.target.getBoundingClientRect().width}px; transform: translateX(${e.target.getBoundingClientRect().left - e.target.parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
             this.prevTab = e.target;
         })
         let observer = new IntersectionObserver((entries) => {
@@ -545,7 +552,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
         let touchStartTime = 0,
             touchEndTime = 0,
             swipeTimeThreshold = 200,
-            swipeDistanceThreshold = 100,
+            swipeDistanceThreshold = 60,
             startingPointX = 0,
             endingPointX = 0;
         this.addEventListener('touchstart', e => {
@@ -557,10 +564,10 @@ customElements.define('sm-tabs', class extends HTMLElement {
             endingPointX = e.changedTouches[0].pageX
             if (touchEndTime - touchStartTime < swipeTimeThreshold) {
                 if (startingPointX > endingPointX && startingPointX - endingPointX > swipeDistanceThreshold && this.prevTab.nextElementSibling) {
-                    this.prevTab.nextElementSibling.nextElementSibling.click()
+                    this.allTabs[this.allTabs.findIndex(element => element.classList.contains('active')) + 1].click()
                 }
                 else if (startingPointX < endingPointX && endingPointX - startingPointX > swipeDistanceThreshold && this.prevTab.previousElementSibling) {
-                    this.prevTab.previousElementSibling.previousElementSibling.click()
+                    this.allTabs[this.allTabs.findIndex(element => element.classList.contains('active')) - 1].click()
                 }
             }
         })
