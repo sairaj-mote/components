@@ -418,8 +418,8 @@ customElements.define('sm-tabs', class extends HTMLElement {
                 opacity: 1,
                 transform: 'none'
             }
-        ];
-        let flyInRight = [
+        ],
+        flyInRight = [
             {
                 opacity: 0,
                 transform: 'translateX(1rem)'
@@ -428,8 +428,8 @@ customElements.define('sm-tabs', class extends HTMLElement {
                 opacity: 1,
                 transform: 'none'
             }
-        ]
-        let flyOutLeft = [
+        ],
+        flyOutLeft = [
             {
                 opacity: 1,
                 transform: 'none'
@@ -438,8 +438,8 @@ customElements.define('sm-tabs', class extends HTMLElement {
                 opacity: 0,
                 transform: 'translateX(-1rem)'
             }
-        ]
-        let flyOutRight = [
+        ],
+        flyOutRight = [
             {
                 opacity: 1,
                 transform: 'none'
@@ -448,8 +448,8 @@ customElements.define('sm-tabs', class extends HTMLElement {
                 opacity: 0,
                 transform: 'translateX(1rem)'
             }
-        ]
-        let animationOptions = {
+        ],
+        animationOptions = {
             duration: 300,
             fill: 'forwards',
             easing: 'ease'
@@ -465,7 +465,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
                 panel.setAttribute('rank', index + 1)
             })
         })
-        this.addEventListener('switchTab', e => {
+        this.tabSlot.addEventListener('click', e => {
             if (e.target === this.prevTab)
                 return
             if (this.prevTab)
@@ -542,6 +542,28 @@ customElements.define('sm-tabs', class extends HTMLElement {
         },
             { threshold: 1.0 })
         observer.observe(this.tabHeader)
+        let touchStartTime = 0,
+            touchEndTime = 0,
+            swipeTimeThreshold = 200,
+            swipeDistanceThreshold = 100,
+            startingPointX = 0,
+            endingPointX = 0;
+        this.addEventListener('touchstart', e => {
+            touchStartTime = e.timeStamp
+            startingPointX = e.changedTouches[0].pageX
+        })
+        this.panelSlot.addEventListener('touchend', e => {
+            touchEndTime = e.timeStamp
+            endingPointX = e.changedTouches[0].pageX
+            if (touchEndTime - touchStartTime < swipeTimeThreshold) {
+                if (startingPointX > endingPointX && startingPointX - endingPointX > swipeDistanceThreshold && this.prevTab.nextElementSibling) {
+                    this.prevTab.nextElementSibling.nextElementSibling.click()
+                }
+                else if (startingPointX < endingPointX && endingPointX - startingPointX > swipeDistanceThreshold && this.prevTab.previousElementSibling) {
+                    this.prevTab.previousElementSibling.previousElementSibling.click()
+                }
+            }
+        })
     }
 })
 
@@ -584,20 +606,6 @@ customElements.define('sm-tab', class extends HTMLElement {
     constructor() {
         super()
         this.shadow = this.attachShadow({ mode: 'open' }).append(smTab.content.cloneNode(true))
-    }
-    connectedCallback() {
-        let switchTab = new CustomEvent('switchTab', {
-            bubbles: true,
-            composed: true,
-        })
-        this.addEventListener('click', () => {
-            this.dispatchEvent(switchTab)
-        })
-        if (this.hasAttribute('active')) {
-            setTimeout(() => {
-                this.dispatchEvent(switchTab)
-            }, 0)
-        }
     }
 })
 
