@@ -118,6 +118,7 @@ smInput.innerHTML = `
         :host{
             display: -webkit-box;
             display: flex;
+            flex-direction: column;
         }
         .hide{
            opacity: 0 !important;
@@ -136,9 +137,6 @@ smInput.innerHTML = `
             stroke-linejoin: round;
             cursor: pointer;
             min-width: 0;
-        }
-        .icon:hover{
-            background: rgba(var(--text), 0.1);
         }
         .input {
             display: flex;
@@ -191,10 +189,19 @@ smInput.innerHTML = `
             }
           
         .animate-label .container .label {
-        -webkit-transform: translateY(-60%) scale(0.7);
-                transform: translateY(-60%) scale(0.7);
-        opacity: 1;
-        color: var(--primary-color);
+            -webkit-transform: translateY(-60%) scale(0.7);
+                    transform: translateY(-60%) scale(0.7);
+            opacity: 1;
+            color: var(--primary-color);
+        }
+        .helper-text{
+            color: var(--error-color);
+            padding: 0.4rem 1rem;
+        }
+        @media (any-hover: hover){
+            .icon:hover{
+                background: rgba(var(--text), 0.1);
+            }
         }
     </style>
     <label class="input">
@@ -209,6 +216,7 @@ smInput.innerHTML = `
             <line x1="64" y1="64" x2="0" y2="0"/>
         </svg>
     </label>
+    <div class="helper-text hide"></div>
 `;
 customElements.define('sm-input',
     class extends HTMLElement {
@@ -251,10 +259,10 @@ customElements.define('sm-input',
             }
         }
 
-        checkInput(input, label, inputParent, clear) {
+        checkInput(label, inputParent, clear, helperText) {
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '')
                 return;
-            if (input.value !== '') {
+            if (this.input.value !== '') {
                 if (this.animate)
                     inputParent.classList.add('animate-label')
                 else
@@ -268,38 +276,56 @@ customElements.define('sm-input',
                     label.classList.remove('hide')
                 clear.classList.add('hide')
             }
+            if (this.valueChanged) {
+                if (this.input.checkValidity())
+                    helperText.classList.add('hide')
+                else
+                    helperText.classList.remove('hide')
+            }
         }
 
         connectedCallback() {
-            let input = this.shadowRoot.querySelector('input'),
-                inputParent = this.shadowRoot.querySelector('.input'),
+            let inputParent = this.shadowRoot.querySelector('.input'),
                 clearBtn = this.shadowRoot.querySelector('.clear'),
-                label = this.shadowRoot.querySelector('.label')
+                label = this.shadowRoot.querySelector('.label'),
+                helperText = this.shadowRoot.querySelector('.helper-text')
+                this.valueChanged = false;
             this.animate = this.hasAttribute('animate')
+            this.input = this.shadowRoot.querySelector('input')
             this.shadowRoot.querySelector('.label').textContent = this.getAttribute('placeholder')
             if (this.hasAttribute('value')) {
-                input.value = this.getAttribute('value')
-                this.checkInput(input, inputParent, clearBtn)
+                this.input.value = this.getAttribute('value')
+                this.checkInput(inputParent, clearBtn)
+            }
+            if (this.hasAttribute('helper-text')) {
+                helperText.textContent = this.getAttribute('helper-text')
             }
             if (this.hasAttribute('type')) {
                 if (this.getAttribute('type') === 'number') {
-                    input.setAttribute('inputmode', 'numeric')
+                    this.input.setAttribute('inputmode', 'numeric')
                 }
                 else
-                    input.setAttribute('type', this.getAttribute('type'))
+                    this.input.setAttribute('type', this.getAttribute('type'))
             }
             else
-                input.setAttribute('type', 'text')
-            input.addEventListener('keydown', e => {
+                this.input.setAttribute('type', 'text')
+            this.input.addEventListener('keydown', e => {
                 if (this.getAttribute('type') === 'number')
                     this.preventNonNumericalInput(e);
             })
-            input.addEventListener('input', e => {
-                this.checkInput(input, label, inputParent, clearBtn)
+            this.input.addEventListener('input', e => {
+                this.checkInput(label, inputParent, clearBtn, helperText)
+            })
+            this.input.addEventListener('change', e => {
+                this.valueChanged = true;
+                if (this.input.checkValidity())
+                    helperText.classList.add('hide')
+                else
+                    helperText.classList.remove('hide')
             })
             clearBtn.addEventListener('click', e => {
-                input.value = ''
-                this.checkInput(input, label, inputParent, clearBtn)
+                this.input.value = ''
+                this.checkInput(label, inputParent, clearBtn, helperText)
             })
         }
 
@@ -345,6 +371,7 @@ smTabs.innerHTML = `
     bottom: 0;
     height: 0.12rem;
     background: var(--primary-color);
+    transition: transform 0.3s, width 0.3s;
 }
 slot[name="tab"]{
     display: grid;
@@ -361,9 +388,6 @@ slot[name="tab"]{
 :host([type="tab"]) slot[name="tab"]{
     border-radius: 0.2rem;
     border-bottom: none;
-}
-.transition{
-    transition: transform 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86), width 0.4s;
 }
 .hide-completely{
     display: none;
@@ -475,14 +499,14 @@ customElements.define('sm-tabs', class extends HTMLElement {
             targetBody.classList.remove('hide-completely')
             targetBody.animate(flyInLeft, animationOptions)
         }
-        this.tabHeader.addEventListener('click', e => {
-            if (e.target === this.prevTab)
+        this.tabSlot.addEventListener('click', e => {
+            if (e.target === this.prevTab || !e.target.closest('sm-tab'))
                 return
             if (this.prevTab)
                 this.prevTab.classList.remove('active')
             e.target.classList.add('active')
 
-            e.target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center'})
             this.indicator.setAttribute('style', `width: ${e.target.getBoundingClientRect().width}px; transform: translateX(${e.target.getBoundingClientRect().left - e.target.parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
             
             if (this.prevTab) {
@@ -541,9 +565,6 @@ customElements.define('sm-tabs', class extends HTMLElement {
                         this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
                         this.prevTab = this.tabSlot.assignedElements()[0];
                     }
-                    setTimeout(() => {
-                        this.indicator.classList.add('transition')
-                    }, 100);
                 }
             })
         },
@@ -554,7 +575,8 @@ customElements.define('sm-tabs', class extends HTMLElement {
             swipeTimeThreshold = 200,
             swipeDistanceThreshold = 60,
             startingPointX = 0,
-            endingPointX = 0;
+            endingPointX = 0,
+            currentIndex = 0;
         this.addEventListener('touchstart', e => {
             touchStartTime = e.timeStamp
             startingPointX = e.changedTouches[0].pageX
@@ -563,11 +585,12 @@ customElements.define('sm-tabs', class extends HTMLElement {
             touchEndTime = e.timeStamp
             endingPointX = e.changedTouches[0].pageX
             if (touchEndTime - touchStartTime < swipeTimeThreshold) {
-                if (startingPointX > endingPointX && startingPointX - endingPointX > swipeDistanceThreshold && this.prevTab.nextElementSibling) {
-                    this.allTabs[this.allTabs.findIndex(element => element.classList.contains('active')) + 1].click()
+                currentIndex = this.allTabs.findIndex(element => element.classList.contains('active'))
+                if (startingPointX > endingPointX && startingPointX - endingPointX > swipeDistanceThreshold && currentIndex < this.allTabs.length) {
+                    this.allTabs[currentIndex + 1].click()
                 }
-                else if (startingPointX < endingPointX && endingPointX - startingPointX > swipeDistanceThreshold && this.prevTab.previousElementSibling) {
-                    this.allTabs[this.allTabs.findIndex(element => element.classList.contains('active')) - 1].click()
+                else if (startingPointX < endingPointX && endingPointX - startingPointX > swipeDistanceThreshold && currentIndex > 0) {
+                    this.allTabs[currentIndex - 1].click()
                 }
             }
         })
