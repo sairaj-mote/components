@@ -13,8 +13,8 @@ smButton.innerHTML = `
             }
             :host([disabled='true']) .sm-btn{
                 cursor: default;
-                opacity: 0.6;
-                background: rgba(var(--text), 0.2) !important;
+                opacity: 1;
+                background: rgba(var(--text), 0.4) !important;
             }
             :host([type='primary']) .sm-btn{
                 background: var(--primary-color);
@@ -573,7 +573,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
         let touchStartTime = 0,
             touchEndTime = 0,
             swipeTimeThreshold = 200,
-            swipeDistanceThreshold = 60,
+            swipeDistanceThreshold = 20,
             startingPointX = 0,
             endingPointX = 0,
             currentIndex = 0;
@@ -1046,6 +1046,7 @@ smSelect.innerHTML = `
                 flex-direction: column;
                 cursor: pointer;
                 width: 100%;
+                -webkit-tap-highlight-color: transparent;
             }
             .option-text{
                 overflow: hidden;
@@ -1066,27 +1067,18 @@ smSelect.innerHTML = `
             }
             .options{
                 overflow: hidden auto;
-                margin-top: 0.5rem;
                 position: absolute;
                 grid-area: options;
                 display: flex;
                 flex-direction: column;
-                top: 100%;
                 right: 0;
                 min-width: 100%;
-                transform: translateY(-0.5rem);
-                padding: 0.5rem 0;
                 background: rgba(var(--foreground), 1);
-                transition: opacity 0.3s, transform 0.3s;
+                transition: opacity 0.3s, top 0.3s;
                 border: solid 1px rgba(var(--text), 0.2);
                 border-radius: 0.2rem;
                 z-index: 2;
-            }
-            .rotate{
-                transform: rotate(-180deg)
-            }
-            .no-transformations{
-                transform: none;
+                box-shadow: 0 0.8rem 2rem #00000040;
             }
         </style>
         <div class="sm-select">
@@ -1118,36 +1110,63 @@ customElements.define('sm-select', class extends HTMLElement {
         let optionList = this.shadowRoot.querySelector('.options'),
             chevron = this.shadowRoot.querySelector('.toggle'),
             slot = this.shadowRoot.querySelector('.options slot'),
-            currentOption;
-        this.addEventListener('click', e => {
-            chevron.classList.toggle('rotate')
-            optionList.classList.toggle('hide')
-            optionList.classList.toggle('no-transformations')
+            selection = this.shadowRoot.querySelector('.selection'),
+            currentOption,
+            previousOption,
+            zoomIn = [
+                    { transform: `scale(0.9)` },
+                    { transform: `scale(1)` }
+            ],
+            zoomOut = [
+                { transform: `scale(1)` },
+                { transform: `scale(0.9)` }
+            ],
+            animationOptions = {
+                duration: 300,
+                fill: "forwards",
+                easing: 'ease'
+            }
+        selection.addEventListener('click', e => {
+            optionList.classList.remove('hide')
+            optionList.animate(zoomIn, animationOptions)
         })
         this.addEventListener('optionSelected', e => {
-            if (currentOption !== e.detail.value) {
+            if (previousOption !== e.target) {
                 this.setAttribute('value', e.detail.value)
                 this.shadowRoot.querySelector('.option-text').textContent = e.detail.text;
                 this.dispatchEvent(new CustomEvent('change', {
                     bubbles: true,
                     composed: true
                 }))
-                currentOption = e.detail.value;
+                if (previousOption) {
+                    previousOption.classList.remove('check-selected')
+                }
+                previousOption = e.target;
             }
+            setTimeout(() => {
+                optionList.animate(zoomOut, animationOptions)
+                optionList.classList.add('hide')
+            }, 200);
+            
+            e.target.classList.add('check-selected')
         })
         slot.addEventListener('slotchange', e => {
             if (slot.assignedElements()[0]) {
                 let firstElement = slot.assignedElements()[0];
                 currentOption = firstElement.getAttribute('value');
+                previousOption = firstElement;
+                firstElement.classList.add('check-selected')
                 this.setAttribute('value', firstElement.getAttribute('value'))
                 this.shadowRoot.querySelector('.option-text').textContent = firstElement.textContent
+                slot.assignedElements().forEach((element, index) => {
+                    element.setAttribute('data-rank', index + 1);
+                })
             }
         });
         document.addEventListener('mousedown', e => {
             if (!this.contains(e.target)) {
-                chevron.classList.remove('rotate')
                 optionList.classList.add('hide')
-                optionList.classList.remove('no-transformations')
+                optionList.animate(zoomOut, animationOptions)
             }
         })
     }
@@ -1166,17 +1185,38 @@ smOption.innerHTML = `
                 display: flex;
             }
             .sm-option{
-                width: 100%;
-                padding: 0.6rem 0.8rem;
+                min-width: 100%;
+                padding: 0.8rem 1.2rem;
                 cursor: pointer;
                 overflow-wrap: break-word;
                 outline: none;
+                display: flex;
+                align-items: center;
+            }
+            :host(.check-selected) .icon{
+                opacity: 1 !important
+            }
+            .icon {
+                margin-right: 0.8rem;
+                fill: none;
+                height: 0.8rem;
+                width: 0.8rem;
+                stroke: rgba(var(--text), 0.7);
+                stroke-width: 10;
+                overflow: visible;
+                stroke-linecap: round;
+                border-radius: 1rem;
+                stroke-linejoin: round;
+                opacity: 0;
             }
             .sm-option:hover{
                 background: rgba(var(--text), 0.1);
             }
         </style>
         <div class="sm-option" tabindex="0">
+            <svg class="icon" viewBox="0 0 64 64">
+                <polyline points="0.35 31.82 21.45 52.98 63.65 10.66"/>
+            </svg>
             <slot></slot> 
         </div>`;
 customElements.define('sm-option', class extends HTMLElement {
@@ -1203,7 +1243,8 @@ customElements.define('sm-option', class extends HTMLElement {
                     composed: true,
                     detail: {
                         text: this.textContent,
-                        value: this.getAttribute('value')
+                        value: this.getAttribute('value'),
+                        rank: this.dataset.rank
                     }
                 })
                 this.dispatchEvent(optionSelected)
