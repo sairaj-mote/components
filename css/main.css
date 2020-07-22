@@ -9,7 +9,7 @@
 }
 
 body {
-  --primary-color: teal;
+  --accent-color: teal;
   --text: 17, 17, 17;
   --foreground: 255, 255, 255;
   --font-family: 'Roboto', sans-serif;
@@ -108,8 +108,8 @@ p {
   main {
     display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 12rem 1fr;
-        grid-template-columns: 12rem 1fr;
+    -ms-grid-columns: 12rem minmax(0, 1fr);
+        grid-template-columns: 12rem minmax(0, 1fr);
     gap: 1.5rem;
   }
   p {

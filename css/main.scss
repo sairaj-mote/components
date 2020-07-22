@@ -7,7 +7,7 @@
     font-family: 'Roboto', sans-serif;
 }
 body{
-    --primary-color: teal;
+    --accent-color: teal;
     --text: 17, 17, 17;
     --foreground: 255, 255, 255;
     --font-family: 'Roboto', sans-serif;
@@ -80,7 +80,7 @@ p{
 @media screen and (min-width: 640px){
     main{
         display: grid;
-        grid-template-columns: 12rem 1fr;
+        grid-template-columns: 12rem minmax(0, 1fr);
         gap: 1.5rem;    
     }
     p{

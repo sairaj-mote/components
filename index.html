@@ -27,7 +27,12 @@
             </ul>
         </div>
         <div class="right">
-            <sm-select>
+            <sm-popup id="popup">
+                idhfioushdfiuh
+            </sm-popup>
+            <sm-button variant="primary" onclick="document.getElementById('popup').show()">show</sm-button>
+            <sm-button id="hide_popup">show</sm-button>
+            <!--<sm-select>
                 <sm-option value="1">option1</sm-option>
                 <sm-option value="2">option2</sm-option>
                 <sm-option value="3">option3</sm-option>
@@ -37,7 +42,7 @@
                 <code>sm-select</code> is very similar to starndatd HTML5 select and it's markup stucture is also identical.</p>
             <h3>strip select</h3>
             <sm-strip-select>
-                <sm-strip-option>option1</sm-strip-option>
+                <sm-strip-option value="something">option1</sm-strip-option>
                 <sm-strip-option>option1</sm-strip-option>
                 <sm-strip-option>option1</sm-strip-option>
                 <sm-strip-option>option1</sm-strip-option>
@@ -113,8 +118,10 @@
             <h3>input</h3>
             <sm-input placeholder="something" type="email" helper-text="please enter correct email" animate></sm-input>
             <h3>button</h3>
-            <sm-button type="primary">button</sm-button>
-            <sm-button type="primary" disabled="true">button</sm-button>
+            <sm-button variant="primary">button</sm-button>
+            <sm-button variant="outlined">button</sm-button>
+            <sm-button variant="no-outline">button</sm-button>
+            <sm-button variant="primary" disabled="true">button</sm-button>-->
         </div>
     </main>
     <script src="components.js"></script>
