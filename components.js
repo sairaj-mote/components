@@ -1433,6 +1433,8 @@ smPopup.innerHTML = `
         padding: 0 1.5rem 1.5rem 1.5rem;
         position: relative;
         display: flex;
+        transform: translateY(100%);
+        transition: transform 0.3s;
         background: rgba(var(--foreground), 1);
         box-shadow: 0 2rem 2rem #00000040;
         overflow-y: auto;
@@ -1450,9 +1452,6 @@ smPopup.innerHTML = `
         opacity: 0;
         pointer-events: none;
     }
-    .no-transformations{
-        transform: none;
-    }
     @media screen and (min-width: 640px){
         .popup{
             width: 24rem;
@@ -1460,6 +1459,7 @@ smPopup.innerHTML = `
             border-radius: 0.4rem;
             height: auto;
             padding: 1.5rem;
+            transform: translateY(0) scale(0.96);
         }
     }
     @media screen and (max-width: 640px){
@@ -1493,20 +1493,18 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     show() {
-        this.shadowRoot.querySelector('.popup-container').classList.remove('hide')
-        if (window.innerWidth > 648)
-            pop.animate(this.zoomIn, this.animationOptions)
+        this.popupContainer.classList.remove('hide')
+        if(window.innerWidth < 648)
+            this.popup.style.transform = 'translateY(0)';
         else
-            this.popup.animate(this.slideUp, this.animationOptions)
+            this.popup.style.transform = 'scale(1)';
     }
     hide() {
-        this.shadowRoot.querySelector('.popup-container').classList.add('hide')
-        if (window.innerWidth > 648)
-            this.popup.animate(this.zoomOut, this.animationOptions)
+        this.popupContainer.classList.add('hide')
+        if (window.innerWidth < 648)
+            this.popup.style.transform = 'translateY(100%)';
         else
-            this.popup.animate(this.slideDown, this.animationOptions).onfinish = () => {
-                this.popup.style.top = 'auto'
-            }
+            this.popup.style.transform = 'scale(0.96)';
     }
 
     connectedCallback() {
@@ -1517,33 +1515,7 @@ customElements.define('sm-popup', class extends HTMLElement {
             touchEndY = 0,
             threshold = 20,
             offset;
-        
-        this.slideUp = [
-            { transform: 'translateY(100%)'},
-            { transform: 'translateY(0)'}
-        ]
-        this.slideDown = [
-            {
-                transform: 'translateY(0)'
-            },
-            {
-                transform: 'translateY(100%)'
-            }
-        ]
-        this.zoomIn = [
-            {transform: 'scale(0.96)'},
-            {transform: 'scale(1)'}
-        ]
-        this.zoomOut = [
-            {transform: 'scale(1)'},
-            {transform: 'scale(0.96)'}
-        ]
-        this.animationOptions = {
-            duration: 300,
-            fill: 'forwards',
-            easing: 'ease'
-        }
-        
+                
         this.popupContainer.addEventListener('mousedown', e => {
             if (e.target === this.popupContainer) {
                 this.hide()
@@ -1551,9 +1523,11 @@ customElements.define('sm-popup', class extends HTMLElement {
         })
         handle.addEventListener('touchstart', e => {
             touchStartY = e.changedTouches[0].pageY
+            this.popup.style.transition = 'none'
         })
         handle.addEventListener('touchend', e => {
             touchEndY = e.changedTouches[0].pageY
+            this.popup.style.transition = 'transform 0.3s'
             if (touchStartY < touchEndY) {
                 this.hide()
             }
@@ -1561,15 +1535,15 @@ customElements.define('sm-popup', class extends HTMLElement {
         handle.addEventListener('touchmove', e => {
             if (touchStartY < e.changedTouches[0].pageY) {
                 offset = e.changedTouches[0].pageY - touchStartY;
-                this.popup.setAttribute('style', `top: ${offset}px`)
+                this.popup.style.transform = `translateY(${offset}px)`
             }
             /*else {
                 offset = e.changedTouches[0].pageY - touchStartY;
                 popup.setAttribute('style', `top: ${offset}px`)
             }*/
         })
-        /*handle.addEventListener('click', e => {
+        handle.addEventListener('click', e => {
             this.hide()
-        })*/
+        })
     }
 })
