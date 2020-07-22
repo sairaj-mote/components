@@ -1498,6 +1498,8 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.popup.style.transform = 'translateY(0)';
         else
             this.popup.style.transform = 'scale(1)';
+        document.body.style.overflow = 'hidden';
+        document.body.style.top = `-${window.scrollY}px`;
     }
     hide() {
         this.popupContainer.classList.add('hide')
@@ -1505,6 +1507,10 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.popup.style.transform = 'translateY(100%)';
         else
             this.popup.style.transform = 'scale(0.96)';
+        const scrollY = document.body.style.top;
+        document.body.style.overflow = 'auto';
+        document.body.style.top = '';
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
 
     connectedCallback() {
