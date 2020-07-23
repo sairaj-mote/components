@@ -9,7 +9,8 @@
 }
 
 body {
-  --accent-color: teal;
+  --accent-color: rgb(17, 180, 99);
+  --light-accent-shade: rgb(200, 255, 228);
   --text: 17, 17, 17;
   --foreground: 255, 255, 255;
   --font-family: 'Roboto', sans-serif;
@@ -87,6 +88,10 @@ p {
   margin-bottom: 1rem;
 }
 
+.right h1 {
+  margin-bottom: 1.5rem;
+}
+
 .component-list {
   list-style: none;
   display: -webkit-box;
@@ -104,6 +109,28 @@ p {
   padding: 0.6rem 0.8rem;
 }
 
+.grid-container {
+  display: -ms-grid;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-container .grid-item {
+  padding: 1.5rem;
+  border-radius: 0.6rem;
+  border: solid 1px rgba(var(--text), 0.2);
+}
+
+.grid-container .grid-item p {
+  margin-bottom: 0;
+  font-size: 1rem;
+}
+
+.grid-container .grid-item h4 {
+  margin-top: 5rem;
+  font-size: 1.1rem;
+}
+
 @media screen and (min-width: 640px) {
   main {
     display: -ms-grid;
@@ -117,6 +144,10 @@ p {
   }
   .right {
     padding: 0 2rem;
+  }
+  .grid-container {
+    -ms-grid-columns: (1fr)[3];
+        grid-template-columns: repeat(3, 1fr);
   }
 }
 

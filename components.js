@@ -44,8 +44,11 @@ smButton.innerHTML = `
                 font-size: 0.8rem;
             }
             @media (hover: hover){
-                .sm-btn:hover{
+                :host([variant='primary']:not([disabled="true"])) .sm-btn:hover{
                     opacity: 0.8;
+                }
+                :host([variant='no-outline']) .sm-btn:hover{
+                    background: var(--light-accent-shade); 
                 }
             }
         </style>
@@ -401,6 +404,7 @@ smTabs.innerHTML = `
 }
 slot[name="tab"]::slotted(.active){
     color: var(--accent-color);
+    opacity: 1;
 }
 slot[name="panel"]::slotted(.hide-completely){
     display: none;
@@ -583,11 +587,11 @@ customElements.define('sm-tabs', class extends HTMLElement {
             currentIndex = 0;
         this.addEventListener('touchstart', e => {
             touchStartTime = e.timeStamp
-            startingPointX = e.changedTouches[0].pageX
+            startingPointX = e.changedTouches[0].clientX
         })
         this.panelSlot.addEventListener('touchend', e => {
             touchEndTime = e.timeStamp
-            endingPointX = e.changedTouches[0].pageX
+            endingPointX = e.changedTouches[0].clientX
             if (touchEndTime - touchStartTime < swipeTimeThreshold) {
                 currentIndex = this.allTabs.findIndex(element => element.classList.contains('active'))
                 if (startingPointX > endingPointX && startingPointX - endingPointX > swipeDistanceThreshold && currentIndex < this.allTabs.length) {
@@ -629,6 +633,17 @@ smTab.innerHTML = `
     transition: color 0.3s;
     text-transform: capitalize;
     font-family: var(--font-family);
+}
+@media (hover: hover){
+    :host(.active) .tab{
+        opacity: 1;
+    }
+    .tab{
+        opacity: 0.7
+    }
+    .tab:hover{
+        opacity: 1
+    }
 }
 </style>
 <div class="tab">
@@ -690,8 +705,8 @@ smCheckbox.innerHTML = `
 
 .icon {
   fill: none;
-  height: 1rem;
-  width: 1rem;
+  height: 1.2rem;
+  width: 1.2rem;
   stroke: rgba(var(--text), 0.7);
   stroke-width: 6;
   overflow: visible;
@@ -974,7 +989,7 @@ smSwitch.innerHTML = `
     -webkit-transition: background 0.4s;
     transition: background 0.4s;
     background: rgba(var(--text), 0.4);
-    box-shadow: 0 0.1rem 0.3rem #00000060 inset;
+    box-shadow: 0 0.1rem 0.3rem #00000040 inset;
 }
 
 .switch .btn {
@@ -984,7 +999,7 @@ smSwitch.innerHTML = `
     height: 1rem;
     width: 1rem;
     border-radius: 1rem;
-    box-shadow: 0 0.1rem 0.4rem #00000080;
+    box-shadow: 0 0.1rem 0.4rem #00000060;
     transition: transform 0.4s;
     border: solid 0.3rem rgba(var(--foreground), 1);
 }
@@ -1059,6 +1074,7 @@ smSelect.innerHTML = `
                 display: flex;
                 padding: 0.4rem 0.7rem;
                 background: rgba(var(--text), 0.1);
+                border: solid 1px rgba(var(--text), 0.2);
                 align-items: center;
                 justify-content: space-between;
                 outline: none;
@@ -1084,7 +1100,7 @@ smSelect.innerHTML = `
                 border: solid 1px rgba(var(--text), 0.2);
                 border-radius: 0.2rem;
                 z-index: 2;
-                box-shadow: 0 0.8rem 2rem #00000040;
+                box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
             }
         </style>
         <div class="sm-select">
@@ -1197,6 +1213,12 @@ smOption.innerHTML = `
                 display: flex;
                 align-items: center;
             }
+            .sm-option:focus{
+                background: rgba(var(--text), 0.1);
+            }
+            .sm-option:focus .icon{
+                opacity: 0.4
+            }
             :host(.check-selected) .icon{
                 opacity: 1 !important
             }
@@ -1213,8 +1235,13 @@ smOption.innerHTML = `
                 stroke-linejoin: round;
                 opacity: 0;
             }
-            .sm-option:hover{
-                background: rgba(var(--text), 0.1);
+            @media (hover: hover){
+                .sm-option:hover{
+                    background: rgba(var(--text), 0.1);
+                }
+                .sm-option:hover .icon{
+                    opacity: 0.4
+                }
             }
         </style>
         <div class="sm-option" tabindex="0">
@@ -1356,11 +1383,20 @@ smStripOption.innerHTML = `
                 outline: none;
                 border-radius: 2rem;
                 text-transform: capitalize;
-                border: solid 1px rgba(var(--text), .16);
+                border: solid 1px rgba(var(--text), .3);
                 opacity: 0.9;
             }
-            .sm-option:hover{
+            .sm-option:focus{
                 background: rgba(var(--text), 0.1);
+            }
+
+            @media (hover: hover){
+                .sm-option{
+                    transition: background 0.3s;
+                }
+                .sm-option:hover{
+                    background: rgba(var(--text), 0.1);
+                }
             }
         </style>
         <div class="sm-option" tabindex="0">
@@ -1419,7 +1455,8 @@ smPopup.innerHTML = `
         left: 0;
         right: 0;
         place-items: center;
-        background: #00000080;
+        background: #00000060;
+        backdrop-filter: blur(1rem);
         z-index: 10;
         transition: opacity 0.3s ease;
     }
@@ -1459,7 +1496,7 @@ smPopup.innerHTML = `
             border-radius: 0.4rem;
             height: auto;
             padding: 1.5rem;
-            transform: translateY(0) scale(0.96);
+            transform: translateY(0) scale(0.9);
         }
     }
     @media screen and (max-width: 640px){
@@ -1470,7 +1507,7 @@ smPopup.innerHTML = `
             padding: 1rem 0;
         }
         .handle{
-            height: 0.2rem;
+            height: 0.3rem;
             width: 2rem;
             background: rgba(var(--text), .4);
             border-radius: 1rem;
@@ -1506,50 +1543,84 @@ customElements.define('sm-popup', class extends HTMLElement {
         if (window.innerWidth < 648)
             this.popup.style.transform = 'translateY(100%)';
         else
-            this.popup.style.transform = 'scale(0.96)';
+            this.popup.style.transform = 'scale(0.9)';
         const scrollY = document.body.style.top;
         document.body.style.overflow = 'auto';
         document.body.style.top = '';
         window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
 
+    handleTouchStart = (e) => {
+        e.preventDefault()
+        this.touchStartY = e.changedTouches[0].clientY
+        this.popup.style.transition = 'initial'
+        this.touchStartTime = e.timeStamp
+    }
+
+    handleTouchMove = (e) => {
+        e.preventDefault()
+        if (this.touchStartY < e.changedTouches[0].clientY) {
+            this.offset = e.changedTouches[0].clientY - this.touchStartY;
+            this.touchEndAnimataion = window.requestAnimationFrame(this.movePopup)
+        }
+            /*else {
+        offset = touchStartY - e.changedTouches[0].clientY;
+        this.popup.style.transform = `translateY(-${offset}px)`
+    }*/
+    }
+
+    handleTouchEnd = (e) => {
+        e.preventDefault()
+        this.touchEndTime = e.timeStamp
+        cancelAnimationFrame(this.touchEndAnimataion)
+        this.touchEndY = e.changedTouches[0].clientY
+        this.popup.style.transition = 'transform 0.3s'
+        if (this.touchEndTime - this.touchStartTime > 200) {
+            if (this.touchEndY - this.touchStartY > this.threshold) {
+                this.hide()
+            }
+            else {
+                this.show()
+            }
+        }
+        else {
+            if (this.touchEndY > this.touchStartY)
+                this.hide()
+        }
+    }
+
+    movePopup = () => {
+        this.popup.style.transform = `translateY(${this.offset}px)`
+    }
+
     connectedCallback() {
         this.popupContainer = this.shadowRoot.querySelector('.popup-container')
         this.popup = this.shadowRoot.querySelector('.popup')
-        let handle = this.shadowRoot.querySelector('.popup-top'),
-            touchStartY = 0,
-            touchEndY = 0,
-            threshold = 20,
-            offset;
+        this.offset
+        this.handle = this.shadowRoot.querySelector('.popup-top')
+        this.touchStartY = 0
+        this.touchEndY = 0
+        this.touchStartTime = 0
+        this.touchEndTime = 0
+        this.threshold = this.popup.getBoundingClientRect().height/2
+        let  touching = false
+        this.touchEndAnimataion;
                 
         this.popupContainer.addEventListener('mousedown', e => {
             if (e.target === this.popupContainer) {
                 this.hide()
             }
         })
-        handle.addEventListener('touchstart', e => {
-            touchStartY = e.changedTouches[0].pageY
-            this.popup.style.transition = 'none'
-        })
-        handle.addEventListener('touchend', e => {
-            touchEndY = e.changedTouches[0].pageY
-            this.popup.style.transition = 'transform 0.3s'
-            if (touchStartY < touchEndY) {
-                this.hide()
-            }
-        })
-        handle.addEventListener('touchmove', e => {
-            if (touchStartY < e.changedTouches[0].pageY) {
-                offset = e.changedTouches[0].pageY - touchStartY;
-                this.popup.style.transform = `translateY(${offset}px)`
-            }
-            /*else {
-                offset = e.changedTouches[0].pageY - touchStartY;
-                popup.setAttribute('style', `top: ${offset}px`)
-            }*/
-        })
-        handle.addEventListener('click', e => {
+        this.handle.addEventListener('touchstart', this.handleTouchStart)
+        this.handle.addEventListener('touchmove', this.handleTouchMove)
+        this.handle.addEventListener('touchend', this.handleTouchEnd)
+        this.handle.addEventListener('click', e => {
             this.hide()
         })
+    }
+    disconnectedCallback() {
+        this.handle.removeEventListener('touchstart', this.handleTouchStart)
+        this.handle.removeEventListener('touchmove', this.handleTouchMove)
+        this.handle.removeEventListener('touchend', this.handleTouchEnd)
     }
 })
