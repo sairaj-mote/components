@@ -1535,7 +1535,7 @@ smPopup.innerHTML = `
         .handle{
             height: 0.3rem;
             width: 2rem;
-            background: rgba(var(--text), .4);
+            background: rgba(var(--text), .2);
             border-radius: 1rem;
             margin: 0.5rem 0;
         }
@@ -1665,5 +1665,168 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.popupHeader.removeEventListener('touchstart', this.handleTouchStart)
         this.popupHeader.removeEventListener('touchmove', this.handleTouchMove)
         this.popupHeader.removeEventListener('touchend', this.handleTouchEnd)
+    }
+})
+
+//carousel
+
+const smCarousel = document.createElement('template')
+smCarousel.innerHTML = `
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    } 
+    :host{
+        display: flex;
+    }
+    .icon {
+        position: absolute;
+        display: flex;
+        fill: none;
+        height: 3rem;
+        width: 3rem;
+        border-radius: 3rem;
+        padding: 1rem;
+        stroke: rgba(var(--text), 0.7);
+        stroke-width: 10;
+        overflow: visible;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        cursor: pointer;
+        min-width: 0;
+        background: rgba(var(--foreground), 1);
+        box-shadow: 0 0.5rem 1rem #00000040; 
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 0.3s; 
+    }
+    .hide{
+        pointer-events: none;
+        transform: scale(0)
+    }
+    .next-item{
+        right: 0;
+    }
+    .carousel-container{
+        position: relative;
+        display: flex;
+        width: 100%;
+        align-items: center;
+    }
+    .carousel{
+        display: grid;
+        gap: 1rem;
+        grid-auto-flow: column;
+        max-width: 100%;
+        overflow: auto hidden;
+        scroll-snap-type: x mandatory;
+    }
+    slot::slotted(*){
+        scroll-snap-align: center;
+    }
+    :host([align-items="start"]) slot::slotted(*){
+        scroll-snap-align: start;
+    }
+    :host([align-items="center"]) slot::slotted(*){
+        scroll-snap-align: center;
+    }
+    :host([align-items="end"]) slot::slotted(*){
+        scroll-snap-align: end;
+    }
+    @media screen and (min-width: 640px){
+        
+    }
+    @media (hover: hover){
+        .carousel{
+            overflow: hidden;
+        }
+    }
+    @media (hover: none){
+        .carousel{
+            overflow: hidden;
+        }
+        .icon{
+            display: none;
+        }
+    }
+</style>
+<div class="carousel-container">
+    <svg class="icon previous-item hide" viewBox="4 0 64 64">
+        <title>Previous</title>
+        <polyline points="48.01 0.35 16.35 32 48.01 63.65"/>
+    </svg>
+    <div class="carousel">
+        <slot></slot>
+    </div>
+    <svg class="icon next-item hide" viewBox="-6 0 64 64">
+        <title>Next</title>
+        <polyline points="15.99 0.35 47.65 32 15.99 63.65"/>
+    </svg>
+</div>
+`;
+
+customElements.define('sm-carousel', class extends HTMLElement{
+    constructor() {
+        super()
+        this.shadow = this.attachShadow({ mode: 'open' }).append(smCarousel.content.cloneNode(true))
+    }
+
+    scrollLeft = () => {
+        this.carousel.scrollBy({
+            top: 0,
+            left: -this.carouselItemWidth,
+            behavior: 'smooth'
+        })
+    }
+
+    scrollRight = () => {
+        this.carousel.scrollBy({
+            top: 0,
+            left: this.carouselItemWidth,
+            behavior: 'smooth'
+        })
+    }
+
+    connectedCallback() {
+        this.carousel = this.shadowRoot.querySelector('.carousel')
+        this.carouselContainer = this.shadowRoot.querySelector('.carousel-container')
+        this.carouselSlot = this.shadowRoot.querySelector('slot')
+        this.nextArrow = this.shadowRoot.querySelector('.next-item')
+        this.previousArrow = this.shadowRoot.querySelector('.previous-item')
+        this.carouselItems
+        this.carouselItemWidth
+        const firstElementObserver = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting){
+                this.previousArrow.classList.add('hide')
+            }
+            else {
+                this.previousArrow.classList.remove('hide')
+            }
+        }, {
+            root: this.carouselContainer,
+            threshold: 1
+        })        
+        const lastElementObserver = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting){
+                this.nextArrow.classList.add('hide')
+            }
+            else{
+                this.nextArrow.classList.remove('hide')
+            }
+        }, {
+            root: this.carouselContainer,
+            threshold: 1
+        })        
+        
+        this.carouselSlot.addEventListener('slotchange', e => {
+            this.carouselItems = this.carouselSlot.assignedElements()
+            firstElementObserver.observe(this.carouselItems[0])
+            lastElementObserver.observe(this.carouselItems[this.carouselItems.length - 1])
+            this.carouselItemWidth = this.carouselItems[0].getBoundingClientRect().width
+        })
+
+        this.nextArrow.addEventListener('click', this.scrollRight)
+        this.previousArrow.addEventListener('click', this.scrollLeft)
     }
 })

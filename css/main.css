@@ -131,6 +131,18 @@ p {
   font-size: 1.1rem;
 }
 
+.card {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 6rem;
+  background: rgba(var(--text), 0.1);
+}
+
+sm-carousel {
+  margin-bottom: 1rem;
+}
+
 @media screen and (min-width: 640px) {
   main {
     display: -ms-grid;
