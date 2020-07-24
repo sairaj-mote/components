@@ -1482,7 +1482,6 @@ smPopup.innerHTML = `
         display: flex;
         width: 100%;
         align-items: center;
-        padding: 1rem 1.5rem;
         justify-content: space-between;
         border-bottom: 1px solid rgba(var(--text), 0.3);
     }
@@ -1513,6 +1512,7 @@ smPopup.innerHTML = `
         stroke-linejoin: round;
         cursor: pointer;
         min-width: 0;
+        -webkit-tap-highlight-color: transparent;
     }
     @media screen and (min-width: 640px){
         .popup{
@@ -1538,6 +1538,15 @@ smPopup.innerHTML = `
             background: rgba(var(--text), .4);
             border-radius: 1rem;
             margin: 0.5rem 0;
+        }
+        .heading{
+            padding: 1.5rem
+        }
+        .close{
+            height: 2rem;
+            width: 2rem;
+            padding: 0.55rem;
+            margin-right: 1rem;
         }
     }
 </style>
@@ -1584,14 +1593,12 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     handleTouchStart = (e) => {
-        e.preventDefault()
         this.touchStartY = e.changedTouches[0].clientY
         this.popup.style.transition = 'initial'
         this.touchStartTime = e.timeStamp
     }
 
     handleTouchMove = (e) => {
-        e.preventDefault()
         if (this.touchStartY < e.changedTouches[0].clientY) {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
             this.touchEndAnimataion = window.requestAnimationFrame(this.movePopup)
@@ -1603,7 +1610,6 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     handleTouchEnd = (e) => {
-        e.preventDefault()
         this.touchEndTime = e.timeStamp
         cancelAnimationFrame(this.touchEndAnimataion)
         this.touchEndY = e.changedTouches[0].clientY
