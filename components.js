@@ -11,24 +11,26 @@ smButton.innerHTML = `
             :host{
                 display: inline-flex;
             }
-            :host([disabled='true']) .sm-btn{
+            :host([disabled='true']) .sm-button{
                 cursor: default;
                 opacity: 1;
                 background: rgba(var(--text), 0.4) !important;
+                color: rgba(var(--foreground), 1);
             }
-            :host([variant='primary']) .sm-btn{
+            :host([variant='primary']) .sm-button{
                 background: var(--accent-color);
+                color: rgba(var(--foreground), 1);
             }
-            :host([variant='outlined']) .sm-btn{
+            :host([variant='outlined']) .sm-button{
                 box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
                 background: rgba(var(--foreground), 1); 
                 color: var(--accent-color);
             }
-            :host([variant='no-outline']) .sm-btn{
+            :host([variant='no-outline']) .sm-button{
                 background: rgba(var(--foreground), 1); 
                 color: var(--accent-color);
             }
-            .sm-btn {
+            .sm-button {
                 display: flex;
                 padding: 0.6rem 0.8rem;
                 cursor: pointer;
@@ -38,21 +40,22 @@ smButton.innerHTML = `
                 transition: transform 0.3s;
                 text-transform: uppercase;
                 font-weight: 600;
-                color: rgba(var(--foreground), 1);
+                color: var(--accent-color);
                 letter-spacing: 0.1em;
                 font-family: var(--font-family);
                 font-size: 0.8rem;
+                background: var(--light-accent-shade); 
             }
             @media (hover: hover){
-                :host([variant='primary']:not([disabled="true"])) .sm-btn:hover{
+                :host([variant='primary']:not([disabled="true"])) .sm-button:hover{
                     opacity: 0.8;
                 }
-                :host([variant='no-outline']) .sm-btn:hover{
+                :host([variant='no-outline']) .sm-button:hover{
                     background: var(--light-accent-shade); 
                 }
             }
         </style>
-        <div class="sm-btn">
+        <div class="sm-button">
             <slot></slot>   
         </div>`;
 customElements.define('sm-button',
@@ -126,8 +129,7 @@ smInput.innerHTML = `
         border: none;
         }
         :host{
-            display: -webkit-box;
-            display: flex;
+            display: inline-flex;
             flex-direction: column;
         }
         .hide{
@@ -992,7 +994,7 @@ smSwitch.innerHTML = `
     box-shadow: 0 0.1rem 0.3rem #00000040 inset;
 }
 
-.switch .btn {
+.switch .button {
     position: relative;
     display: -webkit-inline-box;
     display: inline-flex;
@@ -1004,7 +1006,7 @@ smSwitch.innerHTML = `
     border: solid 0.3rem rgba(var(--foreground), 1);
 }
 
-.switch input:checked ~ .btn {
+.switch input:checked ~ .button {
     transform: translateX(100%);
 }
 
@@ -1016,7 +1018,7 @@ smSwitch.innerHTML = `
 <label class="switch">
     <input type="checkbox">
     <div class="track"></div>
-    <div class="btn"></div>
+    <div class="button"></div>
 </label>`
 
 customElements.define('sm-switch', class extends HTMLElement {
@@ -1082,7 +1084,7 @@ smSelect.innerHTML = `
             .icon{
                 margin-left: 1rem;
             }
-            :host([align="left"]) .options{
+            :host([align-select="right"]) .options{
                 left: 0;
             }
             :host([align-select="right"]) .options{
@@ -1307,7 +1309,8 @@ smStripSelect.innerHTML = `
             slot::slotted(.active){
                 border-radius: 2rem;
                 opacity: 1;
-                background-color: rgba(var(--text), .16);  
+                background-color: rgba(var(--text), .6);  
+                color: rgba(var(--foreground), 1);
             }
             @media (hover: none){
                 ::-webkit-scrollbar-track {
@@ -1456,7 +1459,6 @@ smPopup.innerHTML = `
         right: 0;
         place-items: center;
         background: #00000060;
-        backdrop-filter: blur(1rem);
         z-index: 10;
         transition: opacity 0.3s ease;
     }
@@ -1467,27 +1469,50 @@ smPopup.innerHTML = `
         flex-wrap: wrap;
         width: 100%;
         border-radius: 0.5rem 0.5rem 0 0;
-        padding: 0 1.5rem 1.5rem 1.5rem;
         position: relative;
         display: flex;
         transform: translateY(100%);
         transition: transform 0.3s;
         background: rgba(var(--foreground), 1);
-        box-shadow: 0 2rem 2rem #00000040;
+        box-shadow: 0 -1rem 2rem #00000020;
         overflow-y: auto;
         max-height: 100%;
     }
     .container-header{
-        display: grid;
-        grid-template-columns: auto 1fr auto;
+        display: flex;
+        width: 100%;
         align-items: center;
-        padding: 0;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        padding: 1rem 1.5rem;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(var(--text), 0.3);
+    }
+    .popup-top{
+        display: flex;
+        width: 100%;
+    }
+    .heading{
+        font-weight: 400;
+    }
+    .heading:first-letter{
+        text-transform: uppercase;
     }
     .hide{
         opacity: 0;
         pointer-events: none;
+    }
+    .icon {
+        fill: none;
+        height: 1.6rem;
+        width: 1.6rem;
+        padding: 0.4rem;
+        stroke: rgba(var(--text), 0.7);
+        stroke-width: 10;
+        overflow: visible;
+        stroke-linecap: round;
+        border-radius: 1rem;
+        stroke-linejoin: round;
+        cursor: pointer;
+        min-width: 0;
     }
     @media screen and (min-width: 640px){
         .popup{
@@ -1495,22 +1520,24 @@ smPopup.innerHTML = `
             align-self: center;
             border-radius: 0.4rem;
             height: auto;
-            padding: 1.5rem;
             transform: translateY(0) scale(0.9);
+            box-shadow: 0 2rem 2rem #00000040;
+        }
+        .container-header{
+            padding: 1.5rem;
         }
     }
     @media screen and (max-width: 640px){
         .popup-top{
-            display: flex;
-            width: 100%;
-            justify-content: center;
-            padding: 1rem 0;
+            flex-direction: column;
+            align-items: center;
         }
         .handle{
             height: 0.3rem;
             width: 2rem;
             background: rgba(var(--text), .4);
             border-radius: 1rem;
+            margin: 0.5rem 0;
         }
     }
 </style>
@@ -1518,6 +1545,14 @@ smPopup.innerHTML = `
     <div class="popup">
         <div class="popup-top">
             <div class="handle"></div>
+            <div class="container-header">
+                <h3 class="heading"></h3>
+                <svg class="icon close" viewBox="0 0 64 64">
+                    <title>Close</title>
+                    <line x1="64" y1="0" x2="0" y2="64"/>
+                    <line x1="64" y1="64" x2="0" y2="0"/>
+                </svg>
+            </div>
         </div>
         <slot></slot>
     </div>
@@ -1531,12 +1566,11 @@ customElements.define('sm-popup', class extends HTMLElement {
 
     show() {
         this.popupContainer.classList.remove('hide')
-        if(window.innerWidth < 648)
+        if (window.innerWidth < 648)
             this.popup.style.transform = 'translateY(0)';
         else
             this.popup.style.transform = 'scale(1)';
-        document.body.style.overflow = 'hidden';
-        document.body.style.top = `-${window.scrollY}px`;
+        document.body.setAttribute('style', `overflow: hidden; top: -${window.scrollY}px`)
     }
     hide() {
         this.popupContainer.classList.add('hide')
@@ -1545,8 +1579,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         else
             this.popup.style.transform = 'scale(0.9)';
         const scrollY = document.body.style.top;
-        document.body.style.overflow = 'auto';
-        document.body.style.top = '';
+        document.body.setAttribute('style', `overflow: auto; top: initial`)
         window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
 
@@ -1563,7 +1596,7 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
             this.touchEndAnimataion = window.requestAnimationFrame(this.movePopup)
         }
-            /*else {
+        /*else {
         offset = touchStartY - e.changedTouches[0].clientY;
         this.popup.style.transform = `translateY(-${offset}px)`
     }*/
@@ -1597,30 +1630,34 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.popupContainer = this.shadowRoot.querySelector('.popup-container')
         this.popup = this.shadowRoot.querySelector('.popup')
         this.offset
-        this.handle = this.shadowRoot.querySelector('.popup-top')
+        this.popupHeader = this.shadowRoot.querySelector('.popup-top')
         this.touchStartY = 0
         this.touchEndY = 0
         this.touchStartTime = 0
         this.touchEndTime = 0
-        this.threshold = this.popup.getBoundingClientRect().height/2
-        let  touching = false
+        this.threshold = this.popup.getBoundingClientRect().height * 0.3
         this.touchEndAnimataion;
+        
+        if (this.hasAttribute('heading'))
+            this.shadowRoot.querySelector('.heading').textContent = this.getAttribute('heading')
                 
         this.popupContainer.addEventListener('mousedown', e => {
             if (e.target === this.popupContainer) {
                 this.hide()
             }
         })
-        this.handle.addEventListener('touchstart', this.handleTouchStart)
-        this.handle.addEventListener('touchmove', this.handleTouchMove)
-        this.handle.addEventListener('touchend', this.handleTouchEnd)
-        this.handle.addEventListener('click', e => {
+
+        this.shadowRoot.querySelector('.close').addEventListener('click', e => {
             this.hide()
         })
+
+        this.popupHeader.addEventListener('touchstart', this.handleTouchStart)
+        this.popupHeader.addEventListener('touchmove', this.handleTouchMove)
+        this.popupHeader.addEventListener('touchend', this.handleTouchEnd)
     }
     disconnectedCallback() {
-        this.handle.removeEventListener('touchstart', this.handleTouchStart)
-        this.handle.removeEventListener('touchmove', this.handleTouchMove)
-        this.handle.removeEventListener('touchend', this.handleTouchEnd)
+        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart)
+        this.popupHeader.removeEventListener('touchmove', this.handleTouchMove)
+        this.popupHeader.removeEventListener('touchend', this.handleTouchEnd)
     }
 })
