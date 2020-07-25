@@ -1365,7 +1365,6 @@ smStripSelect.innerHTML = `
                 gap: 0.5rem;
                 max-width: 100%;
                 overflow: auto hidden;
-                margin: 0.6rem 0.5rem 0.6rem 0; 
             }
             .previous-item{
                 left: 0;
