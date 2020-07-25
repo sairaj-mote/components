@@ -11,26 +11,26 @@ smButton.innerHTML = `
             :host{
                 display: inline-flex;
             }
-            :host([disabled='true']) .sm-button{
+            :host([disabled='true']) .button{
                 cursor: default;
                 opacity: 1;
                 background: rgba(var(--text), 0.4) !important;
                 color: rgba(var(--foreground), 1);
             }
-            :host([variant='primary']) .sm-button{
+            :host([variant='primary']) .button{
                 background: var(--accent-color);
                 color: rgba(var(--foreground), 1);
             }
-            :host([variant='outlined']) .sm-button{
+            :host([variant='outlined']) .button{
                 box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
                 background: rgba(var(--foreground), 1); 
                 color: var(--accent-color);
             }
-            :host([variant='no-outline']) .sm-button{
+            :host([variant='no-outline']) .button{
                 background: rgba(var(--foreground), 1); 
                 color: var(--accent-color);
             }
-            .sm-button {
+            .button {
                 display: flex;
                 padding: 0.6rem 0.8rem;
                 cursor: pointer;
@@ -47,15 +47,15 @@ smButton.innerHTML = `
                 background: var(--light-accent-shade); 
             }
             @media (hover: hover){
-                :host([variant='primary']:not([disabled="true"])) .sm-button:hover{
+                :host([variant='primary']:not([disabled="true"])) .button:hover{
                     opacity: 0.8;
                 }
-                :host([variant='no-outline']) .sm-button:hover{
+                :host([variant='no-outline']) .button:hover{
                     background: var(--light-accent-shade); 
                 }
             }
         </style>
-        <div class="sm-button">
+        <div class="button">
             <slot></slot>   
         </div>`;
 customElements.define('sm-button',
@@ -510,7 +510,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
             targetBody.animate(flyInLeft, animationOptions)
         }
         this.tabSlot.addEventListener('click', e => {
-            if (e.target === this.prevTab || !e.target.closest('sm-tab'))
+            if (e.target === this.prevTab || !e.target.closest('tab'))
                 return
             if (this.prevTab)
                 this.prevTab.classList.remove('active')
@@ -771,7 +771,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
 
 })
 
-//sm-audio
+//audio
 
 const smAudio = document.createElement('template')
 smAudio.innerHTML = `
@@ -950,7 +950,7 @@ customElements.define('sm-audio', class extends HTMLElement {
     }
 })
 
-//sm-switch
+//switch
 
 const smSwitch = document.createElement('template')
 smSwitch.innerHTML = `	
@@ -1040,7 +1040,7 @@ customElements.define('sm-switch', class extends HTMLElement {
     }
 })
 
-// sm-select
+// select
 const smSelect = document.createElement('template')
 smSelect.innerHTML = `
         <style>     
@@ -1066,7 +1066,7 @@ smSelect.innerHTML = `
                 opacity: 0;
                 pointer-events: none;
             }
-            .sm-select{
+            .select{
                 position: relative;
                 display: flex;
                 flex-direction: column;
@@ -1113,7 +1113,7 @@ smSelect.innerHTML = `
                 box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
             }
         </style>
-        <div class="sm-select">
+        <div class="select">
             <div class="selection" tabindex="0">
                 <div class="option-text"></div>
                 <svg class="icon toggle" viewBox="0 0 64 64">
@@ -1139,6 +1139,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.setAttribute('value', val)
     }
     connectedCallback() {
+        this.availableOptions
         let optionList = this.shadowRoot.querySelector('.options'),
             chevron = this.shadowRoot.querySelector('.toggle'),
             slot = this.shadowRoot.querySelector('.options slot'),
@@ -1160,6 +1161,19 @@ customElements.define('sm-select', class extends HTMLElement {
         selection.addEventListener('click', e => {
             optionList.classList.remove('hide')
             optionList.animate(slideDown, animationOptions)
+            optionList.children[0].assignedElements()[0].focus()
+        })
+        optionList.addEventListener('keydown', e => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+                e.preventDefault()
+                if(document.activeElement.previousElementSibling)
+                    document.activeElement.previousElementSibling.focus()
+            }
+            if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+                e.preventDefault()
+                if (document.activeElement.nextElementSibling)
+                    document.activeElement.nextElementSibling.focus()
+            }
         })
         this.addEventListener('optionSelected', e => {
             if (previousOption !== e.target) {
@@ -1182,14 +1196,16 @@ customElements.define('sm-select', class extends HTMLElement {
             e.target.classList.add('check-selected')
         })
         slot.addEventListener('slotchange', e => {
-            if (slot.assignedElements()[0]) {
-                let firstElement = slot.assignedElements()[0];
+            this.availableOptions = slot.assignedElements()
+            if (this.availableOptions[0]) {
+                let firstElement = this.availableOptions[0];
                 previousOption = firstElement;
                 firstElement.classList.add('check-selected')
                 this.setAttribute('value', firstElement.getAttribute('value'))
                 this.shadowRoot.querySelector('.option-text').textContent = firstElement.textContent
-                slot.assignedElements().forEach((element, index) => {
+                this.availableOptions.forEach((element, index) => {
                     element.setAttribute('data-rank', index + 1);
+                    element.setAttribute('tabindex', "0");
                 })
             }
         });
@@ -1202,7 +1218,7 @@ customElements.define('sm-select', class extends HTMLElement {
     }
 })
 
-// sm-option
+// option
 const smOption = document.createElement('template')
 smOption.innerHTML = `
         <style>     
@@ -1214,7 +1230,7 @@ smOption.innerHTML = `
             :host{
                 display: flex;
             }
-            .sm-option{
+            .option{
                 min-width: 100%;
                 padding: 0.8rem 1.2rem;
                 cursor: pointer;
@@ -1223,10 +1239,11 @@ smOption.innerHTML = `
                 display: flex;
                 align-items: center;
             }
-            .sm-option:focus{
+            :host(:focus){
+                outline: none;
                 background: rgba(var(--text), 0.1);
             }
-            .sm-option:focus .icon{
+            :host(:focus) .option .icon{
                 opacity: 0.4
             }
             :host(.check-selected) .icon{
@@ -1246,15 +1263,15 @@ smOption.innerHTML = `
                 opacity: 0;
             }
             @media (hover: hover){
-                .sm-option:hover{
+                .option:hover{
                     background: rgba(var(--text), 0.1);
                 }
-                .sm-option:hover .icon{
+                .option:hover .icon{
                     opacity: 0.4
                 }
             }
         </style>
-        <div class="sm-option" tabindex="0">
+        <div class="option">
             <svg class="icon" viewBox="0 0 64 64">
                 <polyline points="0.35 31.82 21.45 52.98 63.65 10.66"/>
             </svg>
@@ -1265,36 +1282,38 @@ customElements.define('sm-option', class extends HTMLElement {
         super()
         this.attachShadow({ mode: 'open' }).append(smOption.content.cloneNode(true))
     }
+
+    sendDetails = () => {
+        let optionSelected = new CustomEvent('optionSelected', {
+            bubbles: true,
+            composed: true,
+            detail: {
+                text: this.textContent,
+                value: this.getAttribute('value')
+            }
+        })
+        this.dispatchEvent(optionSelected)
+    }
+
     connectedCallback() {
         this.addEventListener('click', e => {
-            let optionSelected = new CustomEvent('optionSelected', {
-                bubbles: true,
-                composed: true,
-                detail: {
-                    text: this.textContent,
-                    value: this.getAttribute('value')
-                }
-            })
-            this.dispatchEvent(optionSelected)
+            this.sendDetails()
+        })
+        this.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault()
+                this.sendDetails()
+            }
         })
         if (this.hasAttribute('default')) {
             setTimeout(() => {
-                let optionSelected = new CustomEvent('optionSelected', {
-                    bubbles: true,
-                    composed: true,
-                    detail: {
-                        text: this.textContent,
-                        value: this.getAttribute('value'),
-                        rank: this.dataset.rank
-                    }
-                })
-                this.dispatchEvent(optionSelected)
+                this.sendDetails()
             }, 0);
         }
     }
 })
 
-// sm-select
+// select
 const smStripSelect = document.createElement('template')
 smStripSelect.innerHTML = `
         <style>     
@@ -1306,13 +1325,61 @@ smStripSelect.innerHTML = `
             :host{
                 display: flex;
             }
-            .sm-select{
+            .icon {
+                position: absolute;
+                display: flex;
+                fill: none;
+                height: 2.6rem;
+                width: 2.6rem;
+                padding: 0.9rem;
+                stroke: rgba(var(--text), 0.7);
+                stroke-width: 10;
+                overflow: visible;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                cursor: pointer;
+                min-width: 0;
+                z-index: 1;
+                background: rgba(var(--foreground), 1);
+                -webkit-tap-highlight-color: transparent;
+                transition: opacity 0.3s; 
+            }
+            .hide{
+                pointer-events: none;
+                opacity: 0;
+            }
+            .select-container{
+                position: relative;
+                display: flex;
+                width: 100%;
+                align-items: center;
+            }
+            .select{
                 position: relative;
                 display: flex;
                 gap: 0.5rem;
                 max-width: 100%;
                 overflow: auto hidden;
-                margin: 0.6rem 0;
+                margin: 0.6rem 0.5rem 0.6rem 0; 
+            }
+            .previous-item{
+                left: 0;
+            }
+            .next-item{
+                right: 0;
+            }
+            .left,.right{
+                position: absolute;
+                width: 2rem;
+                height: 100%; 
+                transition: opacity 0.3s;
+            }
+            .left{
+                background: linear-gradient(to left, transparent, rgba(var(--foreground), 0.6))
+            }
+            .right{
+                right: 0;
+                background: linear-gradient(to right, transparent, rgba(var(--foreground), 0.6))
             }
             slot::slotted(.active){
                 border-radius: 2rem;
@@ -1329,10 +1396,36 @@ smStripSelect.innerHTML = `
                     height: 0;
                     background-color: transparent;
                 }
+                .icon{
+                    display: none;
+                }
+                .left,.right{
+                    display: block;
+                }
+            }
+            @media (hover: hover){
+                .select{
+                    overflow: hidden;
+                }
+                .left,.right{
+                    display: none;
+                }
             }
         </style>
-        <div class="sm-select">
-            <slot></slot> 
+        <div class="select-container">
+            <div class="left"></div>
+            <svg class="icon previous-item hide" viewBox="4 0 64 64">
+                <title>Previous</title>
+                <polyline points="48.01 0.35 16.35 32 48.01 63.65"/>
+            </svg>
+            <div class="select">
+                <slot></slot> 
+            </div>
+            <svg class="icon next-item hide" viewBox="-6 0 64 64">
+                <title>Next</title>
+                <polyline points="15.99 0.35 47.65 32 15.99 63.65"/>
+            </svg>
+            <div class="right"></div>
         </div>`;
 customElements.define('sm-strip-select', class extends HTMLElement {
     constructor() {
@@ -1348,9 +1441,66 @@ customElements.define('sm-strip-select', class extends HTMLElement {
     set value(val) {
         this.setAttribute('value', val)
     }
+    scrollLeft = () => {
+        this.select.scrollBy({
+            top: 0,
+            left: -this.scrollDistance,
+            behavior: 'smooth'
+        })
+    }
+
+    scrollRight = () => {
+        this.select.scrollBy({
+            top: 0,
+            left: this.scrollDistance,
+            behavior: 'smooth'
+        })
+    }
     connectedCallback() {
         let previousOption,
             slot = this.shadowRoot.querySelector('slot');
+        this.selectContainer = this.shadowRoot.querySelector('.select-container')
+        this.select = this.shadowRoot.querySelector('.select')
+        this.nextArrow = this.shadowRoot.querySelector('.next-item')
+        this.previousArrow = this.shadowRoot.querySelector('.previous-item')
+        this.nextGradient = this.shadowRoot.querySelector('.right')
+        this.previousGradient = this.shadowRoot.querySelector('.left')
+        this.selectOptions
+        this.scrollDistance = this.selectContainer.getBoundingClientRect().width
+        const firstElementObserver = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) {
+                this.previousArrow.classList.add('hide')
+                this.previousGradient.classList.add('hide')
+            }
+            else {
+                this.previousArrow.classList.remove('hide')
+                this.previousGradient.classList.remove('hide')
+            }
+        }, {
+            root: this.selectContainer,
+            threshold: 0.95
+        })
+        const lastElementObserver = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) {
+                this.nextArrow.classList.add('hide')
+                this.nextGradient.classList.add('hide')
+            }
+            else {
+                this.nextArrow.classList.remove('hide')
+                this.nextGradient.classList.remove('hide')
+            }
+        }, {
+            root: this.selectContainer,
+            threshold: 0.95
+        })
+
+        const selectObserver = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) {
+                this.scrollDistance = this.selectContainer.getBoundingClientRect().width
+            }
+        })
+
+        selectObserver.observe(this.selectContainer)
         this.addEventListener('optionSelected', e => {
             if (previousOption === e.target) return;
             if (previousOption)
@@ -1365,17 +1515,27 @@ customElements.define('sm-strip-select', class extends HTMLElement {
             previousOption = e.target;
         })
         slot.addEventListener('slotchange', e => {
-            if (slot.assignedElements()[0]) {
-                let firstElement = slot.assignedElements()[0];
+            this.selectOptions = slot.assignedElements()
+            firstElementObserver.observe(this.selectOptions[0])
+            lastElementObserver.observe(this.selectOptions[this.selectOptions.length - 1])
+            if (this.selectOptions[0]) {
+                let firstElement = this.selectOptions[0];
                 this.setAttribute('value', firstElement.getAttribute('value'))
                 firstElement.classList.add('active')
                 previousOption = firstElement;
             }
         });
+        this.nextArrow.addEventListener('click', this.scrollRight)
+        this.previousArrow.addEventListener('click', this.scrollLeft)
+    }
+
+    disconnectedCallback() {
+        this.nextArrow.removeEventListener('click', this.scrollRight)
+        this.previousArrow.removeEventListener('click', this.scrollLeft)
     }
 })
 
-// sm-option
+// option
 const smStripOption = document.createElement('template')
 smStripOption.innerHTML = `
         <style>     
@@ -1387,7 +1547,7 @@ smStripOption.innerHTML = `
             :host{
                 display: flex;
             }
-            .sm-option{
+            .option{
                 padding: 0.4rem 0.8rem;
                 cursor: pointer;
                 overflow-wrap: break-word;
@@ -1397,20 +1557,20 @@ smStripOption.innerHTML = `
                 border: solid 1px rgba(var(--text), .3);
                 opacity: 0.9;
             }
-            .sm-option:focus{
+            .option:focus{
                 background: rgba(var(--text), 0.1);
             }
 
             @media (hover: hover){
-                .sm-option{
+                .option{
                     transition: background 0.3s;
                 }
-                .sm-option:hover{
+                .option:hover{
                     background: rgba(var(--text), 0.1);
                 }
             }
         </style>
-        <div class="sm-option" tabindex="0">
+        <div class="option" tabindex="0">
             <slot></slot> 
         </div>`;
 customElements.define('sm-strip-option', class extends HTMLElement {
@@ -1858,7 +2018,15 @@ customElements.define('sm-carousel', class extends HTMLElement{
         }, {
             root: this.carouselContainer,
             threshold: 0.9
-        })        
+        })     
+        
+        const carouselObserver = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) {
+                this.scrollDistance = this.carouselContainer.getBoundingClientRect().width / 3
+            }
+        })
+
+        carouselObserver.observe(this.carouselContainer)
         
         this.carouselSlot.addEventListener('slotchange', e => {
             this.carouselItems = this.carouselSlot.assignedElements()
