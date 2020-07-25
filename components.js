@@ -510,7 +510,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
             targetBody.animate(flyInLeft, animationOptions)
         }
         this.tabSlot.addEventListener('click', e => {
-            if (e.target === this.prevTab || !e.target.closest('tab'))
+            if (e.target === this.prevTab || !e.target.closest('sm-tab'))
                 return
             if (this.prevTab)
                 this.prevTab.classList.remove('active')
@@ -1161,7 +1161,12 @@ customElements.define('sm-select', class extends HTMLElement {
         selection.addEventListener('click', e => {
             optionList.classList.remove('hide')
             optionList.animate(slideDown, animationOptions)
-            optionList.children[0].assignedElements()[0].focus()
+        })
+        selection.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault()
+                this.availableOptions[0].focus()
+            }
         })
         optionList.addEventListener('keydown', e => {
             if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
@@ -1370,16 +1375,17 @@ smStripSelect.innerHTML = `
             }
             .left,.right{
                 position: absolute;
-                width: 2rem;
+                width: 1rem;
                 height: 100%; 
                 transition: opacity 0.3s;
+                z-index: 1;
             }
             .left{
-                background: linear-gradient(to left, transparent, rgba(var(--foreground), 0.6))
+                background: linear-gradient(to left, transparent, rgba(var(--foreground), 1))
             }
             .right{
                 right: 0;
-                background: linear-gradient(to right, transparent, rgba(var(--foreground), 0.6))
+                background: linear-gradient(to right, transparent, rgba(var(--foreground), 1))
             }
             slot::slotted(.active){
                 border-radius: 2rem;
