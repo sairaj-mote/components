@@ -1938,6 +1938,14 @@ smCarousel.innerHTML = `
         }
     }
     @media (hover: none){
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: none !important;
+            background-color: transparent !important;
+        }
+        ::-webkit-scrollbar {
+            height: 0;
+            background-color: transparent;
+        }
         .carousel{
             overflow: auto none;
         }

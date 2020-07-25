@@ -32,7 +32,7 @@ h2:first-of-type {
 }
 
 section {
-  height: 40vh;
+  height: 50vh;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -43,11 +43,11 @@ section {
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
-  /*background: linear-gradient(-90deg, #000000a0 , #00000040),
-                url(/components/resources/background6.jpg) fixed no-repeat bottom;
-    background-size: cover;
-    color: rgba(var(--foreground), 1);*/
-  color: rgba(var(--text), 1);
+  background: -webkit-gradient(linear, right top, left top, from(#00000040), to(transparent)), url(/components/resources/artwork2.svg) fixed no-repeat bottom;
+  background: linear-gradient(-90deg, #00000040, transparent), url(/components/resources/artwork2.svg) fixed no-repeat bottom;
+  background-size: cover;
+  text-align: right;
+  color: rgba(var(--foreground), 1);
   padding: 2rem;
   border-bottom: 1px solid rgba(var(--text), 0.2);
 }
