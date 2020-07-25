@@ -1744,7 +1744,7 @@ smCarousel.innerHTML = `
     }
     @media (hover: none){
         .carousel{
-            overflow: hidden;
+            overflow: auto none;
         }
         .icon{
             display: none;
