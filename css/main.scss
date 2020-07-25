@@ -102,8 +102,12 @@ p{
 }
 .card{
     display: flex;
-    padding: 6rem;
-    background: rgba(var(--text), .1);
+    height: 12rem;
+    padding: 8rem;
+    margin-right: 1rem;
+    border-radius: 1rem;
+    width: 100%;
+    background: rgba(var(--text), .2);
 }
 sm-carousel{
     margin-bottom: 1rem;

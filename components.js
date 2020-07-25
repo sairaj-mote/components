@@ -1027,8 +1027,16 @@ customElements.define('sm-switch', class extends HTMLElement {
         this.attachShadow({ mode: 'open' }).append(smSwitch.content.cloneNode(true))
     }
 
-    connectedCallback() {
+    get checked() {
+        return this.checkbox.checked
+    }
 
+    set checked(value) {
+        this.checkbox.checked = value;
+    }
+
+    connectedCallback() {
+        this.checkbox = this.shadowRoot.querySelector('input');
     }
 })
 
@@ -1505,7 +1513,7 @@ smPopup.innerHTML = `
         width: 1.6rem;
         padding: 0.4rem;
         stroke: rgba(var(--text), 0.7);
-        stroke-width: 10;
+        stroke-width: 8;
         overflow: visible;
         stroke-linecap: round;
         border-radius: 1rem;
@@ -1524,7 +1532,7 @@ smPopup.innerHTML = `
             box-shadow: 0 2rem 2rem #00000040;
         }
         .container-header{
-            padding: 1.5rem;
+            padding: 1.2rem 1.5rem;
         }
     }
     @media screen and (max-width: 640px){
@@ -1540,7 +1548,7 @@ smPopup.innerHTML = `
             margin: 0.5rem 0;
         }
         .heading{
-            padding: 1.5rem
+            padding: 1rem 1.5rem
         }
         .close{
             height: 2rem;
@@ -1685,10 +1693,10 @@ smCarousel.innerHTML = `
         position: absolute;
         display: flex;
         fill: none;
-        height: 3rem;
-        width: 3rem;
+        height: 2.6rem;
+        width: 2.6rem;
         border-radius: 3rem;
-        padding: 1rem;
+        padding: 0.9rem;
         stroke: rgba(var(--text), 0.7);
         stroke-width: 10;
         overflow: visible;
@@ -1696,17 +1704,38 @@ smCarousel.innerHTML = `
         stroke-linejoin: round;
         cursor: pointer;
         min-width: 0;
+        z-index: 1;
         background: rgba(var(--foreground), 1);
-        box-shadow: 0 0.5rem 1rem #00000040; 
+        box-shadow: 0 0.2rem 0.2rem #00000020,
+                    0 0.5rem 1rem #00000040; 
         -webkit-tap-highlight-color: transparent;
         transition: transform 0.3s; 
     }
     .hide{
         pointer-events: none;
+        opacity: 0;
+    }
+    .shrink{
         transform: scale(0)
     }
+    .previous-item{
+        left: -1.3rem;
+    }
     .next-item{
+        right: -1.3rem;
+    }
+    .left,.right{
+        position: absolute;
+        width: 2rem;
+        height: 100%; 
+        transition: opacity 0.3s;
+    }
+    .left{
+        background: linear-gradient(to left, transparent, rgba(var(--foreground), 0.6))
+    }
+    .right{
         right: 0;
+        background: linear-gradient(to right, transparent, rgba(var(--foreground), 0.6))
     }
     .carousel-container{
         position: relative;
@@ -1715,9 +1744,7 @@ smCarousel.innerHTML = `
         align-items: center;
     }
     .carousel{
-        display: grid;
-        gap: 1rem;
-        grid-auto-flow: column;
+        display: flex;
         max-width: 100%;
         overflow: auto hidden;
         scroll-snap-type: x mandatory;
@@ -1741,6 +1768,9 @@ smCarousel.innerHTML = `
         .carousel{
             overflow: hidden;
         }
+        .left,.right{
+            display: none;
+        }
     }
     @media (hover: none){
         .carousel{
@@ -1749,9 +1779,13 @@ smCarousel.innerHTML = `
         .icon{
             display: none;
         }
+        .left,.right{
+            display: block;
+        }
     }
 </style>
 <div class="carousel-container">
+    <div class="left"></div>
     <svg class="icon previous-item hide" viewBox="4 0 64 64">
         <title>Previous</title>
         <polyline points="48.01 0.35 16.35 32 48.01 63.65"/>
@@ -1763,6 +1797,7 @@ smCarousel.innerHTML = `
         <title>Next</title>
         <polyline points="15.99 0.35 47.65 32 15.99 63.65"/>
     </svg>
+    <div class="right"></div>
 </div>
 `;
 
@@ -1775,7 +1810,7 @@ customElements.define('sm-carousel', class extends HTMLElement{
     scrollLeft = () => {
         this.carousel.scrollBy({
             top: 0,
-            left: -this.carouselItemWidth,
+            left: -this.scrollDistance,
             behavior: 'smooth'
         })
     }
@@ -1783,7 +1818,7 @@ customElements.define('sm-carousel', class extends HTMLElement{
     scrollRight = () => {
         this.carousel.scrollBy({
             top: 0,
-            left: this.carouselItemWidth,
+            left: this.scrollDistance,
             behavior: 'smooth'
         })
     }
@@ -1794,39 +1829,49 @@ customElements.define('sm-carousel', class extends HTMLElement{
         this.carouselSlot = this.shadowRoot.querySelector('slot')
         this.nextArrow = this.shadowRoot.querySelector('.next-item')
         this.previousArrow = this.shadowRoot.querySelector('.previous-item')
+        this.nextGradient = this.shadowRoot.querySelector('.right')
+        this.previousGradient = this.shadowRoot.querySelector('.left')
         this.carouselItems
-        this.carouselItemWidth
+        this.scrollDistance = this.carouselContainer.getBoundingClientRect().width/3
         const firstElementObserver = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting){
-                this.previousArrow.classList.add('hide')
+                this.previousArrow.classList.add('hide', 'shrink')
+                this.previousGradient.classList.add('hide')
             }
             else {
-                this.previousArrow.classList.remove('hide')
+                this.previousArrow.classList.remove('hide', 'shrink')
+                this.previousGradient.classList.remove('hide')
             }
         }, {
             root: this.carouselContainer,
-            threshold: 1
+            threshold: 0.9
         })        
         const lastElementObserver = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting){
-                this.nextArrow.classList.add('hide')
+                this.nextArrow.classList.add('hide', 'shrink')
+                this.nextGradient.classList.add('hide')
             }
             else{
-                this.nextArrow.classList.remove('hide')
+                this.nextArrow.classList.remove('hide', 'shrink')
+                this.nextGradient.classList.remove('hide')
             }
         }, {
             root: this.carouselContainer,
-            threshold: 1
+            threshold: 0.9
         })        
         
         this.carouselSlot.addEventListener('slotchange', e => {
             this.carouselItems = this.carouselSlot.assignedElements()
             firstElementObserver.observe(this.carouselItems[0])
             lastElementObserver.observe(this.carouselItems[this.carouselItems.length - 1])
-            this.carouselItemWidth = this.carouselItems[0].getBoundingClientRect().width
         })
 
         this.nextArrow.addEventListener('click', this.scrollRight)
         this.previousArrow.addEventListener('click', this.scrollLeft)
+    }
+
+    disconnectedCallback() {
+        this.nextArrow.removeEventListener('click', this.scrollRight)
+        this.previousArrow.removeEventListener('click', this.scrollLeft)
     }
 })

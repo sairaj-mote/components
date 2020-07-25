@@ -135,8 +135,12 @@ p {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  padding: 6rem;
-  background: rgba(var(--text), 0.1);
+  height: 12rem;
+  padding: 8rem;
+  margin-right: 1rem;
+  border-radius: 1rem;
+  width: 100%;
+  background: rgba(var(--text), 0.2);
 }
 
 sm-carousel {

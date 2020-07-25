@@ -61,6 +61,7 @@
                 <div class="card"></div>
                 <div class="card"></div>
                 <div class="card"></div>
+                <div class="card"></div>
             </sm-carousel>
             <sm-button variant="primary" onclick="document.getElementById('popup').show()">show popup</sm-button>
             <sm-select>
@@ -113,7 +114,8 @@
             <h3>checkbox</h3>
             <sm-checkbox id="checkbox"></sm-checkbox>
             <h3>switch</h3>
-            <sm-switch></sm-switch>
+            <sm-switch id="switch"></sm-switch>
+            <sm-button onclick="alert(document.getElementById('switch').checked)">check</sm-button>
             <h3>input</h3>
             <sm-input placeholder="something" type="email" helper-text="please enter correct email" animate></sm-input>
             <h3>button</h3>
