@@ -122,8 +122,8 @@ smInput.innerHTML = `
             margin: 0; 
         }
         input:invalid{
-        outline: none;
-        box-shadow: none;
+            outline: none;
+            box-shadow: none;
         }
         ::-moz-focus-inner{
         border: none;
@@ -166,6 +166,9 @@ smInput.innerHTML = `
         input:focus{
             caret-color: var(--accent-color);
         }
+        .input:focus-within{
+            box-shadow: 0 0 0 0.1rem var(--accent-color);
+        }
     
         .label {
             user-select: none;
@@ -204,7 +207,7 @@ smInput.innerHTML = `
             -webkit-transform: translateY(-60%) scale(0.7);
                     transform: translateY(-60%) scale(0.7);
             opacity: 1;
-            color: var(--accent-color);
+            color: var(--accent-color)
         }
         .helper-text{
             color: var(--error-color);
@@ -264,53 +267,58 @@ customElements.define('sm-input',
             return this.shadowRoot.querySelector('input').checkValidity()
         }
 
-        preventNonNumericalInput(e) {
+        preventNonNumericalInput = (e) => {
             let keyCode = e.keyCode;
             if (!((keyCode > 47 && keyCode < 56) || (keyCode > 36 && keyCode < 39) || (keyCode > 95 && keyCode < 104) || keyCode === 110 || (keyCode > 7 && keyCode < 19))) {
                 e.preventDefault();
             }
         }
 
-        checkInput(label, inputParent, clear, helperText) {
+        checkInput = (label, inputParent, clear, helperText) => {
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '')
                 return;
             if (this.input.value !== '') {
                 if (this.animate)
-                    inputParent.classList.add('animate-label')
+                    this.inputParent.classList.add('animate-label')
                 else
-                    label.classList.add('hide')
-                clear.classList.remove('hide')
+                    this.label.classList.add('hide')
+                this.clearBtn.classList.remove('hide')
             }
             else {
                 if (this.animate)
-                    inputParent.classList.remove('animate-label')
+                    this.inputParent.classList.remove('animate-label')
                 else
-                    label.classList.remove('hide')
-                clear.classList.add('hide')
+                    this.label.classList.remove('hide')
+                this.clearBtn.classList.add('hide')
             }
             if (this.valueChanged) {
-                if (this.input.checkValidity())
-                    helperText.classList.add('hide')
-                else
-                    helperText.classList.remove('hide')
+                if (this.input.checkValidity()) {
+                    this.helperText.classList.add('hide')
+                    this.inputParent.style.boxShadow = ``
+                }
+                else {
+                    this.helperText.classList.remove('hide')
+                    this.inputParent.style.boxShadow = `0 0 0 0.1rem ${this.computedStyle.getPropertyValue('--error-color')}`
+                }
             }
         }
 
         connectedCallback() {
-            let inputParent = this.shadowRoot.querySelector('.input'),
-                clearBtn = this.shadowRoot.querySelector('.clear'),
-                label = this.shadowRoot.querySelector('.label'),
-                helperText = this.shadowRoot.querySelector('.helper-text')
+            this.inputParent = this.shadowRoot.querySelector('.input')
+            this.computedStyle = window.getComputedStyle(this.inputParent)
+            this.clearBtn = this.shadowRoot.querySelector('.clear')
+            this.label = this.shadowRoot.querySelector('.label')
+            this.helperText = this.shadowRoot.querySelector('.helper-text')
             this.valueChanged = false;
             this.animate = this.hasAttribute('animate')
             this.input = this.shadowRoot.querySelector('input')
             this.shadowRoot.querySelector('.label').textContent = this.getAttribute('placeholder')
             if (this.hasAttribute('value')) {
                 this.input.value = this.getAttribute('value')
-                this.checkInput(inputParent, clearBtn)
+                this.checkInput()
             }
             if (this.hasAttribute('helper-text')) {
-                helperText.textContent = this.getAttribute('helper-text')
+                this.helperText.textContent = this.getAttribute('helper-text')
             }
             if (this.hasAttribute('type')) {
                 if (this.getAttribute('type') === 'number') {
@@ -326,18 +334,18 @@ customElements.define('sm-input',
                     this.preventNonNumericalInput(e);
             })
             this.input.addEventListener('input', e => {
-                this.checkInput(label, inputParent, clearBtn, helperText)
+                this.checkInput()
             })
             this.input.addEventListener('change', e => {
                 this.valueChanged = true;
                 if (this.input.checkValidity())
-                    helperText.classList.add('hide')
+                    this.helperText.classList.add('hide')
                 else
-                    helperText.classList.remove('hide')
+                    this.helperText.classList.remove('hide')
             })
-            clearBtn.addEventListener('click', e => {
+            this.clearBtn.addEventListener('click', e => {
                 this.input.value = ''
-                this.checkInput(label, inputParent, clearBtn, helperText)
+                this.checkInput()
             })
         }
 
@@ -674,14 +682,20 @@ smCheckbox.innerHTML = `
     display: inline-flex;
 }
 .checkbox {
-    diplay:flex;
-    border-radius: 2rem;
+    position: relative;
+    display:flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    height: 1.5rem;
+    width: 1.5rem;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.checkbox:active svg {
-  -webkit-transform: scale(0.9);
-          transform: scale(0.9);
+.checkbox:active .icon,
+.checkbox:focus .icon{
+    background: rgba(var(--text), 0.2);
 }
 
 .checkbox input {
@@ -689,38 +703,42 @@ smCheckbox.innerHTML = `
 }
 
 .checkbox .checkmark {
-  stroke-dashoffset: -65;
-  stroke-dasharray: 65;
-  -webkit-transition: stroke-dashoffset 0.3s; 
-  transition: stroke-dashoffset 0.3s;
+    stroke-dashoffset: -65;
+    stroke-dasharray: 65;
+    -webkit-transition: stroke-dashoffset 0.3s; 
+    transition: stroke-dashoffset 0.3s;
 }
 
 .checkbox input:checked ~ svg .checkmark {
-  stroke-dashoffset: 0;
-  stroke: rgba(var(--foreground), 1);
+    stroke-dashoffset: 0;
+    stroke: rgba(var(--foreground), 1);
 }
 .checkbox input:checked ~ svg {
-  stroke: var(--accent-color);
-  fill: var(--accent-color);
-  stroke-width: 8; 
+    stroke: var(--accent-color);
+    fill: var(--accent-color);
+    stroke-width: 8; 
 }
 
 .icon {
-  fill: none;
-  height: 1.2rem;
-  width: 1.2rem;
-  stroke: rgba(var(--text), 0.7);
-  stroke-width: 6;
-  overflow: visible;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+    position: absolute;
+    fill: none;
+    height: 2.6rem;
+    width: 2.6rem;
+    padding: 0.7rem;
+    stroke: rgba(var(--text), 0.7);
+    stroke-width: 6;
+    overflow: visible;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    border-radius: 2rem;
+    transition: background 0.3s;
 }
 .disabled {
-  opacity: 0.6;
-  pointer-events: none;
+    opacity: 0.6;
+    pointer-events: none;
 }
 </style>
-<label class="checkbox">
+<label class="checkbox" tabindex="0">
     <input type="checkbox">
     <svg class="icon" viewBox="0 0 64 64">
         <title>checkbox</title>
@@ -966,56 +984,71 @@ smSwitch.innerHTML = `
 }
 .switch {
     position: relative;
-    overflow: hidden;
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
-    -webkit-box-align: center;
-            align-items: center;
-    border-radius: 1rem;
+    display: flex;
+    align-items: center;
     width: 2.4rem;
     padding: 0.2rem;
     cursor: pointer;
+    outline: none;
+    border-radius: 2rem;
 }
 
-.switch input {
+input {
     display: none;
 }
 
-.switch .track {
+.track {
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;
-    bottom: 0;
-    -webkit-transition: background 0.4s;
-    transition: background 0.4s;
+    height: 1.4rem;
+    -webkit-transition: background 0.3s;
+    transition: background 0.3s;
     background: rgba(var(--text), 0.4);
     box-shadow: 0 0.1rem 0.3rem #00000040 inset;
+    border-radius: 1rem;
 }
 
-.switch .button {
+.switch:active .button::after,
+.switch:focus .button::after{
+    opacity: 1
+}
+
+.button::after{
+    content: '';
+    display: flex;
+    position: absolute;
+    height: 2.6rem;
+    width: 2.6rem;
+    background: rgba(var(--text), 0.2);
+    border-radius: 2rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.button {
     position: relative;
-    display: -webkit-inline-box;
     display: inline-flex;
     height: 1rem;
     width: 1rem;
+    justify-content: center;
+    align-items: center;
     border-radius: 1rem;
     box-shadow: 0 0.1rem 0.4rem #00000060;
-    transition: transform 0.4s;
+    transition: transform 0.3s;
     border: solid 0.3rem rgba(var(--foreground), 1);
 }
 
-.switch input:checked ~ .button {
+input:checked ~ .button {
     transform: translateX(100%);
 }
 
-.switch input:checked ~ .track {
+input:checked ~ .track {
     background: var(--accent-color);
 }
 
 </style>
-<label class="switch">
+<label class="switch" tabindex="0">
     <input type="checkbox">
     <div class="track"></div>
     <div class="button"></div>
@@ -2054,5 +2087,205 @@ customElements.define('sm-carousel', class extends HTMLElement{
     disconnectedCallback() {
         this.nextArrow.removeEventListener('click', this.scrollRight)
         this.previousArrow.removeEventListener('click', this.scrollLeft)
+    }
+})
+
+//notifications
+
+const smNotifications = document.createElement('template')
+smNotifications.innerHTML = `
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    } 
+    :host{
+        display: flex;
+    }
+    .hide{
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+    .notification-panel{
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 100;
+        max-height: 100%;
+        overflow: hidden auto;
+        overscroll-behavior: contain;
+        padding-bottom: 1.5rem;
+    }
+    .notification{
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        padding: 1rem 1.5rem;
+        border-radius: 0.3rem;
+        margin-bottom: 1rem;
+        box-shadow: 0.1rem 0.2rem 0.2rem #00000020,
+                    0.5rem 1rem 2rem #00000040;
+        background: rgba(var(--foreground), 1);
+    }
+    h4:first-letter,
+    p:first-letter{
+        text-transform: uppercase;
+    }
+    h4{
+        font-weight: 500;
+    }
+    p{
+        line-height: 1.6;
+        color: rgba(var(--text), 0.8);
+        overflow-wrap: break-word;
+    }
+    .notification:last-of-type{
+        margin-bottom: 0;
+    }
+    header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.6rem;
+    }
+    @media screen and (min-width: 640px){
+        .notification-panel{
+            width: 40vw;
+            padding: 1.5rem 0 1.5rem 1.5rem;
+        }
+        .notification{
+            margin-right: 1.5rem;
+        }
+        .icon {
+            fill: none;
+            height: 1.6rem;
+            width: 1.6rem;
+            padding: 0.5rem;
+            stroke: rgba(var(--text), 0.7);
+            stroke-width: 10;
+            overflow: visible;
+            stroke-linecap: round;
+            border-radius: 1rem;
+            stroke-linejoin: round;
+            cursor: pointer;
+            min-width: 0;
+        }
+    }
+    @media screen and (max-width: 640px){
+        
+    }
+</style>
+<div class="notification-panel">
+</div>
+`
+
+customElements.define('sm-notifications', class extends HTMLElement{
+    constructor() {
+        super()
+        this.shadow = this.attachShadow({ mode: 'open' }).append(smNotifications.content.cloneNode(true))
+    }
+
+    push = (messageHeader, messageBody) => {
+        let notification = document.createElement('div')
+        notification.classList.add('notification')
+        notification.innerHTML = `
+            <header>
+                <h4>${messageHeader}</h4>
+                <svg class="icon close" viewBox="0 0 64 64">
+                    <title>Close</title>
+                    <line x1="64" y1="0" x2="0" y2="64"/>
+                    <line x1="64" y1="64" x2="0" y2="0"/>
+                </svg>
+            </header>
+            <p>${messageBody}</p>
+        `
+        notification.setAttribute('style', `index: ${this.zIndex}`);
+        this.notificationPanel.prepend(notification)
+        if (window.innerWidth > 640) {
+            notification.animate([
+                {
+                    transform: 'translateX(1rem)',
+                    opacity: '0'
+                },
+                {
+                    transform: 'translateX(0)',
+                    opacity: '1'
+                }
+            ], this.animationOptions)
+        } else {
+
+            notification.animate([
+                {
+                    transform: 'translateY(-1rem)',
+                    opacity: '0'    },
+                {
+                    transform: 'translateY(0)',
+                    opacity: '1'    }
+            ], this.animationOptions)
+        }
+    }
+
+    removeNotification = (notification) => {
+        if (window.innerWidth > 640) {
+            notification.animate([
+                {
+                    transform: 'translateX(0)',
+                    opacity: '1'
+                },
+                {
+                    transform: 'translateX(1rem)',
+                    opacity: '0'
+                }
+            ], this.animationOptions).onfinish = () => {
+                notification.remove()
+            }
+        } else {
+            notification.animate([
+                {
+                    transform: 'translateY(0)',
+                    opacity: '1'
+                },
+                {
+                    transform: 'translateY(-1rem)',
+                    opacity: '0'
+                }
+            ], this.animationOptions).onfinish = () => {
+                notification.remove();
+            }
+        }
+    }
+
+    connectedCallback() {
+        this.notificationPanel = this.shadowRoot.querySelector('.notification-panel')
+        this.animationOptions = {
+            duration: 300,
+            fill: "forwards",
+            easing: "ease"
+        }
+
+        this.notificationPanel.addEventListener('click', e => {
+            if (e.target.closest('.close'))(
+                this.removeNotification(e.target.closest('.notification'))
+            )
+        })
+
+        const observer = new MutationObserver(mutationList => {
+            mutationList.forEach(mutation => {
+                if (mutation.type === 'childList' && mutation.addedNodes.length) {
+                    setTimeout(() => {
+                        this.removeNotification(mutation.addedNodes[0])
+                    }, 4000);
+                }
+            })
+        })
+        observer.observe(this.notificationPanel, {
+            attributes: true,
+            childList: true,
+            subtree: true
+        })
     }
 })
