@@ -45,7 +45,9 @@
                     </p>
                 </div>
             </div>-->
-            <sm-button onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Beatae quas quod possimus nam delectus doloremque.')">push notification</sm-button>
+            <sm-button onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Beatae quas quod possimus nam delectus doloremque.', 'success')">push success notification</sm-button>
+            <sm-button onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Beatae quas quod possimus nam delectus doloremque.', 'error', true)">push error notification</sm-button>
+            <sm-button onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Beatae quas quod possimus nam delectus doloremque.', '', true)">push notification</sm-button>
             <sm-popup id="popup" heading="something">
                 idhfioushdfiuh<br>
                 idhfioushdfiuh<br>

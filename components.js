@@ -41,7 +41,7 @@ smButton.innerHTML = `
                 text-transform: uppercase;
                 font-weight: 600;
                 color: var(--accent-color);
-                letter-spacing: 0.1em;
+                letter-spacing: 0.12em;
                 font-family: var(--font-family);
                 font-size: 0.8rem;
                 background: var(--light-accent-shade); 
@@ -1011,6 +1011,12 @@ input {
 
 .switch:active .button::after,
 .switch:focus .button::after{
+    opacity: 1
+}
+.switch:focus:not(:focus-visible){
+    opacity: 0;
+}
+.switch:focus-visible .button::after{
     opacity: 1
 }
 
@@ -2108,9 +2114,8 @@ smNotifications.innerHTML = `
         pointer-events: none !important;
     }
     .notification-panel{
-        display: flex;
+        display: grid;
         width: 100%;
-        flex-direction: column;
         position: fixed;
         top: 0;
         right: 0;
@@ -2118,25 +2123,30 @@ smNotifications.innerHTML = `
         max-height: 100%;
         overflow: hidden auto;
         overscroll-behavior: contain;
-        padding-bottom: 1.5rem;
+        padding-bottom: 2rem;
+    }
+    .inner-body{
+        padding: 1rem 1.5rem;
     }
     .notification{
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        justify-content: center;
         position: relative;
-        padding: 1rem 1.5rem;
         border-radius: 0.3rem;
-        margin-bottom: 1rem;
-        box-shadow: 0.1rem 0.2rem 0.2rem #00000020,
-                    0.5rem 1rem 2rem #00000040;
+        box-shadow: 0.1rem 0.2rem 0.2rem rgba(0, 0, 0, 0.1),
+                    0.5rem 1rem 2rem rgba(0, 0, 0, 0.1);
         background: rgba(var(--foreground), 1);
+        transition: height 0.3s;
+        overflow: hidden;
+        border-bottom: 1px solid rgba(var(--text), 0.2);
     }
     h4:first-letter,
     p:first-letter{
         text-transform: uppercase;
     }
     h4{
-        font-weight: 500;
+        font-weight: 400;
     }
     p{
         line-height: 1.6;
@@ -2149,34 +2159,52 @@ smNotifications.innerHTML = `
     header{
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.4rem;
+    }
+    .icon {
+        fill: none;
+        height: 1.6rem;
+        width: 1.6rem;
+        stroke: rgba(var(--text), 0.7);
+        overflow: visible;
+        stroke-linecap: round;
+        border-radius: 1rem;
+        stroke-linejoin: round;
+        cursor: pointer;
+        min-width: 0;
+    }
+    .error-icon{
+        stroke: #E53935;
+    }
+    .success-icon{
+        stroke: #00C853;
+    }
+    .close{
+        margin-left: auto;
+        padding: 0.5rem;
+        stroke-width: 10;
+    }
+    .notification-icon{
+        height: 1.2rem;
+        width: 1.2rem;
+        margin-right: 0.6rem;
+        stroke-width: 6;
     }
     @media screen and (min-width: 640px){
         .notification-panel{
             width: 40vw;
-            padding: 1.5rem 0 1.5rem 1.5rem;
+            padding: 1.5rem 0 3rem 1.5rem;
         }
         .notification{
             margin-right: 1.5rem;
-        }
-        .icon {
-            fill: none;
-            height: 1.6rem;
-            width: 1.6rem;
-            padding: 0.5rem;
-            stroke: rgba(var(--text), 0.7);
-            stroke-width: 10;
-            overflow: visible;
-            stroke-linecap: round;
-            border-radius: 1rem;
-            stroke-linejoin: round;
-            cursor: pointer;
-            min-width: 0;
+            margin-bottom: 1rem;
+            border-bottom: none;
         }
     }
     @media screen and (max-width: 640px){
-        
+        .close{
+            display: none
+        }
     }
 </style>
 <div class="notification-panel">
@@ -2189,20 +2217,42 @@ customElements.define('sm-notifications', class extends HTMLElement{
         this.shadow = this.attachShadow({ mode: 'open' }).append(smNotifications.content.cloneNode(true))
     }
 
-    push = (messageHeader, messageBody) => {
-        let notification = document.createElement('div')
+    push = (messageHeader, messageBody, type ,pinned) => {
+        let notification = document.createElement('div'),
+            composition = ``;
         notification.classList.add('notification')
-        notification.innerHTML = `
-            <header>
-                <h4>${messageHeader}</h4>
-                <svg class="icon close" viewBox="0 0 64 64">
-                    <title>Close</title>
-                    <line x1="64" y1="0" x2="0" y2="64"/>
-                    <line x1="64" y1="64" x2="0" y2="0"/>
-                </svg>
-            </header>
-            <p>${messageBody}</p>
+        if (pinned)
+            notification.classList.add('pinned')
+        composition += `
+                            <div class="inner-body">
+                        <header>
         `
+        if (type === 'error') {
+            composition += `
+            <svg class="notification-icon icon error-icon" viewBox="0 0 64 64">
+                    <path d="M32,4.73a3.17,3.17,0,0,1,2.76,1.59l13.9,24.09L62.57,54.49a3.19,3.19,0,0,1-2.76,4.78H4.19a3.19,3.19,0,0,1-2.76-4.78L15.34,30.41,29.24,6.32A3.17,3.17,0,0,1,32,4.73m0-1a4.14,4.14,0,0,0-3.62,2.09L14.47,29.91.57,54a4.19,4.19,0,0,0,3.62,6.28H59.81A4.19,4.19,0,0,0,63.43,54L49.53,29.91,35.62,5.82A4.14,4.14,0,0,0,32,3.73Z"/>
+                    <line x1="32" y1="24" x2="32" y2="36"/>
+                    <line x1="32" y1="46" x2="32" y2="48"/>
+            </svg>`
+        }
+        else if (type === 'success') {
+            composition += `
+                <svg class="notification-icon icon success-icon" viewBox="0 0 64 64">
+                    <polyline points="0.35 31.82 21.45 52.98 63.65 10.66"/>
+                </svg>
+            `
+        }
+        composition += `
+                            <h4>${messageHeader}</h4>
+                            <svg class="icon close" viewBox="0 0 64 64">
+                                <title>Close</title>
+                                <line x1="64" y1="0" x2="0" y2="64"/>
+                                <line x1="64" y1="64" x2="0" y2="0"/>
+                            </svg>
+                        </header>
+                        <p>${messageBody}</p>
+                    </div>`
+        notification.innerHTML = composition
         notification.setAttribute('style', `index: ${this.zIndex}`);
         this.notificationPanel.prepend(notification)
         if (window.innerWidth > 640) {
@@ -2231,6 +2281,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
 
     removeNotification = (notification) => {
         if (window.innerWidth > 640) {
+            notification.style.height = notification.scrollHeight + 'px';
             notification.animate([
                 {
                     transform: 'translateX(0)',
@@ -2241,8 +2292,11 @@ customElements.define('sm-notifications', class extends HTMLElement{
                     opacity: '0'
                 }
             ], this.animationOptions).onfinish = () => {
-                notification.remove()
+                notification.setAttribute('style', `height: 0; margin-bottom: 0`);
             }
+            setTimeout( () => {
+                notification.remove()
+            }, this.animationOptions.duration*2)
         } else {
             notification.animate([
                 {
@@ -2275,7 +2329,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
 
         const observer = new MutationObserver(mutationList => {
             mutationList.forEach(mutation => {
-                if (mutation.type === 'childList' && mutation.addedNodes.length) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length && !mutation.addedNodes[0].classList.contains('pinned')) {
                     setTimeout(() => {
                         this.removeNotification(mutation.addedNodes[0])
                     }, 4000);
