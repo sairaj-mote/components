@@ -32,18 +32,18 @@ smButton.innerHTML = `
             }
             .button {
                 display: flex;
-                padding: 0.6rem 0.8rem;
+                padding: 0.6rem 0.9rem;
                 cursor: pointer;
                 user-select: none;
                 border-radius: 0.2rem; 
                 justify-content: center;
                 transition: transform 0.3s;
                 text-transform: uppercase;
-                font-weight: 600;
+                font-weight: 500;
                 color: var(--accent-color);
-                letter-spacing: 0.12em;
+                letter-spacing: 0.1rem;
                 font-family: var(--font-family);
-                font-size: 0.8rem;
+                font-size: 0.9rem;
                 background: var(--light-accent-shade); 
             }
             @media (hover: hover){
@@ -395,23 +395,20 @@ smTabs.innerHTML = `
     background: var(--accent-color);
     transition: transform 0.3s, width 0.3s;
 }
-:host([type="tab"]) .indicator{
+:host([variant="tab"]) .indicator{
     height: 100%;
     border-radius: 0.2rem
 }
-:host([type="tab"]) .tab-header{
+:host([variant="tab"]) .tab-header{
     border-bottom: none; 
-}
-:host([type="tab"]) slot[name="tab"]{
-    border-radius: 0.2rem;
-    border-bottom: none;
 }
 .hide-completely{
     display: none;
 }
-:host([type="tab"]) slot[name="tab"]::slotted(.active){
+:host([variant="tab"]) slot[name="tab"]::slotted(.active){
     color: rgba(var(--foreground), 1);
 }
+
 slot[name="tab"]::slotted(.active){
     color: var(--accent-color);
     opacity: 1;
@@ -588,30 +585,32 @@ customElements.define('sm-tabs', class extends HTMLElement {
         },
             { threshold: 1.0 })
         observer.observe(this.tabHeader)
-        let touchStartTime = 0,
-            touchEndTime = 0,
-            swipeTimeThreshold = 200,
-            swipeDistanceThreshold = 20,
-            startingPointX = 0,
-            endingPointX = 0,
-            currentIndex = 0;
-        this.addEventListener('touchstart', e => {
-            touchStartTime = e.timeStamp
-            startingPointX = e.changedTouches[0].clientX
-        })
-        this.panelSlot.addEventListener('touchend', e => {
-            touchEndTime = e.timeStamp
-            endingPointX = e.changedTouches[0].clientX
-            if (touchEndTime - touchStartTime < swipeTimeThreshold) {
-                currentIndex = this.allTabs.findIndex(element => element.classList.contains('active'))
-                if (startingPointX > endingPointX && startingPointX - endingPointX > swipeDistanceThreshold && currentIndex < this.allTabs.length) {
-                    this.allTabs[currentIndex + 1].click()
+        if (this.hasAttribute('swipable') && this.getAttribute('swipable') == 'true') {
+            let touchStartTime = 0,
+                touchEndTime = 0,
+                swipeTimeThreshold = 200,
+                swipeDistanceThreshold = 20,
+                startingPointX = 0,
+                endingPointX = 0,
+                currentIndex = 0;
+            this.addEventListener('touchstart', e => {
+                touchStartTime = e.timeStamp
+                startingPointX = e.changedTouches[0].clientX
+            })
+            this.panelSlot.addEventListener('touchend', e => {
+                touchEndTime = e.timeStamp
+                endingPointX = e.changedTouches[0].clientX
+                if (touchEndTime - touchStartTime < swipeTimeThreshold) {
+                    currentIndex = this.allTabs.findIndex(element => element.classList.contains('active'))
+                    if (startingPointX > endingPointX && startingPointX - endingPointX > swipeDistanceThreshold && currentIndex < this.allTabs.length) {
+                        this.allTabs[currentIndex + 1].click()
+                    }
+                    else if (startingPointX < endingPointX && endingPointX - startingPointX > swipeDistanceThreshold && currentIndex > 0) {
+                        this.allTabs[currentIndex - 1].click()
+                    }
                 }
-                else if (startingPointX < endingPointX && endingPointX - startingPointX > swipeDistanceThreshold && currentIndex > 0) {
-                    this.allTabs[currentIndex - 1].click()
-                }
-            }
-        })
+            })
+        }
     }
 })
 
@@ -1113,6 +1112,13 @@ smSelect.innerHTML = `
                 width: 100%;
                 -webkit-tap-highlight-color: transparent;
             }
+            .heading{
+                text-transform: capitalize;
+                color: var(--accent-color);
+                grid-area: heading;
+                font-weight: 500;
+                margin-bottom: 0.2rem;
+            }
             .option-text{
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -1120,13 +1126,17 @@ smSelect.innerHTML = `
             }
             .selection{
                 border-radius: 0.2rem;
-                display: flex;
-                padding: 0.4rem 0.7rem;
-                background: rgba(var(--text), 0.1);
+                display: grid;
+                grid-template-columns: 1fr auto;
+                grid-template-areas: 'heading heading' '. .';
+                padding: 0.4rem 1rem;
+                background: rgba(var(--text), 0.06);
                 border: solid 1px rgba(var(--text), 0.2);
                 align-items: center;
-                justify-content: space-between;
                 outline: none;
+            }
+            .selection:focus{
+                box-shadow: 0 0 0 0.1rem var(--accent-color) 
             }
             .icon{
                 margin-left: 1rem;
@@ -1138,6 +1148,8 @@ smSelect.innerHTML = `
                 right: 0;
             }
             .options{
+                top: 100%;
+                margin-top: 0.5rem; 
                 overflow: hidden auto;
                 position: absolute;
                 grid-area: options;
@@ -1151,9 +1163,13 @@ smSelect.innerHTML = `
                 z-index: 2;
                 box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
             }
+            .rotate{
+                transform: rotate(180deg)
+            }
         </style>
-        <div class="select">
+        <div class="select" >
             <div class="selection" tabindex="0">
+                <h5 class="heading">select title</h5>
                 <div class="option-text"></div>
                 <svg class="icon toggle" viewBox="0 0 64 64">
                     <polyline points="63.65 15.99 32 47.66 0.35 15.99"/>
@@ -1177,29 +1193,43 @@ customElements.define('sm-select', class extends HTMLElement {
     set value(val) {
         this.setAttribute('value', val)
     }
+
+    collapse = () => {
+        this.optionList.animate(this.slideUp, this.animationOptions)
+        this.optionList.classList.add('hide')
+        this.chevron.classList.remove('rotate')
+        open = false
+    }
     connectedCallback() {
         this.availableOptions
-        let optionList = this.shadowRoot.querySelector('.options'),
-            chevron = this.shadowRoot.querySelector('.toggle'),
-            slot = this.shadowRoot.querySelector('.options slot'),
+        this.optionList = this.shadowRoot.querySelector('.options')
+        this.chevron = this.shadowRoot.querySelector('.toggle')
+        let slot = this.shadowRoot.querySelector('.options slot'),
             selection = this.shadowRoot.querySelector('.selection'),
-            previousOption,
-            slideDown = [
+            previousOption
+            this.slideDown = [
                 { transform: `translateY(-0.5rem)` },
                 { transform: `translateY(0)` }
             ],
-            slideUp = [
+            this.slideUp = [
                 { transform: `translateY(0)` },
                 { transform: `translateY(-0.5rem)` }
             ],
-            animationOptions = {
+            this.animationOptions = {
                 duration: 300,
                 fill: "forwards",
                 easing: 'ease'
-            }
+            },
+            open = false;
         selection.addEventListener('click', e => {
-            optionList.classList.remove('hide')
-            optionList.animate(slideDown, animationOptions)
+            if (!open) {
+                this.optionList.classList.remove('hide')
+                this.optionList.animate(this.slideDown, this.animationOptions)
+                this.chevron.classList.add('rotate')
+                open = true
+            } else {
+                this.collapse()
+            }
         })
         selection.addEventListener('keydown', e => {
             if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
@@ -1207,11 +1237,12 @@ customElements.define('sm-select', class extends HTMLElement {
                 this.availableOptions[0].focus()
             }
         })
-        optionList.addEventListener('keydown', e => {
+        this.optionList.addEventListener('keydown', e => {
             if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
                 e.preventDefault()
-                if(document.activeElement.previousElementSibling)
+                if (document.activeElement.previousElementSibling) {
                     document.activeElement.previousElementSibling.focus()
+                }
             }
             if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
                 e.preventDefault()
@@ -1232,9 +1263,9 @@ customElements.define('sm-select', class extends HTMLElement {
                 }
                 previousOption = e.target;
             }
+            if(!e.detail.switching)
             setTimeout(() => {
-                optionList.animate(slideUp, animationOptions)
-                optionList.classList.add('hide')
+                this.collapse()
             }, 200);
 
             e.target.classList.add('check-selected')
@@ -1255,8 +1286,7 @@ customElements.define('sm-select', class extends HTMLElement {
         });
         document.addEventListener('mousedown', e => {
             if (!this.contains(e.target)) {
-                optionList.classList.add('hide')
-                optionList.animate(slideUp, animationOptions)
+                this.collapse()
             }
         })
     }
@@ -1327,26 +1357,37 @@ customElements.define('sm-option', class extends HTMLElement {
         this.attachShadow({ mode: 'open' }).append(smOption.content.cloneNode(true))
     }
 
-    sendDetails = () => {
+    sendDetails = (switching) => {
         let optionSelected = new CustomEvent('optionSelected', {
             bubbles: true,
             composed: true,
             detail: {
                 text: this.textContent,
-                value: this.getAttribute('value')
+                value: this.getAttribute('value'),
+                switching: switching
             }
         })
         this.dispatchEvent(optionSelected)
     }
 
     connectedCallback() {
+        let validKey = [
+            'ArrowUp',
+            'ArrowDown',
+            'ArrowLeft',
+            'ArrowRight'
+        ]
         this.addEventListener('click', e => {
             this.sendDetails()
         })
-        this.addEventListener('keydown', e => {
+        this.addEventListener('keyup', e => {
             if (e.key === 'Enter') {
                 e.preventDefault()
-                this.sendDetails()
+                this.sendDetails(false)
+            }
+            if (validKey.includes(e.key)) {
+                e.preventDefault()
+                this.sendDetails(true)
             }
         })
         if (this.hasAttribute('default')) {
@@ -2128,7 +2169,12 @@ smNotifications.innerHTML = `
     .inner-body{
         padding: 1rem 1.5rem;
     }
+    .no-transformations{
+        transform: none;
+        opacity: 1;
+    }
     .notification{
+        transform: translateY(-1rem);
         display: grid;
         grid-template-columns: auto 1fr;
         justify-content: center;
@@ -2137,7 +2183,7 @@ smNotifications.innerHTML = `
         box-shadow: 0.1rem 0.2rem 0.2rem rgba(0, 0, 0, 0.1),
                     0.5rem 1rem 2rem rgba(0, 0, 0, 0.1);
         background: rgba(var(--foreground), 1);
-        transition: height 0.3s;
+        transition: height 0.3s, transform 0.3s, opacity 0.3s;
         overflow: hidden;
         border-bottom: 1px solid rgba(var(--text), 0.2);
     }
@@ -2199,6 +2245,7 @@ smNotifications.innerHTML = `
             margin-right: 1.5rem;
             margin-bottom: 1rem;
             border-bottom: none;
+            transform: translateX(1rem);
         }
     }
     @media screen and (max-width: 640px){
@@ -2215,6 +2262,58 @@ customElements.define('sm-notifications', class extends HTMLElement{
     constructor() {
         super()
         this.shadow = this.attachShadow({ mode: 'open' }).append(smNotifications.content.cloneNode(true))
+    }
+
+    handleTouchStart = (e) => {
+        this.notification = e.target.closest('.notification')
+        this.touchStartX = e.changedTouches[0].clientX
+        this.notification.style.transition = 'initial'
+        this.touchStartTime = e.timeStamp
+    }
+
+    handleTouchMove = (e) => {
+        if (this.touchStartX < e.changedTouches[0].clientX) {
+            this.offset = e.changedTouches[0].clientX - this.touchStartX;
+            this.touchEndAnimataion = requestAnimationFrame(this.movePopup)
+        }
+        else {
+            this.offset = -(this.touchStartX - e.changedTouches[0].clientX);
+            this.touchEndAnimataion = requestAnimationFrame(this.movePopup)
+        }
+    }
+
+    handleTouchEnd = (e) => {
+        this.notification.style.transition = 'height 0.3s, transform 0.3s, opacity 0.3s'
+        this.touchEndTime = e.timeStamp
+        cancelAnimationFrame(this.touchEndAnimataion)
+        this.touchEndX = e.changedTouches[0].clientX
+        if (this.touchEndTime - this.touchStartTime > 200) {
+            if (this.touchEndX - this.touchStartX > this.threshold) {
+                this.removeNotification(this.notification)
+            }
+            else if (this.touchStartX - this.touchEndX > this.threshold) {
+                this.removeNotification(this.notification, true)
+            }
+            else {
+                this.resetPosition()
+            }
+        }
+        else {
+            if (this.touchEndX > this.touchStartX) {
+                this.removeNotification(this.notification)
+            }
+            else {
+                this.removeNotification(this.notification, true)
+            }
+        }
+    }
+
+    movePopup = () => {
+        this.notification.style.transform = `translateX(${this.offset}px)`
+    }
+
+    resetPosition = () => {
+        this.notification.style.transform = `translateX(0)`
     }
 
     push = (messageHeader, messageBody, type ,pinned) => {
@@ -2258,59 +2357,59 @@ customElements.define('sm-notifications', class extends HTMLElement{
         if (window.innerWidth > 640) {
             notification.animate([
                 {
-                    transform: 'translateX(1rem)',
+                    transform: `translateX(1rem}px)`,
                     opacity: '0'
                 },
                 {
                     transform: 'translateX(0)',
                     opacity: '1'
                 }
-            ], this.animationOptions)
-        } else {
-
-            notification.animate([
-                {
-                    transform: 'translateY(-1rem)',
-                    opacity: '0'    },
-                {
-                    transform: 'translateY(0)',
-                    opacity: '1'    }
-            ], this.animationOptions)
+            ], this.animationOptions).onfinish = () => {
+                notification.setAttribute('style', `transform: none;`);
+            }
         }
+        else {
+            notification.setAttribute('style', `transform: translateY(0); opacity: 1`)
+        }
+        notification.addEventListener('touchstart', this.handleTouchStart)
+        notification.addEventListener('touchmove', this.handleTouchMove)
+        notification.addEventListener('touchend', this.handleTouchEnd)
     }
 
-    removeNotification = (notification) => {
-        if (window.innerWidth > 640) {
-            notification.style.height = notification.scrollHeight + 'px';
+    removeNotification = (notification, toLeft) => {
+        notification.style.height = notification.scrollHeight + 'px';
+        if (!this.offset)
+            this.offset = 0;
+        
+        if (toLeft)
             notification.animate([
                 {
-                    transform: 'translateX(0)',
+                    transform: `translateX(${this.offset}px)`,
                     opacity: '1'
                 },
                 {
-                    transform: 'translateX(1rem)',
+                    transform: 'translateX(-100%)',
+                    opacity: '0'
+                }
+            ], this.animationOptions).onfinish = () => {
+                notification.setAttribute('style', `height: 0; margin-bottom: 0`);
+                }
+        else
+            notification.animate([
+                {
+                    transform: `translateX(${this.offset}px)`,
+                    opacity: '1'
+                },
+                {
+                    transform: 'translateX(100%)',
                     opacity: '0'
                 }
             ], this.animationOptions).onfinish = () => {
                 notification.setAttribute('style', `height: 0; margin-bottom: 0`);
             }
-            setTimeout( () => {
-                notification.remove()
-            }, this.animationOptions.duration*2)
-        } else {
-            notification.animate([
-                {
-                    transform: 'translateY(0)',
-                    opacity: '1'
-                },
-                {
-                    transform: 'translateY(-1rem)',
-                    opacity: '0'
-                }
-            ], this.animationOptions).onfinish = () => {
-                notification.remove();
-            }
-        }
+        setTimeout( () => {
+            notification.remove()
+        }, this.animationOptions.duration*2)
     }
 
     connectedCallback() {
@@ -2320,6 +2419,14 @@ customElements.define('sm-notifications', class extends HTMLElement{
             fill: "forwards",
             easing: "ease"
         }
+        this.notification
+        this.offset
+        this.touchStartX = 0
+        this.touchEndX = 0
+        this.touchStartTime = 0
+        this.touchEndTime = 0
+        this.threshold = this.notificationPanel.getBoundingClientRect().width * 0.3
+        this.touchEndAnimataion;
 
         this.notificationPanel.addEventListener('click', e => {
             if (e.target.closest('.close'))(
