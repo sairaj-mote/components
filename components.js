@@ -37,25 +37,47 @@ smButton.innerHTML = `
                 user-select: none;
                 border-radius: 0.2rem; 
                 justify-content: center;
-                transition: transform 0.3s;
+                transition: box-shadow 0.3s;
                 text-transform: uppercase;
                 font-weight: 500;
-                color: var(--accent-color);
+                color: rgba(var(--text), 0.9);
                 letter-spacing: 0.1rem;
                 font-family: var(--font-family);
                 font-size: 0.9rem;
-                background: var(--light-accent-shade); 
+                background: rgba(var(--text), 0.1); 
+                -webkit-tap-highlight-color: transparent;
+                outline: none;
+            }
+            :host(:not([disabled="true"])) .button:focus{
+                box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.2);
+            }
+            :host([variant='outlined']) .button:focus{
+                box-shadow: 0 0 0 0.1rem var(--accent-color)inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
             }
             @media (hover: hover){
-                :host([variant='primary']:not([disabled="true"])) .button:hover{
-                    opacity: 0.8;
+                :host(:not([disabled="true"])) .button:active{
+                    box-shadow: none !important;
                 }
-                :host([variant='no-outline']) .button:hover{
-                    background: var(--light-accent-shade); 
+                :host([variant='outlined']) .button:active{
+                    box-shadow: 0 0 0 0.1rem var(--accent-color)inset !important;
+                }
+                :host(:not([disabled="true"])) .button:hover{
+                    box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.2);
+                }
+                :host([variant='outlined']) .button:hover{
+                    box-shadow: 0 0 0 0.1rem var(--accent-color)inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+                }
+            }
+            @media (hover: none){
+                :host(:not([disabled="true"])) .button:active{
+                    box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.2);
+                }
+                :host([variant='outlined']) .button:active{
+                    box-shadow: 0 0 0 0.1rem var(--accent-color)inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
                 }
             }
         </style>
-        <div class="button">
+        <div class="button" tabindex="0">
             <slot></slot>   
         </div>`;
 customElements.define('sm-button',
@@ -990,6 +1012,7 @@ smSwitch.innerHTML = `
     cursor: pointer;
     outline: none;
     border-radius: 2rem;
+    -webkit-tap-highlight-color: transparent;
 }
 
 input {
@@ -2352,12 +2375,11 @@ customElements.define('sm-notifications', class extends HTMLElement{
                         <p>${messageBody}</p>
                     </div>`
         notification.innerHTML = composition
-        notification.setAttribute('style', `index: ${this.zIndex}`);
         this.notificationPanel.prepend(notification)
         if (window.innerWidth > 640) {
             notification.animate([
                 {
-                    transform: `translateX(1rem}px)`,
+                    transform: `translateX(1rem)`,
                     opacity: '0'
                 },
                 {
@@ -2388,7 +2410,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
                     opacity: '1'
                 },
                 {
-                    transform: 'translateX(-100%)',
+                    transform: `translateX(${this.offset - this.fontSize}px)`,
                     opacity: '0'
                 }
             ], this.animationOptions).onfinish = () => {
@@ -2401,7 +2423,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
                     opacity: '1'
                 },
                 {
-                    transform: 'translateX(100%)',
+                    transform: `translateX(${this.offset + this.fontSize}px)`,
                     opacity: '0'
                 }
             ], this.animationOptions).onfinish = () => {
@@ -2419,6 +2441,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
             fill: "forwards",
             easing: "ease"
         }
+        this.fontSize = Number(window.getComputedStyle(document.body).getPropertyValue('font-size').match(/\d+/)[0])
         this.notification
         this.offset
         this.touchStartX = 0
