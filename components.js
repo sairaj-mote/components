@@ -77,7 +77,7 @@ smButton.innerHTML = `
                 }
             }
         </style>
-        <div class="button" tabindex="0">
+        <div class="button" tabindex="0" role="button">
             <slot></slot>   
         </div>`;
 customElements.define('sm-button',
@@ -404,7 +404,6 @@ smTabs.innerHTML = `
     position: relative;
     overflow: auto hidden;
     max-width: 100%;
-    border-bottom: solid 1px rgba(var(--text), .2);
     scrollbar-width: 0;
     margin-bottom: 1rem;
 }
@@ -1826,7 +1825,7 @@ smPopup.innerHTML = `
         }
     }
 </style>
-<div class="popup-container hide">
+<div class="popup-container hide" role="dialog">
     <div class="popup">
         <div class="popup-top">
             <div class="handle"></div>
@@ -2187,7 +2186,6 @@ smNotifications.innerHTML = `
         max-height: 100%;
         overflow: hidden auto;
         overscroll-behavior: contain;
-        padding-bottom: 2rem;
     }
     .inner-body{
         padding: 1rem 1.5rem;
@@ -2197,10 +2195,8 @@ smNotifications.innerHTML = `
         opacity: 1;
     }
     .notification{
+        opacity: 0;
         transform: translateY(-1rem);
-        display: grid;
-        grid-template-columns: auto 1fr;
-        justify-content: center;
         position: relative;
         border-radius: 0.3rem;
         box-shadow: 0.1rem 0.2rem 0.2rem rgba(0, 0, 0, 0.1),
@@ -2229,6 +2225,7 @@ smNotifications.innerHTML = `
         display: flex;
         align-items: center;
         margin-bottom: 0.4rem;
+        width: 100%;
     }
     .icon {
         fill: none;
@@ -2262,12 +2259,12 @@ smNotifications.innerHTML = `
     @media screen and (min-width: 640px){
         .notification-panel{
             width: 40vw;
-            padding: 1.5rem 0 3rem 1.5rem;
         }
         .notification{
             margin-right: 1.5rem;
             margin-bottom: 1rem;
             border-bottom: none;
+            border: solid 1px rgba(var(--text), 0.2);
             transform: translateX(1rem);
         }
     }
@@ -2415,8 +2412,8 @@ customElements.define('sm-notifications', class extends HTMLElement{
                 }
             ], this.animationOptions).onfinish = () => {
                 notification.setAttribute('style', `height: 0; margin-bottom: 0`);
-                }
-        else
+            }
+        else {
             notification.animate([
                 {
                     transform: `translateX(${this.offset}px)`,
@@ -2429,6 +2426,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
             ], this.animationOptions).onfinish = () => {
                 notification.setAttribute('style', `height: 0; margin-bottom: 0`);
             }
+        }
         setTimeout( () => {
             notification.remove()
         }, this.animationOptions.duration*2)
@@ -2459,10 +2457,20 @@ customElements.define('sm-notifications', class extends HTMLElement{
 
         const observer = new MutationObserver(mutationList => {
             mutationList.forEach(mutation => {
-                if (mutation.type === 'childList' && mutation.addedNodes.length && !mutation.addedNodes[0].classList.contains('pinned')) {
-                    setTimeout(() => {
-                        this.removeNotification(mutation.addedNodes[0])
-                    }, 4000);
+                if (mutation.type === 'childList') {
+                    if (mutation.addedNodes.length) {
+                        if (!mutation.addedNodes[0].classList.contains('pinned'))
+                        setTimeout(() => {
+                            this.removeNotification(mutation.addedNodes[0])
+                        }, 4000);
+                        if (window.innerWidth > 640)
+                            this.notificationPanel.style.padding = '1.5rem 0 3rem 1.5rem';
+                        else
+                            this.notificationPanel.style.padding = '1rem 1rem 2rem 1rem';
+                    }
+                    else if (mutation.removedNodes.length && !this.notificationPanel.children.length) {
+                        this.notificationPanel.style.padding = 0;
+                    }
                 }
             })
         })
