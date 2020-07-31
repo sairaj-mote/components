@@ -2407,7 +2407,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
                     opacity: '1'
                 },
                 {
-                    transform: `translateX(${this.offset - this.fontSize}px)`,
+                    transform: `translateX(-100%)`,
                     opacity: '0'
                 }
             ], this.animationOptions).onfinish = () => {
@@ -2420,7 +2420,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
                     opacity: '1'
                 },
                 {
-                    transform: `translateX(${this.offset + this.fontSize}px)`,
+                    transform: `translateX(100%)`,
                     opacity: '0'
                 }
             ], this.animationOptions).onfinish = () => {

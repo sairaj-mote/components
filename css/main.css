@@ -17,6 +17,10 @@ body {
   --error-color: red;
 }
 
+.hide-completely {
+  display: none;
+}
+
 h1, h2, h3, h4.h5 {
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
@@ -162,6 +166,10 @@ p {
 .list .item {
   padding: 0.6rem 1.5rem;
   text-transform: capitalize;
+}
+
+.list .active {
+  color: var(--accent-color);
 }
 
 .card {

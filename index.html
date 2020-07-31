@@ -20,38 +20,67 @@
         </div>
     </section>
     <main>
-        <div class="left">
+        <div id="menu" class="left">
             <h3>Getting Started</h3>
             <ul class="list">
-                <li class="item">Overview</li>
-                <li class="item">Download</li>
+                <li id="overview_btn" class="item" data-target="overview_page">Overview</li>
+                <li id="download_btn" class="item" data-target="download_page">Download</li>
                 <li class="item">notifications</li>
             </ul>
             <h3>Components</h3>
             <ul class="list">
-                <li class="item">button</li>
-                <li class="item">carousel</li>
-                <li class="item">checkbox</li>
-                <li class="item">input</li>
-                <li class="item">notifications</li>
-                <li class="item">popup</li>
-                <li class="item">switch</li>
-                <li class="item">select</li>
-                <li class="item">strip-select</li>
-                <li class="item">tabs</li>
+                <li id="button_entry" class="item active" data-target="button_page">button</li>
+                <li class="item" data-target="carousel_page">carousel</li>
+                <li class="item" data-target="checkbox_page">checkbox</li>
+                <li class="item" data-target="input_page">input</li>
+                <li class="item" data-target="notification_page">notifications</li>
+                <li class="item" data-target="popup_page">popup</li>
+                <li class="item" data-target="switch_page">switch</li>
+                <li class="item" data-target="select_page">select</li>
+                <li class="item" data-target="strip_select_page">strip-select</li>
+                <li class="item" data-target="tabs_page">tabs</li>
             </ul>
         </div>
         <div class="right">
-            <div id="popup_page" class="page">
-                <h3>Popups/Modals</h3>
-                <p class="description">
-                    Popups are used to show addition UI elements that you may want to hide at first and reveal them when needed.
-                </p>
+
+            <div id="overview_page" class="page hide-completely">
+                
+            </div>
+            <div id="download_page" class="page hide-completely">
+                
+            </div>
+            <div id="button_page" class="page">
+                <h3>button</h3>
+                <sm-button variant="primary">button</sm-button>
+                <sm-button>button</sm-button>
+                <sm-button variant="outlined">button</sm-button>
+                <sm-button variant="no-outline">button</sm-button>
+                <sm-button variant="primary" disabled="true">button</sm-button>
+            </div>
+            <div id="carousel_page" class="page hide-completely">
+                <sm-carousel>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                </sm-carousel>
+            </div>
+            <div id="checkbox_page" class="page hide-completely">
+                <h3>checkbox</h3>
+                <sm-checkbox id="checkbox"></sm-checkbox>
+            </div>
+            <div id="input_page" class="page hide-completely">
+                <h3>input</h3>
+                <sm-input placeholder="something" type="email" helper-text="please enter correct email" animate></sm-input>
+            </div>
+            <div id="notification_page" class="page hide-completely">
                 <h4>Example</h4>
                 
                 <code>
-                    &lt;sm-popup heading=&quot;something&quot;&gt;&lt;/sm-popup&gt;
-                </code>
+                                                &lt;sm-popup heading=&quot;something&quot;&gt;&lt;/sm-popup&gt;
+                                            </code>
                 <sm-button
                     onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit.Lorem ipsum dolor, sit amet consectetur adipisicing elit.', 'success')">
                     push success notification</sm-button>
@@ -61,90 +90,103 @@
                     onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit.', '', true)">
                     push notification</sm-button>
             </div>
-            
-            <!--<sm-popup id="popup" heading="something">
-                idhfioushdfiuh<br>
-                idhfioushdfiuh<br>
-                idhfioushdfiuh<br>
-                idhfioushdfiuh<br>
-                idhfioushdfiuh<br>
-                idhfioushdfiuh<br>
-                idhfioushdfiuh<br>
-                idhfioushdfiuh<br>
-                idhfioushdfiuh<br>
-            </sm-popup>
-            <sm-carousel>
-                <div class="card"></div>
-                <div class="card"></div>
-                <div class="card"></div>
-                <div class="card"></div>
-                <div class="card"></div>
-                <div class="card"></div>
-            </sm-carousel>
-            <sm-button variant="primary" onclick="document.getElementById('popup').show()">show popup</sm-button>
-            <sm-select>
-                <sm-option value="1">option1</sm-option>
-                <sm-option value="2">option2 something</sm-option>
-                <sm-option value="3">option3</sm-option>
-            </sm-select>
-            <h3>select</h3>
-            <p>
-                <code>select</code> is very similar to starndatd HTML5 select and it's markup stucture is also identical.</p>
-            <h3>strip select</h3>
-            <sm-strip-select>
-                <sm-strip-option value="something">option1</sm-strip-option>
-                <sm-strip-option>option1</sm-strip-option>
-                <sm-strip-option>option1</sm-strip-option>
-                <sm-strip-option>option1</sm-strip-option>
-                <sm-strip-option>option1</sm-strip-option>
-                <sm-strip-option>option1</sm-strip-option>
-                <sm-strip-option>option1</sm-strip-option>
-            </sm-strip-select>
-            <h3>tabs</h3>
-            <sm-tabs>
-                <sm-tab slot="tab">inbox</sm-tab>
-                <sm-panel slot="panel">
-                    gjdhnsrfijbgn<br>bdfjnbj
-                </sm-panel>
-                <sm-tab slot="tab">sent</sm-tab>
-                <sm-panel slot="panel">
-                    jadifjoaijdiajdo
-                    dosfighjoi<br>
-                    flkmgklfmzkl<br>
-                    hbdsfhb
-                </sm-panel>
-                <sm-tab slot="tab">draft</sm-tab>
-                <sm-panel slot="panel">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facere neque incidunt aut laudantium, quam
-                    id,
-                    molestiae vero blanditiis nisi alias in magnam autem quasi cumque eveniet qui cupiditate nam
-                    corrupti?
-                </sm-panel>
-                <sm-tab slot="tab">spam</sm-tab>
-                <sm-panel slot="panel">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis fuga ipsam, explicabo, eius
-                    accusamus
-                    consectetur ex sunt soluta voluptatem iure totam nulla expedita suscipit minus molestiae similique
-                    odio optio
-                    quibusdam.
-                </sm-panel>
-            </sm-tabs>
-            <h3>checkbox</h3>
-            <sm-checkbox id="checkbox"></sm-checkbox>
-            <h3>switch</h3>
-            <sm-switch id="switch"></sm-switch>
-            <sm-button onclick="alert(document.getElementById('switch').checked)">check</sm-button>
-            <h3>input</h3>
-            <sm-input placeholder="something" type="email" helper-text="please enter correct email" animate></sm-input>
-            <h3>button</h3>
-            <sm-button variant="primary">button</sm-button>
-            <sm-button>button</sm-button>
-            <sm-button variant="outlined">button</sm-button>
-            <sm-button variant="no-outline">button</sm-button>
-            <sm-button variant="primary" disabled="true">button</sm-button>-->
+            <div id="popup_page" class="page hide-completely">
+                <h3>Popups/Modals</h3>
+                <p class="description">
+                    Popups are used to show addition UI elements that you may want to hide at first and reveal them when needed.
+                </p>
+                <sm-popup id="popup" heading="something">
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                </sm-popup>
+                
+                <sm-button variant="primary" onclick="document.getElementById('popup').show()">show popup</sm-button>
+            </div>
+            <div id="switch_page" class="page hide-completely">
+                <h3>switch</h3>
+                <sm-switch id="switch"></sm-switch>
+                <sm-button onclick="alert(document.getElementById('switch').checked)">check</sm-button>
+            </div>
+            <div id="select_page" class="page hide-completely">
+                <h3>select</h3>
+                <p>
+                    <code>select</code> is very similar to starndatd HTML5 select and it's markup stucture is also identical.</p>
+                <sm-select>
+                    <sm-option value="1">option1</sm-option>
+                    <sm-option value="2">option2 something</sm-option>
+                    <sm-option value="3">option3</sm-option>
+                </sm-select>
+            </div>
+            <div id="strip_select_page" class="page hide-completely">
+                <h3>strip select</h3>
+                <sm-strip-select>
+                    <sm-strip-option value="something">option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                </sm-strip-select>
+            </div>
+            <div id="tabs_page" class="page hide-completely">
+                <h3>tabs</h3>
+                <sm-tabs>
+                    <sm-tab slot="tab">inbox</sm-tab>
+                    <sm-panel slot="panel">
+                        gjdhnsrfijbgn<br>bdfjnbj
+                    </sm-panel>
+                    <sm-tab slot="tab">sent</sm-tab>
+                    <sm-panel slot="panel">
+                        jadifjoaijdiajdo
+                        dosfighjoi<br>
+                        flkmgklfmzkl<br>
+                        hbdsfhb
+                    </sm-panel>
+                    <sm-tab slot="tab">draft</sm-tab>
+                    <sm-panel slot="panel">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facere neque incidunt aut laudantium, quam
+                        id,
+                        molestiae vero blanditiis nisi alias in magnam autem quasi cumque eveniet qui cupiditate nam
+                        corrupti?
+                    </sm-panel>
+                    <sm-tab slot="tab">spam</sm-tab>
+                    <sm-panel slot="panel">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis fuga ipsam, explicabo, eius
+                        accusamus
+                        consectetur ex sunt soluta voluptatem iure totam nulla expedita suscipit minus molestiae similique
+                        odio optio
+                        quibusdam.
+                    </sm-panel>
+                </sm-tabs>
+            </div>            
         </div>
     </main>
     <script src="components.js"></script>
+    <script>
+        let currentPage = document.getElementById('button_page'),
+            selectedItem = document.getElementById('button_entry');
+        function showPage(item, targetPage){
+            let page = document.getElementById(targetPage)
+            currentPage.classList.add('hide-completely')
+            selectedItem.classList.remove('active')
+            page.classList.remove('hide-completely')
+            item.classList.add('active')
+            currentPage = page
+            selectedItem = item
+        }
+        document.getElementById('menu').addEventListener('click', e => {
+            if(e.target.closest('.item'))
+                showPage(e.target.closest('.item'), e.target.closest('.item').dataset.target)
+        })
+    </script>
 </body>
 
 </html>
