@@ -32,6 +32,9 @@ h2{
       margin-top: 1rem;
   }  
 }
+h1.headline{
+    color: rgba(var(--text), 1);
+}
 section{
     height: 100vh;
     display: flex;
@@ -78,20 +81,48 @@ section{
         margin-right: 1rem;
     }
 }
+pre{
+    display: inline-flex;
+        max-width: 100%;
+}
 code{
-    color: rgba(var(--foreground), 1);
-    background: rgba(var(--text), .6);
-    padding: 0.4rem 0.8rem;
+    display: inline-flex;
+    color: #311B92;
+    background: rgba(var(--text), .1);
+    padding: 0.2rem 0.4rem;
     border-radius: 0.2rem;
+    margin: 0.2rem 0;
+}
+code.extend{
+    padding: 0 1.5rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+    overflow-x: auto;
+    max-width: 100%;
 }
 main{
     height: 100vh;
 }
 p{
-    margin: 1rem 0;
+    margin: 1rem 0 1.5rem 0;
     line-height: 1.6em;
     color: rgba(var(--text), .8);
-    font-size: 1.1rem;
+    font-size: 1rem;
+    &::first-letter{
+        text-transform: capitalize;
+    }
+}
+ol{
+    padding: 0.6rem 1rem;
+    li{
+        margin-bottom: 1rem;
+        &:last-of-type{
+            margin-bottom: 0;
+        }
+        &::first-letter{
+            text-transform: capitalize;
+        }
+    }
 }
 .left{
     max-height: 100%;
@@ -116,17 +147,16 @@ p{
         text-transform: capitalize;
     }
     .active{
-        color: var(--accent-color)
+        color: var(--accent-color);
+        background: rgba(var(--text), .06);
     }
 }
 .card{
-    display: flex;
-    height: 12rem;
-    padding: 8rem;
+    height: 24rem;
     margin-right: 1rem;
-    border-radius: 1rem;
+    border-radius: 0.4rem;
     width: 100%;
-    background: rgba(var(--text), .2);
+    object-fit: cover;
 }
 sm-carousel{
     margin-bottom: 1rem;
@@ -143,6 +173,16 @@ sm-carousel{
     .background-box{
         width: 24rem !important;
         height: 50% !important;
+    }
+}
+@media screen and (max-width: 640px){
+    .left{
+        position: fixed;
+        z-index: 2;
+        background: rgba(var(--foreground), 1);
+        box-shadow: 0.5rem 0 2rem rgba(0,0,0, 0.1);
+        height: 100vh;
+        transform: translateX(-100%);
     }
 }
 @media (any-hover: hover){

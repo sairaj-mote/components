@@ -98,21 +98,28 @@ customElements.define('sm-button',
             this.setAttribute('disabled', val)
         }
 
+        dispatch = () => {
+            if (this.getAttribute('disabled') === 'true') {
+                this.dispatchEvent(new CustomEvent('disabled', {
+                    bubbles: true,
+                    composed: true
+                }))
+            }
+            else {
+                this.dispatchEvent(new CustomEvent('clicked', {
+                    bubbles: true,
+                    composed: true
+                }))
+            }
+        }
+
         connectedCallback() {
-            let disabledEvent = new CustomEvent('disabled', {
-                bubbles: true,
-                composed: true
-            })
-            let clicked = new CustomEvent('clicked', {
-                bubbles: true,
-                composed: true
-            })
             this.addEventListener('click', (e) => {
-                if (this.getAttribute('disabled') === 'true') {
-                    this.dispatchEvent(disabledEvent)
-                }
-                else
-                    this.dispatchEvent(clicked)
+                this.dispatch()
+            })
+            this.addEventListener('keyup', (e) => {
+                if (e.code === "Enter" || e.code === "Space")
+                    this.dispatch()
             })
         }
 
@@ -705,12 +712,14 @@ smCheckbox.innerHTML = `
     position: relative;
     display:flex;
     align-items: center;
-    justify-content: center;
     cursor: pointer;
     height: 1.5rem;
-    width: 1.5rem;
     outline: none;
     -webkit-tap-highlight-color: transparent;
+}
+
+p{
+    margin-left: 2rem;
 }
 
 .checkbox:active .icon,
@@ -752,11 +761,13 @@ smCheckbox.innerHTML = `
     stroke-linejoin: round;
     border-radius: 2rem;
     transition: background 0.3s;
+    left: -0.5rem;
 }
 .disabled {
     opacity: 0.6;
     pointer-events: none;
 }
+
 </style>
 <label class="checkbox" tabindex="0">
     <input type="checkbox">
@@ -765,15 +776,22 @@ smCheckbox.innerHTML = `
         <rect class="box" x="0" y="0" width="64" height="64" rx="4" />
         <path class="checkmark" d="M50.52,19.56,26,44.08,13.48,31.56" />
     </svg>
+    <p><slot></slot></p>
 </label>`
 customElements.define('sm-checkbox', class extends HTMLElement {
     constructor() {
         super()
         this.attachShadow({ mode: 'open' }).append(smCheckbox.content.cloneNode(true))
+        
+        this.checkbox = this.shadowRoot.querySelector('.checkbox');
+        this.input = this.shadowRoot.querySelector('input')
+        
+        this.isChecked = false
+        this.isDisabled = false
     }
 
     static get observedAttributes() {
-        return ['disabled']
+        return ['disabled', 'checked']
     }
 
     get disabled() {
@@ -784,24 +802,42 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         this.setAttribute('disabled', val)
     }
 
+    get checked() {
+        return this.getAttribute('checked')
+    }
+
+    set checked(value) {
+        this.setAttribute('checked', value)
+    }
+
     connectedCallback() {
-        this.checkbox = this.shadowRoot.querySelector('.checkbox');
-        if (this.hasAttribute('disabled')) {
-            this.checkbox.classList.add('disabled')
-        }
-        else {
-            this.checkbox.classList.remove('disabled')
-        }
+        this.addEventListener('keyup', e => {
+            if ((e.code === "Enter" || e.code === "Space") && this.isDisabled == false) {
+                this.isChecked = !this.isChecked
+                this.setAttribute('checked', this.isChecked)
+            }
+        })
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        this.checkbox = this.shadowRoot.querySelector('.checkbox');
         if (oldValue !== newValue) {
             if (name === 'disabled') {
                 if (newValue === 'true') {
                     this.checkbox.classList.add('disabled')
+                    this.isDisabled = true
                 }
                 else {
                     this.checkbox.classList.remove('disabled')
+                    this.isDisabled = false
+                }
+            }
+            if (name === 'checked') {
+                if (newValue == 'true') {
+                    this.isChecked = true
+                    this.input.checked = true
+                }
+                else {
+                    this.isChecked = false
+                    this.input.checked = false
                 }
             }
         }
@@ -1073,7 +1109,10 @@ input:checked ~ .button {
 input:checked ~ .track {
     background: var(--accent-color);
 }
-
+.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
 </style>
 <label class="switch" tabindex="0">
     <input type="checkbox">
@@ -1085,18 +1124,65 @@ customElements.define('sm-switch', class extends HTMLElement {
     constructor() {
         super()
         this.attachShadow({ mode: 'open' }).append(smSwitch.content.cloneNode(true))
+        this.switch = this.shadowRoot.querySelector('.switch');
+        this.input = this.shadowRoot.querySelector('input')
+        this.isChecked = false  
+        this.isDisabled = false
+    }
+
+    static get observedAttributes() {
+        return ['disabled', 'checked']
+    }
+
+    get disabled() {
+        return this.getAttribute('disabled')
+    }
+
+    set disabled(val) {
+        this.setAttribute('disabled', val)
     }
 
     get checked() {
-        return this.checkbox.checked
+        return this.isChecked
     }
 
     set checked(value) {
-        this.checkbox.checked = value;
+        this.setAttribute('checked', value)
     }
 
     connectedCallback() {
-        this.checkbox = this.shadowRoot.querySelector('input');
+
+        this.addEventListener('keyup', e => {
+            if ((e.code === "Enter" || e.code === "Space") && this.isDisabled == false) {
+                this.isChecked = !this.isChecked
+                this.setAttribute('checked', this.isChecked)
+            }
+        })
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            if (name === 'disabled') {
+                if (newValue === 'true') {
+                    this.switch.classList.add('disabled')
+                    this.isDisabled = true
+                }
+                else {
+                    this.switch.classList.remove('disabled')
+                    this.isDisabled = false
+                }
+            }
+            if (name === 'checked') {
+                if (newValue == 'true') {
+                    this.isChecked = true
+                    this.input.checked = true
+                }
+                else {
+                    this.isChecked = false
+                    this.input.checked = false
+                }
+            }
+        }
     }
 })
 
@@ -1254,19 +1340,28 @@ customElements.define('sm-select', class extends HTMLElement {
             }
         })
         selection.addEventListener('keydown', e => {
-            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            if (e.code === 'ArrowDown' || e.code === 'ArrowRight') {
                 e.preventDefault()
                 this.availableOptions[0].focus()
             }
+            if (e.code === 'Enter' || e.code === 'Space')
+                if (!open) {
+                    this.optionList.classList.remove('hide')
+                    this.optionList.animate(this.slideDown, this.animationOptions)
+                    this.chevron.classList.add('rotate')
+                    open = true
+                } else {
+                    this.collapse()
+                }
         })
         this.optionList.addEventListener('keydown', e => {
-            if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+            if (e.code === 'ArrowUp' || e.code === 'ArrowRight') {
                 e.preventDefault()
                 if (document.activeElement.previousElementSibling) {
                     document.activeElement.previousElementSibling.focus()
                 }
             }
-            if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+            if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
                 e.preventDefault()
                 if (document.activeElement.nextElementSibling)
                     document.activeElement.nextElementSibling.focus()
@@ -1403,7 +1498,7 @@ customElements.define('sm-option', class extends HTMLElement {
             this.sendDetails()
         })
         this.addEventListener('keyup', e => {
-            if (e.key === 'Enter') {
+            if (e.code === 'Enter') {
                 e.preventDefault()
                 this.sendDetails(false)
             }
@@ -1520,7 +1615,7 @@ smStripSelect.innerHTML = `
             }
         </style>
         <div class="select-container">
-            <div class="left"></div>
+            <div class="left hide"></div>
             <svg class="icon previous-item hide" viewBox="4 0 64 64">
                 <title>Previous</title>
                 <polyline points="48.01 0.35 16.35 32 48.01 63.65"/>
@@ -1532,7 +1627,7 @@ smStripSelect.innerHTML = `
                 <title>Next</title>
                 <polyline points="15.99 0.35 47.65 32 15.99 63.65"/>
             </svg>
-            <div class="right"></div>
+            <div class="right hide"></div>
         </div>`;
 customElements.define('sm-strip-select', class extends HTMLElement {
     constructor() {
@@ -2147,6 +2242,13 @@ customElements.define('sm-carousel', class extends HTMLElement{
             this.carouselItems = this.carouselSlot.assignedElements()
             firstElementObserver.observe(this.carouselItems[0])
             lastElementObserver.observe(this.carouselItems[this.carouselItems.length - 1])
+        })
+
+        this.addEventListener('keyup', e => {
+            if (e.code === 'ArrowLeft')
+                this.scrollRight()
+            else
+                this.scrollRight()
         })
 
         this.nextArrow.addEventListener('click', this.scrollRight)
