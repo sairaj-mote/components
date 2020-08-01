@@ -10,13 +10,12 @@
 
 <body>
     <sm-notifications id="notify"></sm-notifications>
-    <section class="hide-completely">
+    <section>
         <div class="background-box"></div>
         <h1>SM Web Components</h1>
         <h4>UI components based on custom elements API.</h4>
         <div>
-            <sm-button>Components</sm-button>
-            <sm-button variant="primary">Get started</sm-button>
+            <sm-button id="get_started_btn" variant="primary">Get started</sm-button>
         </div>
     </section>
     <main>
@@ -54,7 +53,7 @@
                 <p>
                     Some of the components have some cool tricks under their sleeves like <strong>custom events and variantions</strong>.
                     They allow developers to access more information about component or simply react to whatever state change happen to them.
-                    We will go more in-depth about all the variantions and customs events related to each event as we go further 😋.
+                    We will go more in-depth about all the variantions and customs events related to each event as we go further.
                 </p>
             </div>
 
@@ -80,13 +79,13 @@
                 <sm-button variant="outlined">outlined</sm-button>
                 <sm-button variant="no-outline">no-outline</sm-button>
                 <sm-button variant="primary" disabled="true">disabled</sm-button>
-                <pre><code class="extend">
-&lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
-&lt;sm-button&gt;default&lt;/sm-button&gt;
-&lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
-&lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
-&lt;sm-button variant="primary" disabled="true"&gt;disabled&lt;/sm-button&gt;
-                </code></pre>
+                ```html
+                <sm-button variant="primary">primary</sm-button>
+                <sm-button>default</sm-button>
+                <sm-button variant="outlined">outlined</sm-button>
+                <sm-button variant="no-outline">no-outline</sm-button>
+                <sm-button variant="primary" disabled="true">disabled</sm-button>
+                ```
             </div>
 
             <div id="carousel_page" class="page hide-completely">
@@ -119,7 +118,8 @@
                 <p class="description">
                     To start using SM Components
                 </p>
-                <sm-input placeholder="something" type="email" helper-text="please enter correct email" animate></sm-input>
+                <sm-input id="my_input" placeholder="something" type="email" helper-text="please enter correct email" animate></sm-input>
+                <p id="insert_text"></p>
             </div>
 
             <div id="notification_page" class="page hide-completely">
@@ -236,7 +236,8 @@
     <script src="components.js"></script>
     <script>
         let currentPage = document.getElementById('overview_page'),
-            selectedItem = document.getElementById('overview_entry');
+            selectedItem = document.getElementById('overview_entry'),
+            main = document.querySelector('main');
         function showPage(item, targetPage){
             let page = document.getElementById(targetPage)
             currentPage.classList.add('hide-completely')
@@ -251,6 +252,9 @@
                 showPage(e.target.closest('.item'), e.target.closest('.item').dataset.target)
         })
         showPage(selectedItem, 'overview_page')
+        document.getElementById('get_started_btn').addEventListener('click', e => {
+            main.scrollIntoView()
+        })
     </script>
 </body>
 
