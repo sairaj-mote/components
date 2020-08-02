@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body>
+<body onload="PR.prettyPrint()">
     <sm-notifications id="notify"></sm-notifications>
     <section>
         <div class="background-box"></div>
@@ -74,18 +74,19 @@
                 <p class="description">
                     Buttons are used in various basic UI interactions to perform an action.  
                 </p>
-                <sm-button variant="primary">primary</sm-button>
                 <sm-button>default</sm-button>
+                <sm-button variant="primary">primary</sm-button>
                 <sm-button variant="outlined">outlined</sm-button>
                 <sm-button variant="no-outline">no-outline</sm-button>
                 <sm-button variant="primary" disabled="true">disabled</sm-button>
-                ```html
-                <sm-button variant="primary">primary</sm-button>
-                <sm-button>default</sm-button>
-                <sm-button variant="outlined">outlined</sm-button>
-                <sm-button variant="no-outline">no-outline</sm-button>
-                <sm-button variant="primary" disabled="true">disabled</sm-button>
-                ```
+                <pre><code class="prettyprint">
+                        &lt;sm-button&gt;default&lt;/sm-button&gt;
+                        &lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
+                        &lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
+                        &lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
+                        &lt;sm-button variant="primary" disabled="true"&gt;disabled&lt;/sm-button&gt;
+                    </code>
+                </pre>
             </div>
 
             <div id="carousel_page" class="page hide-completely">
@@ -174,7 +175,7 @@
                 <h1 class="headline">Select</h1>
                 <p>
                     <code>&lt;sm-select&gt;</code> is very similar to starndatd HTML5 select and it's markup stucture is also identical.</p>
-                <sm-select>
+                <sm-select >
                     <sm-option value="1">option1</sm-option>
                     <sm-option value="2">option2 something</sm-option>
                     <sm-option value="3">option3</sm-option>
@@ -202,7 +203,7 @@
                 <p class="description">
                     To start using SM Components
                 </p>
-                <sm-tabs>
+                <sm-tabs enable-swipe="true">
                     <sm-tab slot="tab">inbox</sm-tab>
                     <sm-panel slot="panel">
                         gjdhnsrfijbgn<br>bdfjnbj
@@ -256,6 +257,7 @@
             main.scrollIntoView()
         })
     </script>
+        <script src="prettify.js"></script>
 </body>
 
 </html>

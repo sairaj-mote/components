@@ -527,6 +527,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
             }
         this.prevTab
         this.allTabs
+
         this.shadowRoot.querySelector('slot[name="panel"]').addEventListener('slotchange', () => {
             this.shadowRoot.querySelector('slot[name="panel"]').assignedElements().forEach((panel, index) => {
                 panel.classList.add('hide-completely')
@@ -617,7 +618,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
         },
             { threshold: 1.0 })
         observer.observe(this.tabHeader)
-        if (this.hasAttribute('swipable') && this.getAttribute('swipable') == 'true') {
+        if (this.hasAttribute('enable-swipe') && this.getAttribute('enable-swipe') == 'true') {
             let touchStartTime = 0,
                 touchEndTime = 0,
                 swipeTimeThreshold = 200,
@@ -1241,13 +1242,6 @@ smSelect.innerHTML = `
                 width: 100%;
                 -webkit-tap-highlight-color: transparent;
             }
-            .heading{
-                text-transform: capitalize;
-                color: var(--accent-color);
-                grid-area: heading;
-                font-weight: 500;
-                margin-bottom: 0.2rem;
-            }
             .option-text{
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -1298,7 +1292,6 @@ smSelect.innerHTML = `
         </style>
         <div class="select" >
             <div class="selection" tabindex="0">
-                <h5 class="heading">select title</h5>
                 <div class="option-text"></div>
                 <svg class="icon toggle" viewBox="0 0 64 64">
                     <polyline points="63.65 15.99 32 47.66 0.35 15.99"/>
@@ -1327,7 +1320,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.optionList.animate(this.slideUp, this.animationOptions)
         this.optionList.classList.add('hide')
         this.chevron.classList.remove('rotate')
-        open = false
+        this.open = false
     }
     connectedCallback() {
         this.availableOptions
@@ -1336,6 +1329,7 @@ customElements.define('sm-select', class extends HTMLElement {
         let slot = this.shadowRoot.querySelector('.options slot'),
             selection = this.shadowRoot.querySelector('.selection'),
             previousOption
+        this.open = false;
             this.slideDown = [
                 { transform: `translateY(-0.5rem)` },
                 { transform: `translateY(0)` }
@@ -1348,14 +1342,13 @@ customElements.define('sm-select', class extends HTMLElement {
                 duration: 300,
                 fill: "forwards",
                 easing: 'ease'
-            },
-            open = false;
+            }
         selection.addEventListener('click', e => {
-            if (!open) {
+            if (!this.open) {
                 this.optionList.classList.remove('hide')
                 this.optionList.animate(this.slideDown, this.animationOptions)
                 this.chevron.classList.add('rotate')
-                open = true
+                this.open = true
             } else {
                 this.collapse()
             }
@@ -1366,11 +1359,11 @@ customElements.define('sm-select', class extends HTMLElement {
                 this.availableOptions[0].focus()
             }
             if (e.code === 'Enter' || e.code === 'Space')
-                if (!open) {
+                if (!this.open) {
                     this.optionList.classList.remove('hide')
                     this.optionList.animate(this.slideDown, this.animationOptions)
                     this.chevron.classList.add('rotate')
-                    open = true
+                    this.open = true
                 } else {
                     this.collapse()
                 }
@@ -1402,9 +1395,7 @@ customElements.define('sm-select', class extends HTMLElement {
                 previousOption = e.target;
             }
             if(!e.detail.switching)
-            setTimeout(() => {
                 this.collapse()
-            }, 200);
 
             e.target.classList.add('check-selected')
         })
@@ -1519,11 +1510,11 @@ customElements.define('sm-option', class extends HTMLElement {
             this.sendDetails()
         })
         this.addEventListener('keyup', e => {
-            if (e.code === 'Enter') {
+            if (e.code === 'Enter' || e.code === 'Space') {
                 e.preventDefault()
                 this.sendDetails(false)
             }
-            if (validKey.includes(e.key)) {
+            if (validKey.includes(e.code)) {
                 e.preventDefault()
                 this.sendDetails(true)
             }
@@ -1801,29 +1792,31 @@ customElements.define('sm-strip-option', class extends HTMLElement {
         super()
         this.attachShadow({ mode: 'open' }).append(smStripOption.content.cloneNode(true))
     }
+    sendDetails = () => {
+        let optionSelected = new CustomEvent('optionSelected', {
+            bubbles: true,
+            composed: true,
+            detail: {
+                text: this.textContent,
+                value: this.getAttribute('value')
+            }
+        })
+        this.dispatchEvent(optionSelected)
+    }
+
     connectedCallback() {
         this.addEventListener('click', e => {
-            let optionSelected = new CustomEvent('optionSelected', {
-                bubbles: true,
-                composed: true,
-                detail: {
-                    text: this.textContent,
-                    value: this.getAttribute('value')
-                }
-            })
-            this.dispatchEvent(optionSelected)
+            this.sendDetails()
+        })
+        this.addEventListener('keyup', e => {
+            if (e.code === 'Enter' || e.code === 'Space') {
+                e.preventDefault()
+                this.sendDetails(false)
+            }
         })
         if (this.hasAttribute('default')) {
             setTimeout(() => {
-                let optionSelected = new CustomEvent('optionSelected', {
-                    bubbles: true,
-                    composed: true,
-                    detail: {
-                        text: this.textContent,
-                        value: this.getAttribute('value')
-                    }
-                })
-                this.dispatchEvent(optionSelected)
+                this.sendDetails()
             }, 0);
         }
     }
@@ -2459,9 +2452,10 @@ customElements.define('sm-notifications', class extends HTMLElement{
         this.notification.style.transform = `translateX(0)`
     }
 
-    push = (messageHeader, messageBody, type ,pinned) => {
+    push = (messageHeader, messageBody, options) => {
         let notification = document.createElement('div'),
-            composition = ``;
+            composition = ``,
+            { pinned, type } = options;
         notification.classList.add('notification')
         if (pinned)
             notification.classList.add('pinned')

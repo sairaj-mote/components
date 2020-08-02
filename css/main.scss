@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 *{
     box-sizing: border-box;
     padding: 0;
@@ -10,13 +11,55 @@ html{
     scroll-behavior: smooth;
 }
 body{
-    --accent-color: rgb(9, 155, 82);
+    --accent-color: #4527A0;
     --light-accent-shade: rgb(223, 255, 239);
     --text-color: 17, 17, 17;
     --foreground-color: 255, 255, 255;
     --font-family: 'Roboto', sans-serif;
     --error-color: #E53935;
 }
+
+//Syntax highlighting
+
+
+pre .str, code .str { color: #65B042; } /* string  - green */
+pre .kwd, code .kwd { color: #E28964; } /* keyword - dark pink */
+pre .com, code .com { color: #AEAEAE; font-style: italic; } /* comment - gray */
+pre .typ, code .typ { color: #4395ff; } /* type - light blue */
+pre .lit, code .lit { color: #1a76c2; } /* literal - blue */
+pre .pun, code .pun { color: #111; } /* punctuation - white */
+pre .pln, code .pln { color: #111; } /* plaintext - white */
+pre .tag, code .tag { color: #22863a; } /* html/xml tag    - light blue */
+pre .atn, code .atn { color: #005cc5; } /* html/xml attribute name  - khaki */
+pre .atv, code .atv { color: #032f62; } /* html/xml attribute value - green */
+pre .dec, code .dec { color: #3387CC; } /* decimal - blue */
+
+pre{
+	margin: 1rem 0;
+    padding: 0 1.5rem;
+    border-radius: 0.2rem;
+    white-space: pre-line;
+    background: rgba(var(--text-color), .04);
+}
+code{
+    font-family: 'Roboto Mono', monospace;
+    border-radius: 0.2rem;
+    font-weight: 400;
+    padding: 0.2rem 0.4rem;
+    background: rgba(var(--text-color), .04);
+}
+code > *{
+    font-family: 'Roboto Mono', monospace;
+}
+pre code{
+    line-height: 1.4;
+    border-radius: none;
+    background: none;
+    width: 100%;
+}
+
+//
+
 .hide-completely{
     display: none;
 }
@@ -83,25 +126,6 @@ section{
     sm-button:first-of-type{
         margin-right: 1rem;
     }
-}
-pre{
-    display: inline-flex;
-        max-width: 100%;
-}
-code{
-    display: inline-flex;
-    color: #311B92;
-    background: rgba(var(--text-color), .1);
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.2rem;
-    margin: 0.2rem 0;
-}
-code.extend{
-    padding: 0 1.5rem;
-    line-height: 1.6;
-    margin: 1rem 0;
-    overflow-x: auto;
-    max-width: 100%;
 }
 main{
     height: 100vh;
