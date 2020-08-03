@@ -404,14 +404,22 @@ smTabs.innerHTML = `
     display: flex;
 }
 .tabs{
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+.panel-container{
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
-    position: relative;
     overflow: hidden auto;
 }
 .tab-header{
-    display: flex;
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: flex-start;
+    gap: 1rem;
     position: relative;
     overflow: auto hidden;
     max-width: 100%;
@@ -460,11 +468,13 @@ slot[name="panel"]::slotted(.hide-completely){
 }         
 </style>
 <div class="tabs">
-    <div class="tab-header">
+    <div part="tab-header" class="tab-header">
         <slot name="tab">Nothing to see here</slot>
         <div class="indicator"></div>
     </div>
-    <slot name="panel">Nothing to see here</slot>
+    <div part="panel-container" class="panel-container">
+        <slot name="panel">Nothing to see here</slot>
+    </div>
 </div>
 `;
 
@@ -595,6 +605,15 @@ customElements.define('sm-tabs', class extends HTMLElement {
             }
             this.prevTab = e.target;
         })
+        let resizeObserver = new ResizeObserver(entries => {
+            entries.forEach((entry) => { 
+                if (this.prevTab) {
+                    let tabDimensions = this.prevTab.getBoundingClientRect();
+                    this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                }
+            })
+        })
+        resizeObserver.observe(this)
         let observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
@@ -617,8 +636,8 @@ customElements.define('sm-tabs', class extends HTMLElement {
             })
         },
             { threshold: 1.0 })
-        observer.observe(this.tabHeader)
-        if (this.hasAttribute('enable-swipe') && this.getAttribute('enable-swipe') == 'true') {
+        observer.observe(this)
+        if (this.hasAttribute('enable-flick') && this.getAttribute('enable-flick') == 'true') {
             let touchStartTime = 0,
                 touchEndTime = 0,
                 swipeTimeThreshold = 200,
@@ -2073,32 +2092,32 @@ smCarousel.innerHTML = `
         width: 2.6rem;
         border-radius: 3rem;
         padding: 0.9rem;
-        stroke: rgba(var(--text-color), 0.7);
-        stroke-width: 10;
+        stroke: rgba(var(--foreground-color), 0.8);
+        stroke-width: 14;
         overflow: visible;
         stroke-linecap: round;
         stroke-linejoin: round;
         cursor: pointer;
         min-width: 0;
         z-index: 1;
-        background: rgba(var(--foreground-color), 1);
-        box-shadow: 0 0.2rem 0.2rem #00000020,
+        background: rgba(var(--text-color), 1);
+        box-shadow: 0 0.2rem 0.2rem #00000020, 
                     0 0.5rem 1rem #00000040; 
         -webkit-tap-highlight-color: transparent;
-        transition: transform 0.3s; 
+        transform: scale(0)
     }
     .hide{
         pointer-events: none;
         opacity: 0;
     }
-    .shrink{
-        transform: scale(0)
+    .expand{
+        transform: scale(1)
     }
     .previous-item{
-        left: -1.3rem;
+        left: 1rem;
     }
     .next-item{
-        right: -1.3rem;
+        right: 1rem;
     }
     .left,.right{
         position: absolute;
@@ -2120,7 +2139,8 @@ smCarousel.innerHTML = `
         align-items: center;
     }
     .carousel{
-        display: flex;
+        display: grid;
+        grid-auto-flow: column;
         max-width: 100%;
         overflow: auto hidden;
         scroll-snap-type: x mandatory;
@@ -2136,9 +2156,6 @@ smCarousel.innerHTML = `
     }
     :host([align-items="end"]) slot::slotted(*){
         scroll-snap-align: end;
-    }
-    @media screen and (min-width: 640px){
-        
     }
     @media (hover: hover){
         .carousel{
@@ -2170,14 +2187,14 @@ smCarousel.innerHTML = `
 </style>
 <div class="carousel-container">
     <div class="left"></div>
-    <svg class="icon previous-item hide" viewBox="4 0 64 64">
+    <svg class="icon previous-item" viewBox="4 0 64 64">
         <title>Previous</title>
         <polyline points="48.01 0.35 16.35 32 48.01 63.65"/>
     </svg>
     <div class="carousel">
         <slot></slot>
     </div>
-    <svg class="icon next-item hide" viewBox="-6 0 64 64">
+    <svg class="icon next-item" viewBox="-6 0 64 64">
         <title>Next</title>
         <polyline points="15.99 0.35 47.65 32 15.99 63.65"/>
     </svg>
@@ -2219,11 +2236,11 @@ customElements.define('sm-carousel', class extends HTMLElement{
         this.scrollDistance = this.carouselContainer.getBoundingClientRect().width/3
         const firstElementObserver = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting){
-                this.previousArrow.classList.add('hide', 'shrink')
+                this.previousArrow.classList.remove('expand')
                 this.previousGradient.classList.add('hide')
             }
             else {
-                this.previousArrow.classList.remove('hide', 'shrink')
+                this.previousArrow.classList.add('expand')
                 this.previousGradient.classList.remove('hide')
             }
         }, {
@@ -2232,11 +2249,11 @@ customElements.define('sm-carousel', class extends HTMLElement{
         })        
         const lastElementObserver = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting){
-                this.nextArrow.classList.add('hide', 'shrink')
+                this.nextArrow.classList.remove('expand')
                 this.nextGradient.classList.add('hide')
             }
             else{
-                this.nextArrow.classList.remove('hide', 'shrink')
+                this.nextArrow.classList.add('expand')
                 this.nextGradient.classList.remove('hide')
             }
         }, {
