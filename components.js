@@ -623,13 +623,13 @@ customElements.define('sm-tabs', class extends HTMLElement {
                     })
                     if (activeElement.length) {
                         let tabDimensions = activeElement[0].getBoundingClientRect();
-                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - activeElement[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                        this.indicator.setAttribute('style', `transform: translateX(${tabDimensions.left - activeElement[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
                     }
                     else {
                         this.tabSlot.assignedElements()[0].classList.add('active')
                         this.panelSlot.assignedElements()[0].classList.remove('hide-completely')
                         let tabDimensions = this.tabSlot.assignedElements()[0].getBoundingClientRect();
-                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                        this.indicator.setAttribute('style', `transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
                         this.prevTab = this.tabSlot.assignedElements()[0];
                     }
                 }
@@ -1283,7 +1283,7 @@ smSelect.innerHTML = `
             .icon{
                 margin-left: 1rem;
             }
-            :host([align-select="right"]) .options{
+            :host([align-select="left"]) .options{
                 left: 0;
             }
             :host([align-select="right"]) .options{
@@ -1433,7 +1433,7 @@ customElements.define('sm-select', class extends HTMLElement {
             }
         });
         document.addEventListener('mousedown', e => {
-            if (!this.contains(e.target)) {
+            if (!this.contains(e.target) && this.open) {
                 this.collapse()
             }
         })
@@ -2613,5 +2613,283 @@ customElements.define('sm-notifications', class extends HTMLElement{
             childList: true,
             subtree: true
         })
+    }
+})
+// sm-menu
+const smMenu = document.createElement('template')
+smMenu.innerHTML = `
+        <style>     
+            *{
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            } 
+            .menu{
+                display: grid;
+                place-items: center;
+                position: relative;
+                height: 2rem;
+                width: 2rem;
+                outline: none;
+            }
+            .icon {
+                position: absolute;
+                fill: rgba(var(--text-color), 0.7);
+                height: 2.4rem;
+                width: 2.4rem;
+                padding: 0.7rem;
+                stroke: rgba(var(--text-color), 0.7);
+                stroke-width: 6;
+                overflow: visible;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                border-radius: 2rem;
+                transition: background 0.3s;
+            }      
+            :host{
+                display: inline-flex;
+            }
+            .hide{
+                opacity: 0;
+                pointer-events: none;
+            }
+            .select{
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                cursor: pointer;
+                width: 100%;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .menu:focus .icon,
+            .focused{
+                background: rgba(var(--text-color), 0.1); 
+            }
+            :host([align-options="left"]) .options{
+                left: 0;
+            }
+            :host([align-options="right"]) .options{
+                right: 0;
+            }
+            .options{
+                padding: 0.5rem 0;
+                overflow: hidden auto;
+                position: absolute;
+                display: flex;
+                min-width: 100%;
+                transform: translateY(-1rem);
+                flex-direction: column;
+                background: rgba(var(--foreground-color), 1);
+                transition: opacity 0.3s, transform 0.3s;
+                border: solid 1px rgba(var(--text-color), 0.2);
+                border-radius: 0.2rem;
+                z-index: 2;
+                box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
+                top: 100%;
+                margin: 0.4rem 0 0 0;
+                bottom: auto;
+            }
+            .moveUp{
+                top: auto;
+                margin: 0 0 0.4rem 0;
+                bottom: 100%;
+                transform: translateY(1rem);
+            }
+            .moveLeft{
+                left: auto: 
+                right: 0;
+            }
+            .no-transformations{
+                transform: none !important;
+            }
+            @media (hover: hover){
+                .menu:hover .icon{
+                    background: rgba(var(--text-color), 0.1); 
+                }
+            }
+        </style>
+        <div class="select">
+            <div class="menu" tabindex="0">
+                <svg class="icon" viewBox="0 0 64 64">
+                    <title>options</title>
+                    <circle cx="32" cy="6" r="5.5"/>
+                    <circle cx="32" cy="58" r="5.5"/>
+                    <circle cx="32" cy="31.89" r="5.5"/>
+                </svg>
+            </div>
+            <div class="options hide">
+                <slot></slot> 
+            </div>
+        </div>`;
+customElements.define('sm-menu', class extends HTMLElement {
+    constructor() {
+        super()
+        this.attachShadow({ mode: 'open' }).append(smMenu.content.cloneNode(true))
+    }
+    static get observedAttributes() {
+        return ['value']
+    }
+    get value() {
+        return this.getAttribute('value')
+    }
+    set value(val) {
+        this.setAttribute('value', val)
+    }
+    expand = () => {
+        if (!this.open) {
+            if (this.containerDimensions.left > this.containerDimensions.width) {
+                this.optionList.style.right = 0
+            }
+            else {
+                this.optionList.style.right = 'auto'
+            }
+            this.optionList.classList.remove('hide')
+            this.optionList.classList.add('no-transformations')
+            this.open = true
+            this.icon.classList.add('focused')
+        }
+    }
+    collapse = () => {
+        if (this.open) {
+            this.open = false
+            this.icon.classList.remove('focused')
+            this.optionList.classList.add('hide')
+            this.optionList.classList.remove('no-transformations')
+        }
+    }
+    connectedCallback() {
+        this.availableOptions
+        this.containerDimensions
+        this.optionList = this.shadowRoot.querySelector('.options')
+        let slot = this.shadowRoot.querySelector('.options slot'),
+            menu = this.shadowRoot.querySelector('.menu')
+        this.icon = this.shadowRoot.querySelector('.icon')
+        this.open = false;
+        menu.addEventListener('click', e => {
+            if (!this.open) {
+                this.expand()
+            } else {
+                this.collapse()
+            }
+        })
+        menu.addEventListener('keydown', e => {
+            if (e.code === 'ArrowDown' || e.code === 'ArrowRight') {
+                e.preventDefault()
+                this.availableOptions[0].focus()
+            }
+            if (e.code === 'Enter' || e.code === 'Space') {
+                e.preventDefault()
+                if (!this.open) {
+                    this.expand()
+                } else {
+                    this.collapse()
+                }
+            }
+        })
+        this.optionList.addEventListener('keydown', e => {
+            if (e.code === 'ArrowUp' || e.code === 'ArrowRight') {
+                e.preventDefault()
+                if (document.activeElement.previousElementSibling) {
+                    document.activeElement.previousElementSibling.focus()
+                }
+            }
+            if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
+                e.preventDefault()
+                if (document.activeElement.nextElementSibling)
+                    document.activeElement.nextElementSibling.focus()
+            }
+        })
+        this.optionList.addEventListener('click', e => {
+            this.collapse()
+        })
+        slot.addEventListener('slotchange', e => {
+            this.availableOptions = slot.assignedElements()
+            this.containerDimensions = this.optionList.getBoundingClientRect()
+            this.menuDimensions = menu.getBoundingClientRect()
+        });
+        window.addEventListener('mousedown', e => {
+            if (!this.contains(e.target) && e.button !== 2) {
+                this.collapse()
+            }
+        })
+        if (this.hasAttribute('set-context') && this.getAttribute('set-context') === 'true'){
+            this.parentNode.addEventListener('mouseup', e => {
+                if (e.button === 2) {
+                    this.expand()
+                }
+            })
+        }
+        const intersectionObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting && this.open) {
+                    if(window.innerHeight - entry.intersectionRect.top < this.containerDimensions.height)
+                        this.optionList.classList.add('moveUp')
+                    else
+                        this.optionList.classList.remove('moveUp')
+                    if (entry.intersectionRect.left > this.containerDimensions.width) {
+                        this.optionList.style.right = 0
+                    }
+                    else {
+                        this.optionList.style.right = 'auto'
+                    }
+                }
+            })
+        }, {
+                threshold: 1
+        })
+        intersectionObserver.observe(this.optionList)
+    }
+})
+
+// option
+const smMenuOption = document.createElement('template')
+smMenuOption.innerHTML = `
+        <style>     
+            *{
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            }     
+            :host{
+                display: flex;
+            }
+            .option{
+                min-width: 100%;
+                padding: 0.8rem 1.6rem;
+                cursor: pointer;
+                overflow-wrap: break-word;
+                white-space: nowrap;
+                outline: none;
+                display: flex;
+                align-items: center;
+                text-transform: capitalize;
+            }
+            :host(:focus){
+                outline: none;
+                background: rgba(var(--text-color), 0.1);
+            }
+            @media (hover: hover){
+                .option:hover{
+                    background: rgba(var(--text-color), 0.1);
+                }
+            }
+        </style>
+        <div class="option">
+            <slot></slot> 
+        </div>`;
+customElements.define('sm-menu-option', class extends HTMLElement {
+    constructor() {
+        super()
+        this.attachShadow({ mode: 'open' }).append(smMenuOption.content.cloneNode(true))
+    }
+
+    connectedCallback() {
+        this.addEventListener('keyup', e => {
+            if (e.code === 'Enter' || e.code === 'Space') {
+                e.preventDefault()
+                this.click()
+            }
+        })
+        this.setAttribute('tabindex', '0')
     }
 })
