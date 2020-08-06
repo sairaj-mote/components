@@ -26,12 +26,12 @@ pre .str, code .str { color: #65B042; } /* string  - green */
 pre .kwd, code .kwd { color: #E28964; } /* keyword - dark pink */
 pre .com, code .com { color: #AEAEAE; font-style: italic; } /* comment - gray */
 pre .typ, code .typ { color: #4395ff; } /* type - light blue */
-pre .lit, code .lit { color: #1a76c2; } /* literal - blue */
-pre .pun, code .pun { color: #111; } /* punctuation - white */
-pre .pln, code .pln { color: #111; } /* plaintext - white */
-pre .tag, code .tag { color: #22863a; } /* html/xml tag    - light blue */
-pre .atn, code .atn { color: #005cc5; } /* html/xml attribute name  - khaki */
-pre .atv, code .atv { color: #032f62; } /* html/xml attribute value - green */
+pre .lit, code .lit { color: #1a76c2; } /* literal */
+pre .pun, code .pun { color: #111; } /* punctuation */
+pre .pln, code .pln { color: #111; } /* plaintext */
+pre .tag, code .tag { color: #22863a; } /* html/xml tag */
+pre .atn, code .atn { color: #005cc5; } /* html/xml attribute name */
+pre .atv, code .atv { color: #032f62; } /* html/xml attribute value*/
 pre .dec, code .dec { color: #3387CC; } /* decimal - blue */
 
 pre{
@@ -179,6 +179,7 @@ ol{
     }
 }
 .card{
+    display: flex;
     height: 24rem;
     margin-right: 1rem;
     border-radius: 0.4rem;

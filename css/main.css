@@ -47,32 +47,32 @@ pre .lit, code .lit {
   color: #1a76c2;
 }
 
-/* literal - blue */
+/* literal */
 pre .pun, code .pun {
   color: #111;
 }
 
-/* punctuation - white */
+/* punctuation */
 pre .pln, code .pln {
   color: #111;
 }
 
-/* plaintext - white */
+/* plaintext */
 pre .tag, code .tag {
   color: #22863a;
 }
 
-/* html/xml tag    - light blue */
+/* html/xml tag */
 pre .atn, code .atn {
   color: #005cc5;
 }
 
-/* html/xml attribute name  - khaki */
+/* html/xml attribute name */
 pre .atv, code .atv {
   color: #032f62;
 }
 
-/* html/xml attribute value - green */
+/* html/xml attribute value*/
 pre .dec, code .dec {
   color: #3387CC;
 }
@@ -279,6 +279,9 @@ ol li::first-letter {
 }
 
 .card {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
   height: 24rem;
   margin-right: 1rem;
   border-radius: 0.4rem;
