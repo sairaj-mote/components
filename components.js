@@ -3016,6 +3016,19 @@ customElements.define('sm-tab-header', class extends HTMLElement {
         this.tabSlot = this.shadowRoot.querySelector('slot');
         this.tabHeader = this.shadowRoot.querySelector('.tab-header');
     }
+
+    sendDetails = (element) => {
+        this.dispatchEvent(
+            new CustomEvent("switchtab", {
+                bubbles: true,
+                detail: {
+                    target: this.target,
+                    rank: parseInt(element.getAttribute('rank'))
+                }
+            })
+        )
+    }
+
     connectedCallback() {
         if (!this.hasAttribute('target') || this.getAttribute('target').value === '') return;
         this.prevTab
@@ -3025,8 +3038,6 @@ customElements.define('sm-tab-header', class extends HTMLElement {
         this.tabSlot.addEventListener('slotchange', () => {
             this.tabSlot.assignedElements().forEach((tab, index) => {
                 tab.setAttribute('rank', index)
-                if (tab.classList.contains('active') || tab.hasAttribute('active'))
-                    activeTab = tab
             })
         })
         this.allTabs = this.tabSlot.assignedElements();
@@ -3041,15 +3052,7 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             e.target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
             console.log()
             this.indicator.setAttribute('style', `width: ${e.target.getBoundingClientRect().width}px; transform: translateX(${e.target.getBoundingClientRect().left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
-            this.dispatchEvent(
-                new CustomEvent("switchtab", {
-                    bubbles: true,
-                    detail: {
-                        target: this.target,
-                        rank: parseInt(e.target.getAttribute('rank'))
-                    }
-                })
-            )
+            this.sendDetails(e.target)
             this.prevTab = e.target;
             this.activeTab = e.target;
         })
@@ -3074,15 +3077,7 @@ customElements.define('sm-tab-header', class extends HTMLElement {
                         this.allTabs[0].classList.add('active')
                         let tabDimensions = this.allTabs[0].getBoundingClientRect();
                         this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
-                        this.dispatchEvent(
-                            new CustomEvent("switchtab", {
-                                bubbles: true,
-                                detail: {
-                                    target: this.target,
-                                    rank: parseInt(this.allTabs[0].getAttribute('rank'))
-                                }
-                            })
-                        )
+                        this.sendDetails(this.allTabs[0])
                         this.prevTab = this.tabSlot.assignedElements()[0];
                         this.activeTab = this.prevTab;
                     }
@@ -3247,31 +3242,5 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
             this.previousRank = e.detail.rank
             this.prevPanel = this.allPanels[e.detail.rank];
         })
-        if (this.hasAttribute('enable-flick') && this.getAttribute('enable-flick') == 'true') {
-            let touchStartTime = 0,
-                touchEndTime = 0,
-                swipeTimeThreshold = 200,
-                swipeDistanceThreshold = 20,
-                startingPointX = 0,
-                endingPointX = 0,
-                currentIndex = 0;
-            this.addEventListener('touchstart', e => {
-                touchStartTime = e.timeStamp
-                startingPointX = e.changedTouches[0].clientX
-            })
-            this.panelSlot.addEventListener('touchend', e => {
-                touchEndTime = e.timeStamp
-                endingPointX = e.changedTouches[0].clientX
-                if (touchEndTime - touchStartTime < swipeTimeThreshold) {
-                    currentIndex = this.allTabs.findIndex(element => element.classList.contains('active'))
-                    if (startingPointX > endingPointX && startingPointX - endingPointX > swipeDistanceThreshold && currentIndex < this.allTabs.length) {
-                        this.allTabs[currentIndex + 1].click()
-                    }
-                    else if (startingPointX < endingPointX && endingPointX - startingPointX > swipeDistanceThreshold && currentIndex > 0) {
-                        this.allTabs[currentIndex - 1].click()
-                    }
-                }
-            })
-        }
     }
 })

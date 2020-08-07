@@ -304,8 +304,8 @@
             if(e.target.closest('.item'))
                 showPage(e.target.closest('.item'), e.target.closest('.item').dataset.target)
         })
-        showPage(selectedItem, 'new_tab_page')
-        document.getElementById('new_tab_btn').addEventListener('click', e => {
+        showPage(selectedItem, 'overview_page')
+        document.getElementById('get_started_btn').addEventListener('click', e => {
             main.scrollIntoView()
         })
     </script>
