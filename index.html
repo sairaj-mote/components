@@ -38,6 +38,7 @@
                 <li class="item" data-target="select_page">select</li>
                 <li class="item" data-target="strip_select_page">strip-select</li>
                 <li class="item" data-target="tabs_page">tabs</li>
+                <li class="item" data-target="new_tab_page">new tabs</li>
             </ul>
         </div>
         <div class="right language-html">
@@ -218,7 +219,7 @@
                 <p class="description">
                     To start using SM Components
                 </p>
-                <sm-tabs enable-flick="true">
+                <sm-tabs variant="tab">
                     <sm-tab slot="tab">inbox</sm-tab>
                     <sm-panel slot="panel">
                         gjdhnsrfijbgn<br>bdfjnbj
@@ -247,6 +248,42 @@
                     </sm-panel>
                 </sm-tabs>
             </div>            
+            <div id="new_tab_page" class="page hide-completely">
+                <h1 class="headline">new Tabs</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <sm-tab-header variant="tab" target="tab1">
+                    <sm-tab>inbox</sm-tab>
+                    <sm-tab>sent</sm-tab>
+                    <sm-tab>draft</sm-tab>
+                    <sm-tab>spam</sm-tab>
+                </sm-tab-header>
+                <sm-tab-panels id="tab1">
+                    <sm-panel>
+                        gjdhnsrfijbgn<br>bdfjnbj
+                    </sm-panel>
+                    <sm-panel>
+                        jadifjoaijdiajdo
+                        dosfighjoi<br>
+                        flkmgklfmzkl<br>
+                        hbdsfhb
+                    </sm-panel>
+                    <sm-panel>
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facere neque incidunt aut laudantium, quam
+                        id,
+                        molestiae vero blanditiis nisi alias in magnam autem quasi cumque eveniet qui cupiditate nam
+                        corrupti?
+                    </sm-panel>
+                    <sm-panel>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis fuga ipsam, explicabo, eius
+                        accusamus
+                        consectetur ex sunt soluta voluptatem iure totam nulla expedita suscipit minus molestiae similique
+                        odio optio
+                        quibusdam.
+                    </sm-panel>
+                </sm-tab-panels>
+            </div>            
         </div>
     </main>
     <script src="components.js"></script>
@@ -267,8 +304,8 @@
             if(e.target.closest('.item'))
                 showPage(e.target.closest('.item'), e.target.closest('.item').dataset.target)
         })
-        showPage(selectedItem, 'overview_page')
-        document.getElementById('get_started_btn').addEventListener('click', e => {
+        showPage(selectedItem, 'new_tab_page')
+        document.getElementById('new_tab_btn').addEventListener('click', e => {
             main.scrollIntoView()
         })
     </script>

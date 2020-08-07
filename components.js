@@ -248,19 +248,21 @@ smInput.innerHTML = `
             }
         }
     </style>
-    <label class="input">
-        <slot name = "icon"></slot>
-        <div class="container">
-            <input/>
-            <div class="label"></div>
-        </div>
-        <svg class="icon clear hide" viewBox="0 0 64 64">
-            <title>clear</title>
-            <line x1="64" y1="0" x2="0" y2="64"/>
-            <line x1="64" y1="64" x2="0" y2="0"/>
-        </svg>
-    </label>
-    <div class="helper-text hide"></div>
+    <div>
+        <label class="input">
+            <slot name="icon"></slot>
+            <div class="container">
+                <input/>
+                <div class="label"></div>
+            </div>
+            <svg class="icon clear hide" viewBox="0 0 64 64">
+                <title>clear</title>
+                <line x1="64" y1="0" x2="0" y2="64"/>
+                <line x1="64" y1="64" x2="0" y2="0"/>
+            </svg>
+        </label>
+        <div class="helper-text hide"></div>
+    </div>
 `;
 customElements.define('sm-input',
     class extends HTMLElement {
@@ -441,10 +443,16 @@ smTabs.innerHTML = `
 .hide-completely{
     display: none;
 }
+:host([variant="tab"]) .tab-header{
+    gap: 0;
+    display: inline-grid;
+    justify-self: flex-start;
+    background: rgba(var(--text-color), 0.1);
+    border-radius: 0.2rem;
+}
 :host([variant="tab"]) slot[name="tab"]::slotted(.active){
     color: rgba(var(--foreground-color), 1);
 }
-
 slot[name="tab"]::slotted(.active){
     color: var(--accent-color);
     opacity: 1;
@@ -612,6 +620,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
         resizeObserver.observe(this)
         let observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
+                this.indicator.style.transition = 'none'
                 if (entry.isIntersecting) {
                     let activeElement = this.tabSlot.assignedElements().filter(element => {
                         if (element.classList.contains('active'))
@@ -619,13 +628,13 @@ customElements.define('sm-tabs', class extends HTMLElement {
                     })
                     if (activeElement.length) {
                         let tabDimensions = activeElement[0].getBoundingClientRect();
-                        this.indicator.setAttribute('style', `transform: translateX(${tabDimensions.left - activeElement[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - activeElement[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
                     }
                     else {
                         this.tabSlot.assignedElements()[0].classList.add('active')
                         this.panelSlot.assignedElements()[0].classList.remove('hide-completely')
                         let tabDimensions = this.tabSlot.assignedElements()[0].getBoundingClientRect();
-                        this.indicator.setAttribute('style', `transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
                         this.prevTab = this.tabSlot.assignedElements()[0];
                     }
                 }
@@ -2914,5 +2923,355 @@ customElements.define('sm-menu-option', class extends HTMLElement {
             }
         })
         this.setAttribute('tabindex', '0')
+    }
+})
+
+// tab-header
+
+const smTabHeader = document.createElement('template')
+smTabHeader.innerHTML = `
+<style>
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+} 
+:host{
+    display: flex;
+}
+.tabs{
+    position: relative;
+    display: grid;
+    width: 100%;
+}
+.tab-header{
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: flex-start;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    scrollbar-width: 0;
+    margin-bottom: 1rem;
+}
+.indicator{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 0.15rem;
+    border-radius: 1rem 1rem 0 0;  
+    background: var(--accent-color);
+    transition: transform 0.3s, width 0.3s;
+}
+:host([variant="tab"]) .indicator{
+    height: 100%;
+    border-radius: 0.2rem
+}
+:host([variant="tab"]) .tab-header{
+    border-bottom: none; 
+}
+.hide-completely{
+    display: none;
+}
+:host([variant="tab"]) .tab-header{
+    gap: 0;
+    display: inline-grid;
+    justify-self: flex-start;
+    background: rgba(var(--text-color), 0.1);
+    border-radius: 0.2rem;
+}
+:host([variant="tab"]) slot::slotted(.active){
+    color: rgba(var(--foreground-color), 1);
+}
+slot::slotted(.active){
+    color: var(--accent-color);
+    opacity: 1;
+}
+@media (hover: none){
+    .tab-header::-webkit-scrollbar-track {
+        -webkit-box-shadow: none !important;
+        background-color: transparent !important;
+    }
+    .tab-header::-webkit-scrollbar {
+        height: 0;
+        background-color: transparent;
+    }
+}         
+</style>
+<div part="tab-container" class="tabs">
+    <div part="tab-header" class="tab-header">
+        <slot></slot>
+        <div class="indicator"></div>
+    </div>
+</div>
+`;
+
+customElements.define('sm-tab-header', class extends HTMLElement {
+    constructor() {
+        super()
+        this.attachShadow({ mode: 'open' }).append(smTabHeader.content.cloneNode(true))
+
+        this.indicator = this.shadowRoot.querySelector('.indicator');
+        this.tabSlot = this.shadowRoot.querySelector('slot');
+        this.tabHeader = this.shadowRoot.querySelector('.tab-header');
+    }
+    connectedCallback() {
+        if (!this.hasAttribute('target') || this.getAttribute('target').value === '') return;
+        this.prevTab
+        this.allTabs
+        this.activeTab
+        this.target = this.getAttribute('target')
+        this.tabSlot.addEventListener('slotchange', () => {
+            this.tabSlot.assignedElements().forEach((tab, index) => {
+                tab.setAttribute('rank', index)
+                if (tab.classList.contains('active') || tab.hasAttribute('active'))
+                    activeTab = tab
+            })
+        })
+        this.allTabs = this.tabSlot.assignedElements();
+
+        this.tabSlot.addEventListener('click', e => {
+            if (e.target === this.prevTab || !e.target.closest('sm-tab'))
+                return
+            if (this.prevTab)
+                this.prevTab.classList.remove('active')
+            e.target.classList.add('active')
+
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+            console.log()
+            this.indicator.setAttribute('style', `width: ${e.target.getBoundingClientRect().width}px; transform: translateX(${e.target.getBoundingClientRect().left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+            this.dispatchEvent(
+                new CustomEvent("switchtab", {
+                    bubbles: true,
+                    detail: {
+                        target: this.target,
+                        rank: parseInt(e.target.getAttribute('rank'))
+                    }
+                })
+            )
+            this.prevTab = e.target;
+            this.activeTab = e.target;
+        })
+        let resizeObserver = new ResizeObserver(entries => {
+            entries.forEach((entry) => {
+                if (this.prevTab) {
+                    let tabDimensions = this.activeTab.getBoundingClientRect();
+                    this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                }
+            })
+        })
+        resizeObserver.observe(this)
+        let observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    this.indicator.style.transition = 'none'
+                    if (this.activeTab) {
+                        let tabDimensions = this.activeTab.getBoundingClientRect();
+                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                    }
+                    else {
+                        this.allTabs[0].classList.add('active')
+                        let tabDimensions = this.allTabs[0].getBoundingClientRect();
+                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                        this.dispatchEvent(
+                            new CustomEvent("switchtab", {
+                                bubbles: true,
+                                detail: {
+                                    target: this.target,
+                                    rank: parseInt(this.allTabs[0].getAttribute('rank'))
+                                }
+                            })
+                        )
+                        this.prevTab = this.tabSlot.assignedElements()[0];
+                        this.activeTab = this.prevTab;
+                    }
+                }
+            })
+        },
+            { threshold: 1.0 })
+        observer.observe(this)
+    }
+})
+
+// tab-panels
+
+const smTabPanels = document.createElement('template')
+smTabPanels.innerHTML = `
+<style>
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+} 
+:host{
+    display: flex;
+    width: 100%;
+}
+.panel-container{
+    position: relative;
+    display: flex;
+    width: 100%;
+    overflow: hidden auto;
+}
+slot::slotted(.hide-completely){
+    display: none;
+}
+@media (hover: none){
+    .tab-header::-webkit-scrollbar-track {
+        -webkit-box-shadow: none !important;
+        background-color: transparent !important;
+    }
+    .tab-header::-webkit-scrollbar {
+        height: 0;
+        background-color: transparent;
+    }
+}         
+</style>
+<div part="panel-container" class="panel-container">
+    <slot></slot>
+</div>
+`;
+
+customElements.define('sm-tab-panels', class extends HTMLElement {
+    constructor() {
+        super()
+        this.attachShadow({ mode: 'open' }).append(smTabPanels.content.cloneNode(true))
+        this.panelSlot = this.shadowRoot.querySelector('slot');
+    }
+    connectedCallback() {
+
+        //animations
+        let flyInLeft = [
+            {
+                opacity: 0,
+                transform: 'translateX(-1rem)'
+            },
+            {
+                opacity: 1,
+                transform: 'none'
+            }
+        ],
+            flyInRight = [
+                {
+                    opacity: 0,
+                    transform: 'translateX(1rem)'
+                },
+                {
+                    opacity: 1,
+                    transform: 'none'
+                }
+            ],
+            flyOutLeft = [
+                {
+                    opacity: 1,
+                    transform: 'none'
+                },
+                {
+                    opacity: 0,
+                    transform: 'translateX(-1rem)'
+                }
+            ],
+            flyOutRight = [
+                {
+                    opacity: 1,
+                    transform: 'none'
+                },
+                {
+                    opacity: 0,
+                    transform: 'translateX(1rem)'
+                }
+            ],
+            animationOptions = {
+                duration: 300,
+                fill: 'forwards',
+                easing: 'ease'
+            }
+        this.prevPanel
+        this.allPanels
+        this.previousRank
+
+        this.panelSlot.addEventListener('slotchange', () => {
+            this.panelSlot.assignedElements().forEach((panel) => {
+                panel.classList.add('hide-completely')
+            })
+        })
+        this.allPanels = this.panelSlot.assignedElements()
+        this._targetBodyFlyRight = (targetBody) => {
+            targetBody.classList.remove('hide-completely')
+            targetBody.animate(flyInRight, animationOptions)
+        }
+        this._targetBodyFlyLeft = (targetBody) => {
+            targetBody.classList.remove('hide-completely')
+            targetBody.animate(flyInLeft, animationOptions)
+        }
+        document.addEventListener('switchtab', e => {
+            if (e.detail.target !== this.id)
+                return
+
+            if (this.prevPanel) {
+                let targetBody = this.allPanels[e.detail.rank],
+                    currentBody = this.prevPanel;
+                if (this.previousRank < e.detail.rank) {
+                    if (currentBody && !targetBody)
+                        currentBody.animate(flyOutLeft, animationOptions).onfinish = () => {
+                            currentBody.classList.add('hide-completely')
+                        }
+                    else if (targetBody && !currentBody) {
+                        this._targetBodyFlyRight(targetBody)
+                    }
+                    else if (currentBody && targetBody) {
+                        currentBody.animate(flyOutLeft, animationOptions).onfinish = () => {
+                            currentBody.classList.add('hide-completely')
+                            this._targetBodyFlyRight(targetBody)
+                        }
+                    }
+                } else {
+                    if (currentBody && !targetBody)
+                        currentBody.animate(flyOutRight, animationOptions).onfinish = () => {
+                            currentBody.classList.add('hide-completely')
+                        }
+                    else if (targetBody && !currentBody) {
+                        this._targetBodyFlyLeft(targetBody)
+                    }
+                    else if (currentBody && targetBody) {
+                        currentBody.animate(flyOutRight, animationOptions).onfinish = () => {
+                            currentBody.classList.add('hide-completely')
+                            this._targetBodyFlyLeft(targetBody)
+                        }
+                    }
+                }
+            } else {
+                this.allPanels[e.detail.rank].classList.remove('hide-completely')
+            }
+            this.previousRank = e.detail.rank
+            this.prevPanel = this.allPanels[e.detail.rank];
+        })
+        if (this.hasAttribute('enable-flick') && this.getAttribute('enable-flick') == 'true') {
+            let touchStartTime = 0,
+                touchEndTime = 0,
+                swipeTimeThreshold = 200,
+                swipeDistanceThreshold = 20,
+                startingPointX = 0,
+                endingPointX = 0,
+                currentIndex = 0;
+            this.addEventListener('touchstart', e => {
+                touchStartTime = e.timeStamp
+                startingPointX = e.changedTouches[0].clientX
+            })
+            this.panelSlot.addEventListener('touchend', e => {
+                touchEndTime = e.timeStamp
+                endingPointX = e.changedTouches[0].clientX
+                if (touchEndTime - touchStartTime < swipeTimeThreshold) {
+                    currentIndex = this.allTabs.findIndex(element => element.classList.contains('active'))
+                    if (startingPointX > endingPointX && startingPointX - endingPointX > swipeDistanceThreshold && currentIndex < this.allTabs.length) {
+                        this.allTabs[currentIndex + 1].click()
+                    }
+                    else if (startingPointX < endingPointX && endingPointX - startingPointX > swipeDistanceThreshold && currentIndex > 0) {
+                        this.allTabs[currentIndex - 1].click()
+                    }
+                }
+            })
+        }
     }
 })
