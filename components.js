@@ -712,7 +712,7 @@ smTab.innerHTML = `
     }
 }
 </style>
-<div class="tab">
+<div part="tab" class="tab">
     <slot></slot>
 </div>
 `;
@@ -2950,10 +2950,9 @@ smTabHeader.innerHTML = `
     justify-content: flex-start;
     gap: 1rem;
     position: relative;
-    overflow: hidden;
+    overflow: auto hidden;
     max-width: 100%;
     scrollbar-width: 0;
-    margin-bottom: 1rem;
 }
 .indicator{
     position: absolute;
@@ -2978,7 +2977,7 @@ smTabHeader.innerHTML = `
     gap: 0;
     display: inline-grid;
     justify-self: flex-start;
-    background: rgba(var(--text-color), 0.1);
+    box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.2);
     border-radius: 0.2rem;
 }
 :host([variant="tab"]) slot::slotted(.active){
@@ -3002,7 +3001,7 @@ slot::slotted(.active){
 <div part="tab-container" class="tabs">
     <div part="tab-header" class="tab-header">
         <slot></slot>
-        <div class="indicator"></div>
+        <div part="indicator" class="indicator"></div>
     </div>
 </div>
 `;
@@ -3050,7 +3049,6 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             e.target.classList.add('active')
 
             e.target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
-            console.log()
             this.indicator.setAttribute('style', `width: ${e.target.getBoundingClientRect().width}px; transform: translateX(${e.target.getBoundingClientRect().left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
             this.sendDetails(e.target)
             this.prevTab = e.target;

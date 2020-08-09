@@ -294,6 +294,10 @@ sm-carousel {
   margin-bottom: 1rem;
 }
 
+sm-tab-header {
+  margin-bottom: 1.5rem;
+}
+
 @media screen and (min-width: 640px) {
   main {
     display: -ms-grid;
