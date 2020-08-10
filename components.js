@@ -3122,7 +3122,7 @@ slot::slotted(.hide-completely){
 }         
 </style>
 <div part="panel-container" class="panel-container">
-    <slot></slot>
+    <slot>Nothing to see here.</slot>
 </div>
 `;
 
