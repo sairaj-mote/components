@@ -422,7 +422,6 @@ smTabs.innerHTML = `
     overflow: auto hidden;
     max-width: 100%;
     scrollbar-width: 0;
-    margin-bottom: 1rem;
 }
 .indicator{
     position: absolute;
