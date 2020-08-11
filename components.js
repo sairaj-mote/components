@@ -98,7 +98,7 @@ customElements.define('sm-button',
             this.setAttribute('disabled', val)
         }
 
-        dispatch = () => {
+        dispatch() {
             if (this.getAttribute('disabled') === 'true') {
                 this.dispatchEvent(new CustomEvent('disabled', {
                     bubbles: true,
@@ -298,14 +298,14 @@ customElements.define('sm-input',
             return this.shadowRoot.querySelector('input').checkValidity()
         }
 
-        preventNonNumericalInput = (e) => {
+        preventNonNumericalInput(e) {
             let keyCode = e.keyCode;
             if (!((keyCode > 47 && keyCode < 56) || (keyCode > 36 && keyCode < 39) || (keyCode > 95 && keyCode < 104) || keyCode === 110 || (keyCode > 7 && keyCode < 19))) {
                 e.preventDefault();
             }
         }
 
-        checkInput = () => {
+        checkInput() {
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '')
                 return;
             if (this.input.value !== '') {
@@ -609,7 +609,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
             this.prevTab = e.target;
         })
         let resizeObserver = new ResizeObserver(entries => {
-            entries.forEach((entry) => { 
+            entries.forEach((entry) => {
                 if (this.prevTab) {
                     let tabDimensions = this.prevTab.getBoundingClientRect();
                     this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
@@ -810,10 +810,10 @@ customElements.define('sm-checkbox', class extends HTMLElement {
     constructor() {
         super()
         this.attachShadow({ mode: 'open' }).append(smCheckbox.content.cloneNode(true))
-        
+
         this.checkbox = this.shadowRoot.querySelector('.checkbox');
         this.input = this.shadowRoot.querySelector('input')
-        
+
         this.isChecked = false
         this.isDisabled = false
     }
@@ -838,7 +838,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         this.setAttribute('checked', value)
     }
 
-    dispatch = () => {
+    dispatch() {
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true
@@ -1163,7 +1163,7 @@ customElements.define('sm-switch', class extends HTMLElement {
         this.attachShadow({ mode: 'open' }).append(smSwitch.content.cloneNode(true))
         this.switch = this.shadowRoot.querySelector('.switch');
         this.input = this.shadowRoot.querySelector('input')
-        this.isChecked = false  
+        this.isChecked = false
         this.isDisabled = false
     }
 
@@ -1187,7 +1187,7 @@ customElements.define('sm-switch', class extends HTMLElement {
         this.setAttribute('checked', value)
     }
 
-    dispatch = () => {
+    dispatch() {
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true
@@ -1339,7 +1339,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.setAttribute('value', val)
     }
 
-    collapse = () => {
+    collapse() {
         this.optionList.animate(this.slideUp, this.animationOptions)
         this.optionList.classList.add('hide')
         this.chevron.classList.remove('rotate')
@@ -1353,10 +1353,10 @@ customElements.define('sm-select', class extends HTMLElement {
             selection = this.shadowRoot.querySelector('.selection'),
             previousOption
         this.open = false;
-            this.slideDown = [
-                { transform: `translateY(-0.5rem)` },
-                { transform: `translateY(0)` }
-            ],
+        this.slideDown = [
+            { transform: `translateY(-0.5rem)` },
+            { transform: `translateY(0)` }
+        ],
             this.slideUp = [
                 { transform: `translateY(0)` },
                 { transform: `translateY(-0.5rem)` }
@@ -1417,7 +1417,7 @@ customElements.define('sm-select', class extends HTMLElement {
                 }
                 previousOption = e.target;
             }
-            if(!e.detail.switching)
+            if (!e.detail.switching)
                 this.collapse()
 
             e.target.classList.add('check-selected')
@@ -1509,7 +1509,7 @@ customElements.define('sm-option', class extends HTMLElement {
         this.attachShadow({ mode: 'open' }).append(smOption.content.cloneNode(true))
     }
 
-    sendDetails = (switching) => {
+    sendDetails(switching) {
         let optionSelected = new CustomEvent('optionSelected', {
             bubbles: true,
             composed: true,
@@ -1678,7 +1678,7 @@ customElements.define('sm-strip-select', class extends HTMLElement {
     set value(val) {
         this.setAttribute('value', val)
     }
-    scrollLeft = () => {
+    scrollLeft() {
         this.select.scrollBy({
             top: 0,
             left: -this.scrollDistance,
@@ -1686,7 +1686,7 @@ customElements.define('sm-strip-select', class extends HTMLElement {
         })
     }
 
-    scrollRight = () => {
+    scrollRight() {
         this.select.scrollBy({
             top: 0,
             left: this.scrollDistance,
@@ -1815,7 +1815,7 @@ customElements.define('sm-strip-option', class extends HTMLElement {
         super()
         this.attachShadow({ mode: 'open' }).append(smStripOption.content.cloneNode(true))
     }
-    sendDetails = () => {
+    sendDetails() {
         let optionSelected = new CustomEvent('optionSelected', {
             bubbles: true,
             composed: true,
@@ -1984,7 +1984,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.attachShadow({ mode: 'open' }).append(smPopup.content.cloneNode(true))
     }
 
-    resumeScrolling = () => {
+    resumeScrolling() {
         const scrollY = document.body.style.top;
         window.scrollTo(0, parseInt(scrollY || '0') * -1);
         setTimeout(() => {
@@ -2015,17 +2015,17 @@ customElements.define('sm-popup', class extends HTMLElement {
             }
         }
         else {
-           this.resumeScrolling()
+            this.resumeScrolling()
         }
     }
 
-    handleTouchStart = (e) => {
+    handleTouchStart(e) {
         this.touchStartY = e.changedTouches[0].clientY
         this.popup.style.transition = 'initial'
         this.touchStartTime = e.timeStamp
     }
 
-    handleTouchMove = (e) => {
+    handleTouchMove(e) {
         if (this.touchStartY < e.changedTouches[0].clientY) {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
             this.touchEndAnimataion = window.requestAnimationFrame(this.movePopup)
@@ -2036,7 +2036,7 @@ customElements.define('sm-popup', class extends HTMLElement {
     }*/
     }
 
-    handleTouchEnd = (e) => {
+    handleTouchEnd(e) {
         this.touchEndTime = e.timeStamp
         cancelAnimationFrame(this.touchEndAnimataion)
         this.touchEndY = e.changedTouches[0].clientY
@@ -2055,7 +2055,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         }
     }
 
-    movePopup = () => {
+    movePopup() {
         this.popup.style.transform = `translateY(${this.offset}px)`
     }
 
@@ -2072,10 +2072,10 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.touchEndTime = 0
         this.threshold = this.popup.getBoundingClientRect().height * 0.3
         this.touchEndAnimataion;
-        
+
         if (this.hasAttribute('heading'))
             this.shadowRoot.querySelector('.heading').textContent = this.getAttribute('heading')
-                
+
         this.popupContainer.addEventListener('mousedown', e => {
             if (e.target === this.popupContainer && !this.pinned) {
                 this.hide()
@@ -2226,13 +2226,13 @@ smCarousel.innerHTML = `
 </div>
 `;
 
-customElements.define('sm-carousel', class extends HTMLElement{
+customElements.define('sm-carousel', class extends HTMLElement {
     constructor() {
         super()
         this.shadow = this.attachShadow({ mode: 'open' }).append(smCarousel.content.cloneNode(true))
     }
 
-    scrollLeft = () => {
+    scrollLeft() {
         this.carousel.scrollBy({
             top: 0,
             left: -this.scrollDistance,
@@ -2240,7 +2240,7 @@ customElements.define('sm-carousel', class extends HTMLElement{
         })
     }
 
-    scrollRight = () => {
+    scrollRight() {
         this.carousel.scrollBy({
             top: 0,
             left: this.scrollDistance,
@@ -2257,9 +2257,9 @@ customElements.define('sm-carousel', class extends HTMLElement{
         this.nextGradient = this.shadowRoot.querySelector('.right')
         this.previousGradient = this.shadowRoot.querySelector('.left')
         this.carouselItems
-        this.scrollDistance = this.carouselContainer.getBoundingClientRect().width/3
+        this.scrollDistance = this.carouselContainer.getBoundingClientRect().width / 3
         const firstElementObserver = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting){
+            if (entries[0].isIntersecting) {
                 this.previousArrow.classList.remove('expand')
                 this.previousGradient.classList.add('hide')
             }
@@ -2270,21 +2270,21 @@ customElements.define('sm-carousel', class extends HTMLElement{
         }, {
             root: this.carouselContainer,
             threshold: 0.9
-        })        
+        })
         const lastElementObserver = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting){
+            if (entries[0].isIntersecting) {
                 this.nextArrow.classList.remove('expand')
                 this.nextGradient.classList.add('hide')
             }
-            else{
+            else {
                 this.nextArrow.classList.add('expand')
                 this.nextGradient.classList.remove('hide')
             }
         }, {
             root: this.carouselContainer,
             threshold: 0.9
-        })     
-        
+        })
+
         const carouselObserver = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting) {
                 this.scrollDistance = this.carouselContainer.getBoundingClientRect().width / 3
@@ -2292,7 +2292,7 @@ customElements.define('sm-carousel', class extends HTMLElement{
         })
 
         carouselObserver.observe(this.carouselContainer)
-        
+
         this.carouselSlot.addEventListener('slotchange', e => {
             this.carouselItems = this.carouselSlot.assignedElements()
             firstElementObserver.observe(this.carouselItems[0])
@@ -2435,20 +2435,20 @@ smNotifications.innerHTML = `
 </div>
 `
 
-customElements.define('sm-notifications', class extends HTMLElement{
+customElements.define('sm-notifications', class extends HTMLElement {
     constructor() {
         super()
         this.shadow = this.attachShadow({ mode: 'open' }).append(smNotifications.content.cloneNode(true))
     }
 
-    handleTouchStart = (e) => {
+    handleTouchStart(e) {
         this.notification = e.target.closest('.notification')
         this.touchStartX = e.changedTouches[0].clientX
         this.notification.style.transition = 'initial'
         this.touchStartTime = e.timeStamp
     }
 
-    handleTouchMove = (e) => {
+    handleTouchMove(e) {
         if (this.touchStartX < e.changedTouches[0].clientX) {
             this.offset = e.changedTouches[0].clientX - this.touchStartX;
             this.touchEndAnimataion = requestAnimationFrame(this.movePopup)
@@ -2459,7 +2459,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
         }
     }
 
-    handleTouchEnd = (e) => {
+    handleTouchEnd(e) {
         this.notification.style.transition = 'height 0.3s, transform 0.3s, opacity 0.3s'
         this.touchEndTime = e.timeStamp
         cancelAnimationFrame(this.touchEndAnimataion)
@@ -2485,15 +2485,15 @@ customElements.define('sm-notifications', class extends HTMLElement{
         }
     }
 
-    movePopup = () => {
+    movePopup() {
         this.notification.style.transform = `translateX(${this.offset}px)`
     }
 
-    resetPosition = () => {
+    resetPosition() {
         this.notification.style.transform = `translateX(0)`
     }
 
-    push = (messageHeader, messageBody, options) => {
+    push(messageHeader, messageBody, options) {
         let notification = document.createElement('div'),
             composition = ``,
             { pinned, type } = options;
@@ -2553,11 +2553,11 @@ customElements.define('sm-notifications', class extends HTMLElement{
         notification.addEventListener('touchend', this.handleTouchEnd)
     }
 
-    removeNotification = (notification, toLeft) => {
+    removeNotification(notification, toLeft) {
         notification.style.height = notification.scrollHeight + 'px';
         if (!this.offset)
             this.offset = 0;
-        
+
         if (toLeft)
             notification.animate([
                 {
@@ -2585,9 +2585,9 @@ customElements.define('sm-notifications', class extends HTMLElement{
                 notification.setAttribute('style', `height: 0; margin-bottom: 0`);
             }
         }
-        setTimeout( () => {
+        setTimeout(() => {
             notification.remove()
-        }, this.animationOptions.duration*2)
+        }, this.animationOptions.duration * 2)
     }
 
     connectedCallback() {
@@ -2608,7 +2608,7 @@ customElements.define('sm-notifications', class extends HTMLElement{
         this.touchEndAnimataion;
 
         this.notificationPanel.addEventListener('click', e => {
-            if (e.target.closest('.close'))(
+            if (e.target.closest('.close')) (
                 this.removeNotification(e.target.closest('.notification'))
             )
         })
@@ -2618,9 +2618,9 @@ customElements.define('sm-notifications', class extends HTMLElement{
                 if (mutation.type === 'childList') {
                     if (mutation.addedNodes.length) {
                         if (!mutation.addedNodes[0].classList.contains('pinned'))
-                        setTimeout(() => {
-                            this.removeNotification(mutation.addedNodes[0])
-                        }, 4000);
+                            setTimeout(() => {
+                                this.removeNotification(mutation.addedNodes[0])
+                            }, 4000);
                         if (window.innerWidth > 640)
                             this.notificationPanel.style.padding = '1.5rem 0 3rem 1.5rem';
                         else
@@ -2759,7 +2759,7 @@ customElements.define('sm-menu', class extends HTMLElement {
     set value(val) {
         this.setAttribute('value', val)
     }
-    expand = () => {
+    expand() {
         if (!this.open) {
             if (this.containerDimensions.left > this.containerDimensions.width) {
                 this.optionList.style.right = 0
@@ -2773,7 +2773,7 @@ customElements.define('sm-menu', class extends HTMLElement {
             this.icon.classList.add('focused')
         }
     }
-    collapse = () => {
+    collapse() {
         if (this.open) {
             this.open = false
             this.icon.classList.remove('focused')
@@ -2853,7 +2853,7 @@ customElements.define('sm-menu', class extends HTMLElement {
         const intersectionObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (!entry.isIntersecting && this.open) {
-                    if(window.innerHeight - entry.intersectionRect.top < this.containerDimensions.height)
+                    if (window.innerHeight - entry.intersectionRect.top < this.containerDimensions.height)
                         this.optionList.classList.add('moveUp')
                     else
                         this.optionList.classList.remove('moveUp')
@@ -2866,7 +2866,7 @@ customElements.define('sm-menu', class extends HTMLElement {
                 }
             })
         }, {
-                threshold: 1
+            threshold: 1
         })
         intersectionObserver.observe(this.optionList)
     }
@@ -3015,7 +3015,7 @@ customElements.define('sm-tab-header', class extends HTMLElement {
         this.tabHeader = this.shadowRoot.querySelector('.tab-header');
     }
 
-    sendDetails = (element) => {
+    sendDetails(element) {
         this.dispatchEvent(
             new CustomEvent("switchtab", {
                 bubbles: true,
