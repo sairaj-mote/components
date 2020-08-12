@@ -1,5 +1,4 @@
 //Button
-
 const smButton = document.createElement('template')
 smButton.innerHTML = `
         <style>     
@@ -1762,13 +1761,13 @@ customElements.define('sm-strip-select', class extends HTMLElement {
                 previousOption = firstElement;
             }
         });
-        this.nextArrow.addEventListener('click', this.scrollRight)
-        this.previousArrow.addEventListener('click', this.scrollLeft)
+        this.nextArrow.addEventListener('click', this.scrollRight.bind(this))
+        this.previousArrow.addEventListener('click', this.scrollLeft.bind(this))
     }
 
     disconnectedCallback() {
-        this.nextArrow.removeEventListener('click', this.scrollRight)
-        this.previousArrow.removeEventListener('click', this.scrollLeft)
+        this.nextArrow.removeEventListener('click', this.scrollRight.bind(this))
+        this.previousArrow.removeEventListener('click', this.scrollLeft.bind(this))
     }
 })
 
@@ -2029,10 +2028,10 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
             this.touchEndAnimataion = window.requestAnimationFrame(this.movePopup)
         }
-        /*else {
-        offset = touchStartY - e.changedTouches[0].clientY;
-        this.popup.style.transform = `translateY(-${offset}px)`
-    }*/
+        else {
+            offset = touchStartY - e.changedTouches[0].clientY;
+            this.popup.style.transform = `translateY(-${offset}px)`
+        }
     }
 
     handleTouchEnd(e) {
@@ -2087,14 +2086,14 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.hide()
         })
 
-        this.popupHeader.addEventListener('touchstart', this.handleTouchStart)
-        this.popupHeader.addEventListener('touchmove', this.handleTouchMove)
-        this.popupHeader.addEventListener('touchend', this.handleTouchEnd)
+        this.popupHeader.addEventListener('touchstart', this.handleTouchStart.bind(this))
+        this.popupHeader.addEventListener('touchmove', this.handleTouchMove.bind(this))
+        this.popupHeader.addEventListener('touchend', this.handleTouchEnd.bind(this))
     }
     disconnectedCallback() {
-        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart)
-        this.popupHeader.removeEventListener('touchmove', this.handleTouchMove)
-        this.popupHeader.removeEventListener('touchend', this.handleTouchEnd)
+        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart.bind(this))
+        this.popupHeader.removeEventListener('touchmove', this.handleTouchMove.bind(this))
+        this.popupHeader.removeEventListener('touchend', this.handleTouchEnd.bind(this))
     }
 })
 
@@ -2230,7 +2229,7 @@ smCarousel.innerHTML = `
 customElements.define('sm-carousel', class extends HTMLElement {
     constructor() {
         super()
-        this.shadow = this.attachShadow({ mode: 'open' }).append(smCarousel.content.cloneNode(true))
+        this.attachShadow({ mode: 'open' }).append(smCarousel.content.cloneNode(true))
     }
 
     scrollLeft() {
@@ -2307,13 +2306,13 @@ customElements.define('sm-carousel', class extends HTMLElement {
                 this.scrollRight()
         })
 
-        this.nextArrow.addEventListener('click', this.scrollRight)
-        this.previousArrow.addEventListener('click', this.scrollLeft)
+        this.nextArrow.addEventListener('click', this.scrollRight.bind(this))
+        this.previousArrow.addEventListener('click', this.scrollLeft.bind(this))
     }
 
     disconnectedCallback() {
-        this.nextArrow.removeEventListener('click', this.scrollRight)
-        this.previousArrow.removeEventListener('click', this.scrollLeft)
+        this.nextArrow.removeEventListener('click', this.scrollRight.bind(this))
+        this.previousArrow.removeEventListener('click', this.scrollLeft.bind(this))
     }
 })
 
@@ -2549,9 +2548,9 @@ customElements.define('sm-notifications', class extends HTMLElement {
         else {
             notification.setAttribute('style', `transform: translateY(0); opacity: 1`)
         }
-        notification.addEventListener('touchstart', this.handleTouchStart)
-        notification.addEventListener('touchmove', this.handleTouchMove)
-        notification.addEventListener('touchend', this.handleTouchEnd)
+        notification.addEventListener('touchstart', this.handleTouchStart.bind(this))
+        notification.addEventListener('touchmove', this.handleTouchMove.bind(this))
+        notification.addEventListener('touchend', this.handleTouchEnd.bind(this))
     }
 
     removeNotification(notification, toLeft) {
@@ -2640,6 +2639,8 @@ customElements.define('sm-notifications', class extends HTMLElement {
         })
     }
 })
+
+
 // sm-menu
 const smMenu = document.createElement('template')
 smMenu.innerHTML = `
