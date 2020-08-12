@@ -1925,7 +1925,6 @@ smPopup.innerHTML = `
     }
     @media screen and (min-width: 640px){
         .popup{
-            width: 24rem;
             align-self: center;
             border-radius: 0.4rem;
             height: auto;
@@ -1959,8 +1958,8 @@ smPopup.innerHTML = `
         }
     }
 </style>
-<div class="popup-container hide" role="dialog">
-    <div class="popup">
+<div part="background" class="popup-container hide" role="dialog">
+    <div part="popup" class="popup">
         <div class="popup-top">
             <div class="handle"></div>
             <div class="container-header">
