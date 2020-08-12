@@ -2076,6 +2076,8 @@ customElements.define('sm-popup', class extends HTMLElement {
         if (this.hasAttribute('heading'))
             this.shadowRoot.querySelector('.heading').textContent = this.getAttribute('heading')
 
+        if (this.hasAttribute('open') && this.getAttribute('open') === 'true')
+            this.show()
         this.popupContainer.addEventListener('mousedown', e => {
             if (e.target === this.popupContainer && !this.pinned) {
                 this.hide()
