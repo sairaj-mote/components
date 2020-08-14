@@ -31,6 +31,7 @@ smButton.innerHTML = `
             }
             .button {
                 display: flex;
+                width: 100%;
                 padding: 0.6rem 0.9rem;
                 cursor: pointer;
                 user-select: none;
@@ -157,7 +158,7 @@ smInput.innerHTML = `
         border: none;
         }
         :host{
-            display: inline-flex;
+            display: flex;
         }
         .hide{
            opacity: 0 !important;
@@ -212,7 +213,11 @@ smInput.innerHTML = `
             will-change: transform;
             text-transform: capitalize;
         }
+        .outer-container{
+            width: 100%;
+        }
         .container{
+            width: 100%;
             display: flex;
             position: relative;
             align-items: center;
@@ -247,7 +252,7 @@ smInput.innerHTML = `
             }
         }
     </style>
-    <div>
+    <div class="outer-container">
         <label class="input">
             <slot name="icon"></slot>
             <div class="container">
@@ -1869,7 +1874,6 @@ smPopup.innerHTML = `
         transition: opacity 0.3s ease;
     }
     .popup{
-        flex-direction: column;
         align-self: flex-end;
         align-items: flex-start;
         flex-wrap: wrap;
@@ -1924,6 +1928,7 @@ smPopup.innerHTML = `
     }
     @media screen and (min-width: 640px){
         .popup{
+            width: auto;
             align-self: center;
             border-radius: 0.4rem;
             height: auto;
