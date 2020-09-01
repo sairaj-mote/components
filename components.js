@@ -10,74 +10,89 @@ smButton.innerHTML = `
             :host{
                 display: inline-flex;
             }
-            :host([disabled='true']) .button{
-                cursor: default;
+            :host([disabled]) .button{
+                cursor: not-allowed;
                 opacity: 1;
-                background: rgba(var(--text-color), 0.4) !important;
+                background: rgba(var(--text-color), 0.3) !important;
                 color: rgba(var(--foreground-color), 1);
             }
-            :host([variant='primary']) .button{
-                background: var(--accent-color);
+            :host([variant='primary']) .button,
+            :host([variant='round']) .button{
+                background: hsl(var(--hue), var(--saturation), var(--lightness));
                 color: rgba(var(--foreground-color), 1);
+            }
+            :host([variant='round']) .button{
+                border-radius: 50%;
+                padding: 0.8rem;
             }
             :host([variant='outlined']) .button{
-                box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
-                background: rgba(var(--foreground-color), 1); 
+                box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset;
+                background: transparent; 
                 color: var(--accent-color);
             }
             :host([variant='no-outline']) .button{
                 background: rgba(var(--foreground-color), 1); 
                 color: var(--accent-color);
             }
+            :host(.small) .button{
+                padding: 0.4rem 0.8rem;
+            }
             .button {
                 display: flex;
                 width: 100%;
-                padding: 0.6rem 0.9rem;
+                padding: 0.6rem 1rem;
                 cursor: pointer;
                 user-select: none;
-                border-radius: 0.2rem; 
+                border-radius: 0.3rem; 
                 justify-content: center;
                 transition: box-shadow 0.3s;
-                text-transform: uppercase;
+                text-transform: capitalize;
+                font-size: 0.9em;
                 font-weight: 500;
                 color: rgba(var(--text-color), 0.9);
-                letter-spacing: 0.1rem;
                 font-family: var(--font-family);
-                font-size: 0.9rem;
                 background: rgba(var(--text-color), 0.1); 
                 -webkit-tap-highlight-color: transparent;
                 outline: none;
             }
-            :host(:not([disabled="true"])) .button:focus{
+            :host(:not([disabled])) .button:focus{
                 box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.2);
             }
             :host([variant='outlined']) .button:focus{
-                box-shadow: 0 0 0 0.1rem var(--accent-color)inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+                box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
             }
             @media (hover: hover){
-                :host(:not([disabled="true"])) .button:active{
+                :host(:not([disabled])) .button:active{
                     box-shadow: none !important;
                 }
                 :host([variant='outlined']) .button:active{
-                    box-shadow: 0 0 0 0.1rem var(--accent-color)inset !important;
+                    box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset !important;
                 }
-                :host(:not([disabled="true"])) .button:hover{
-                    box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.2);
+                :host(:not([disabled])) .button:hover{
+                    box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.12);
                 }
                 :host([variant='outlined']) .button:hover{
-                    box-shadow: 0 0 0 0.1rem var(--accent-color)inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+                    box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.12);
+                }
+                :host([variant="primary"]:not([disabled])) .button:active,
+                :host([variant="round"]:not([disabled])) .button:active{
+                    background: hsl(var(--hue), var(--saturation), calc(var(--lightness) - 20%)) !important;
+                }
+                :host([variant="primary"]:not([disabled])) .button:hover,
+                :host([variant="round"]:not([disabled])) .button:hove{
+                    background: hsl(var(--hue), var(--saturation), calc(var(--lightness) - 10%));
                 }
             }
             @media (hover: none){
-                :host(:not([disabled="true"])) .button:active{
+                :host(:not([disabled])) .button:active{
                     box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.2);
                 }
                 :host([variant='outlined']) .button:active{
-                    box-shadow: 0 0 0 0.1rem var(--accent-color)inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+                    box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
                 }
             }
         </style>
-        <div class="button" tabindex="0" role="button">
+        <div part="button" class="button" tabindex="0" role="button">
             <slot></slot>   
         </div>`;
 customElements.define('sm-button',
@@ -86,20 +101,25 @@ customElements.define('sm-button',
             super()
             this.attachShadow({ mode: 'open' }).append(smButton.content.cloneNode(true))
         }
-        static get observedAttributes() {
-            return ['disabled']
-        }
 
         get disabled() {
-            return this.getAttribute('disabled')
+            return this.isDisabled
         }
 
-        set disabled(val) {
-            this.setAttribute('disabled', val)
+        set disabled(value) {
+            if (value && !this.isDisabled) {
+                this.isDisabled = true
+                this.setAttribute('disabled', '')
+                this.button.removeAttribute('tabindex')
+            }
+            else if (!value && this.isDisabled) {
+                this.isDisabled = false
+                this.removeAttribute('disabled')
+            }
         }
 
         dispatch() {
-            if (this.getAttribute('disabled') === 'true') {
+            if (this.isDisabled) {
                 this.dispatchEvent(new CustomEvent('disabled', {
                     bubbles: true,
                     composed: true
@@ -114,6 +134,10 @@ customElements.define('sm-button',
         }
 
         connectedCallback() {
+            this.isDisabled = false
+            this.button = this.shadowRoot.querySelector('.button')
+            if (this.hasAttribute('disabled') && !this.isDisabled)
+                this.isDisabled = true
             this.addEventListener('click', (e) => {
                 this.dispatch()
             })
@@ -121,9 +145,6 @@ customElements.define('sm-button',
                 if (e.code === "Enter" || e.code === "Space")
                     this.dispatch()
             })
-        }
-
-        attributeChangedCallback(name, oldValue, newValue) {
         }
     })
 
@@ -164,16 +185,19 @@ smInput.innerHTML = `
            opacity: 0 !important;
            pointer-events: none !important;
         }
+        .hide-completely{
+            display: none;
+        }
         .icon {
             fill: none;
-            height: 1.6rem;
-            width: 1.6rem;
-            padding: 0.5rem;
+            height: 1.6em;
+            width: 1.6em;
+            padding: 0.5em;
             stroke: rgba(var(--text-color), 0.7);
             stroke-width: 10;
             overflow: visible;
             stroke-linecap: round;
-            border-radius: 1rem;
+            border-radius: 1em;
             stroke-linejoin: round;
             cursor: pointer;
             min-width: 0;
@@ -182,38 +206,43 @@ smInput.innerHTML = `
             display: flex;
             align-items: center;
             position: relative;
-            gap: 1rem;
-            padding: 0.6rem 1rem;
-            border-radius: 0.2em;
+            gap: 1em;
+            padding: 0.7em 1em;
+            border-radius: 0.3em;
             transition: opacity 0.3s;
             background: rgba(var(--text-color), 0.1);
             font-family: var(--font-family);
             width: 100%
             outline: none;
+            min-width: 0;
         }
 
         input:focus{
             caret-color: var(--accent-color);
         }
         .input:focus-within{
-            box-shadow: 0 0 0 0.1rem var(--accent-color);
+            box-shadow: 0 0 0 0.1em var(--accent-color) inset;
         }
     
         .label {
             user-select: none;
             opacity: .7;
             font-weight: 400;
-            font-size: 1rem;
+            font-size: 1em;
             position: absolute;
             top: 0;
             transition: transform 0.3s;
             -webkit-transform-origin: left;
             transform-origin: left;
             pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
             will-change: transform;
-            text-transform: capitalize;
         }
         .outer-container{
+            position: relative;
             width: 100%;
         }
         .container{
@@ -224,7 +253,7 @@ smInput.innerHTML = `
             flex: 1;
         }    
         input{
-            font-size: 1rem;
+            font-size: 1em;
             border: none;
             background: transparent;
             outline: none;
@@ -232,19 +261,26 @@ smInput.innerHTML = `
             width: 100%;
         }
         .animate-label .container input {
-            -webkit-transform: translateY(0.5rem);
-                    transform: translateY(0.5rem);
+            -webkit-transform: translateY(0.6em);
+                    transform: translateY(0.6em);
             }
           
         .animate-label .container .label {
-            -webkit-transform: translateY(-60%) scale(0.7);
-                    transform: translateY(-60%) scale(0.7);
+            -webkit-transform: translateY(-0.6em) scale(0.8);
+                    transform: translateY(-0.6em) scale(0.8);
             opacity: 1;
             color: var(--accent-color)
         }
         .helper-text{
+            top: 100%;
+            width: 100%;
+            position: absolute;
             color: var(--error-color);
-            padding: 0.4rem 1rem;
+            background: rgba(var(--foreground-color), 1);
+            margin-top: 0.5em;
+            border-radius: 0.2em;
+            border: solid 1px rgba(var(--text-color), 0.2);
+            padding: 0.6em 1em;
         }
         @media (any-hover: hover){
             .icon:hover{
@@ -255,9 +291,9 @@ smInput.innerHTML = `
     <div class="outer-container">
         <label class="input">
             <slot name="icon"></slot>
-            <div class="container">
+            <div part="input" class="container">
                 <input/>
-                <div class="label"></div>
+                <div part="placeholder" class="label"></div>
             </div>
             <svg class="icon clear hide" viewBox="0 0 64 64">
                 <title>clear</title>
@@ -284,6 +320,8 @@ customElements.define('sm-input',
 
         set value(val) {
             this.shadowRoot.querySelector('input').value = val;
+            this.checkInput()
+            this.fireEvent()
         }
 
         get placeholder() {
@@ -309,6 +347,15 @@ customElements.define('sm-input',
             }
         }
 
+        fireEvent() {
+            let event = new Event('input', {
+                bubbles: true,
+                cancelable: true,
+                composed: true
+            });
+            this.dispatchEvent(event);
+        }
+
         checkInput() {
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '')
                 return;
@@ -317,16 +364,18 @@ customElements.define('sm-input',
                     this.inputParent.classList.add('animate-label')
                 else
                     this.label.classList.add('hide')
-                this.clearBtn.classList.remove('hide')
+                if(!this.readonly)
+                    this.clearBtn.classList.remove('hide')
             }
             else {
                 if (this.animate)
                     this.inputParent.classList.remove('animate-label')
                 else
                     this.label.classList.remove('hide')
-                this.clearBtn.classList.add('hide')
+                if(!this.readonly)
+                    this.clearBtn.classList.add('hide')
             }
-            if (this.valueChanged) {
+            /*if (this.valueChanged) {
                 if (this.input.checkValidity()) {
                     this.helperText.classList.add('hide')
                     this.inputParent.style.boxShadow = ``
@@ -335,22 +384,30 @@ customElements.define('sm-input',
                     this.helperText.classList.remove('hide')
                     this.inputParent.style.boxShadow = `0 0 0 0.1rem ${this.computedStyle.getPropertyValue('--error-color')}`
                 }
-            }
+            }*/
         }
+        
 
         connectedCallback() {
             this.inputParent = this.shadowRoot.querySelector('.input')
-            this.computedStyle = window.getComputedStyle(this.inputParent)
             this.clearBtn = this.shadowRoot.querySelector('.clear')
             this.label = this.shadowRoot.querySelector('.label')
             this.helperText = this.shadowRoot.querySelector('.helper-text')
             this.valueChanged = false;
+            this.readonly = false
             this.animate = this.hasAttribute('animate')
             this.input = this.shadowRoot.querySelector('input')
             this.shadowRoot.querySelector('.label').textContent = this.getAttribute('placeholder')
             if (this.hasAttribute('value')) {
                 this.input.value = this.getAttribute('value')
                 this.checkInput()
+            }
+            if (this.hasAttribute('required')) {
+                this.input.setAttribute('required', '')
+            }
+            if (this.hasAttribute('readonly')) {
+                this.input.setAttribute('readonly', '')
+                this.readonly = true
             }
             if (this.hasAttribute('helper-text')) {
                 this.helperText.textContent = this.getAttribute('helper-text')
@@ -371,16 +428,15 @@ customElements.define('sm-input',
             this.input.addEventListener('input', e => {
                 this.checkInput()
             })
-            this.input.addEventListener('change', e => {
+            /*this.input.addEventListener('change', e => {
                 this.valueChanged = true;
                 if (this.input.checkValidity())
                     this.helperText.classList.add('hide')
                 else
                     this.helperText.classList.remove('hide')
-            })
+            })*/
             this.clearBtn.addEventListener('click', e => {
-                this.input.value = ''
-                this.checkInput()
+                this.value = ''
             })
         }
 
@@ -392,7 +448,225 @@ customElements.define('sm-input',
         }
     })
 
-// tab-header
+//textarea
+const smTextarea = document.createElement('template')
+smTextarea.innerHTML = `
+        <style>
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        } 
+        ::-moz-focus-inner{
+            border: none;
+        }
+        :host{
+            display: flex;
+        }
+        .hide{
+           opacity: 0 !important;
+           pointer-events: none !important;
+        }
+        .hide-completely{
+            display: none;
+        }
+        .icon {
+            fill: none;
+            height: 1.6em;
+            width: 1.6em;
+            padding: 0.5em;
+            stroke: rgba(var(--text-color), 0.7);
+            stroke-width: 10;
+            overflow: visible;
+            stroke-linecap: round;
+            border-radius: 1em;
+            stroke-linejoin: round;
+            cursor: pointer;
+            min-width: 0;
+        }
+        .input {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 0.7em 1em;
+            border-radius: 0.3em;
+            transition: opacity 0.3s;
+            background: rgba(var(--text-color), 0.1);
+            font-family: var(--font-family);
+            width: 100%
+            outline: none;
+            min-width: 0;
+        }
+
+        textarea:focus{
+            caret-color: var(--accent-color);
+        }
+        .input:focus-within{
+            box-shadow: 0 0 0 0.1em var(--accent-color) inset;
+        }
+    
+        .label {
+            user-select: none;
+            opacity: .7;
+            font-weight: 400;
+            font-size: 1em;
+            position: absolute;
+            top: 0.9em;
+            transition: transform 0.3s;
+            -webkit-transform-origin: left;
+            transform-origin: left;
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            will-change: transform;
+        }   
+        textarea{
+            font-size: 1em;
+            border: none;
+            background: transparent;
+            outline: none;
+            color: rgba(var(--text-color), 1);
+            width: 100%;
+            font-family: inherit;
+        }
+        .animate-label textarea {
+            -webkit-transform: translateY(0.6em);
+                    transform: translateY(0.6em);
+        }
+          
+        .animate-label .label {
+            -webkit-transform: translateY(-0.6em) scale(0.8);
+                    transform: translateY(-0.6em) scale(0.8);
+            opacity: 1;
+            color: var(--accent-color)
+        }
+        @media (any-hover: hover){
+            .icon:hover{
+                background: rgba(var(--text-color), 0.1);
+            }
+        }
+    </style>
+    <label class="input">
+        <textarea rows="1"></textarea>
+        <div part="placeholder" class="label"></div>
+        <svg class="icon clear hide" viewBox="0 0 64 64">
+            <title>clear</title>
+            <line x1="64" y1="0" x2="0" y2="64"/>
+            <line x1="64" y1="64" x2="0" y2="0"/>
+        </svg>
+    </label>
+`;
+customElements.define('sm-textarea',
+    class extends HTMLElement {
+        constructor() {
+            super()
+            this.attachShadow({ mode: 'open' }).append(smTextarea.content.cloneNode(true))
+        }
+        static get observedAttributes() {
+            return ['placeholder']
+        }
+
+        get value() {
+            return this.shadowRoot.querySelector('textarea').value
+        }
+
+        set value(val) {
+            this.shadowRoot.querySelector('textarea').value = val;
+            this.checkInput()
+            this.fireEvent()
+        }
+
+        get placeholder() {
+            return this.getAttribute('placeholder')
+        }
+
+        set placeholder(val) {
+            this.setAttribute('placeholder', val)
+        }
+
+        fireEvent() {
+            let event = new Event('input', {
+                bubbles: true,
+                cancelable: true,
+                composed: true
+            });
+            this.dispatchEvent(event);
+        }
+
+        checkInput() {
+            if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '')
+                return;
+            if (this.input.value !== '') {
+                if (this.animate)
+                    this.inputParent.classList.add('animate-label')
+                else
+                    this.label.classList.add('hide')
+                if(!this.readonly)
+                    this.clearBtn.classList.remove('hide')
+            }
+            else {
+                if (this.animate)
+                    this.inputParent.classList.remove('animate-label')
+                else
+                    this.label.classList.remove('hide')
+                if(!this.readonly)
+                    this.clearBtn.classList.add('hide')
+            }
+
+            this.input.style.height = 'auto'
+            this.input.style.height = (this.input.scrollHeight) + 'px';
+        }
+        
+
+        connectedCallback() {
+            this.inputParent = this.shadowRoot.querySelector('.input')
+            this.clearBtn = this.shadowRoot.querySelector('.clear')
+            this.label = this.shadowRoot.querySelector('.label')
+            this.helperText = this.shadowRoot.querySelector('.helper-text')
+            this.valueChanged = false;
+            this.readonly = false
+            this.animate = this.hasAttribute('animate')
+            this.input = this.shadowRoot.querySelector('textarea')
+            this.shadowRoot.querySelector('.label').textContent = this.getAttribute('placeholder')
+            
+            this.input.setAttribute('style', 'height:' + (this.input.scrollHeight) + 'px;overflow-y:hidden;');
+            
+            if (this.hasAttribute('value')) {
+                this.input.value = this.getAttribute('value')
+                this.checkInput()
+            }
+            if (this.hasAttribute('required')) {
+                this.input.setAttribute('required', '')
+            }
+            if (this.hasAttribute('readonly')) {
+                this.input.setAttribute('readonly', '')
+                this.readonly = true
+            }
+            if (this.hasAttribute('helper-text')) {
+                this.helperText.textContent = this.getAttribute('helper-text')
+            }
+            this.input.addEventListener('keydown', e => {
+                if (this.getAttribute('type') === 'number')
+                    this.preventNonNumericalInput(e);
+            })
+            this.input.addEventListener('input', e => {
+                this.checkInput()
+            })
+            this.clearBtn.addEventListener('click', e => {
+                this.value = ''
+            })
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (oldValue !== newValue) {
+                if (name === 'placeholder')
+                    this.shadowRoot.querySelector('.label').textContent = newValue;
+            }
+        }
+    })
 
 const smTabs = document.createElement('template')
 smTabs.innerHTML = `
@@ -438,7 +712,7 @@ smTabs.innerHTML = `
 }
 :host([variant="tab"]) .indicator{
     height: 100%;
-    border-radius: 0.2rem
+    border-radius: 0.3rem;
 }
 :host([variant="tab"]) .tab-header{
     border-bottom: none; 
@@ -451,7 +725,7 @@ smTabs.innerHTML = `
     display: inline-grid;
     justify-self: flex-start;
     background: rgba(var(--text-color), 0.1);
-    border-radius: 0.2rem;
+    border-radius: 0.3rem;
 }
 :host([variant="tab"]) slot[name="tab"]::slotted(.active){
     color: rgba(var(--foreground-color), 1);
@@ -695,7 +969,7 @@ smTab.innerHTML = `
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     white-space: nowrap;
-    padding: 0.6rem 0.8rem;
+    padding: 0.4rem 0.8rem;
     font-weight: 500;
     word-spacing: 0.1em;
     text-align: center;
@@ -910,7 +1184,7 @@ smAudio.innerHTML = `
   -webkit-user-select: none;
           user-select: none;
   padding: 0.6rem;
-  border-radius: 0.2rem;
+  border-radius: 0.3rem;
   background: rgba(var(--text-color), 0.08);
   overflow: hidden;
   width: 100%;
@@ -953,7 +1227,7 @@ audio {
   transition: width 0.2s;
   pointer-events: none;
   z-index: 0;
-  border-radius: 0.2rem;
+  border-radius: 0.3rem;
 }
 
 .disabled {
@@ -1171,16 +1445,22 @@ customElements.define('sm-switch', class extends HTMLElement {
         this.isDisabled = false
     }
 
-    static get observedAttributes() {
-        return ['disabled', 'checked']
-    }
-
     get disabled() {
         return this.getAttribute('disabled')
     }
 
     set disabled(val) {
-        this.setAttribute('disabled', val)
+        if (val) {
+            this.disabled = true
+            this.setAttribute('disabled', '')
+            this.switch.classList.add('disabled')
+        }
+        else {
+            this.disabled = false
+            this.removeAttribute('disabled')
+            this.switch.classList.remove('disabled')
+            
+        }
     }
 
     get checked() {
@@ -1188,10 +1468,19 @@ customElements.define('sm-switch', class extends HTMLElement {
     }
 
     set checked(value) {
-        this.setAttribute('checked', value)
+        if (value) {
+            this.setAttribute('checked', '')
+            this.isChecked = true
+            this.input.checked = true
+        }
+        else {
+            this.removeAttribute('checked')
+            this.isChecked = false
+            this.input.checked = false
+        }
     }
 
-    dispatch() {
+    dispatch = () => {
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true
@@ -1199,39 +1488,20 @@ customElements.define('sm-switch', class extends HTMLElement {
     }
 
     connectedCallback() {
+        if(this.hasAttribute('disabled'))
+            this.switch.classList.add('disabled')
         this.addEventListener('keyup', e => {
-            if ((e.code === "Enter" || e.code === "Space") && this.isDisabled == false) {
-                this.isChecked = !this.isChecked
-                this.setAttribute('checked', this.isChecked)
+            if ((e.code === "Enter" || e.code === "Space") && !this.isDisabled) {
+                this.input.click()
             }
         })
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue !== newValue) {
-            if (name === 'disabled') {
-                if (newValue === 'true') {
-                    this.switch.classList.add('disabled')
-                    this.isDisabled = true
-                }
-                else {
-                    this.switch.classList.remove('disabled')
-                    this.isDisabled = false
-                }
-            }
-            if (name === 'checked') {
-                if (newValue == 'true') {
-                    this.isChecked = true
-                    this.input.checked = true
-                    this.dispatch()
-                }
-                else {
-                    this.isChecked = false
-                    this.input.checked = false
-                    this.dispatch()
-                }
-            }
-        }
+        this.input.addEventListener('click', e => {
+            if (this.input.checked)
+                this.checked = true
+            else
+                this.checked = false
+            this.dispatch()
+        })
     }
 })
 
@@ -1275,7 +1545,7 @@ smSelect.innerHTML = `
                 white-space: nowrap;
             }
             .selection{
-                border-radius: 0.2rem;
+                border-radius: 0.3rem;
                 display: grid;
                 grid-template-columns: 1fr auto;
                 grid-template-areas: 'heading heading' '. .';
@@ -1309,7 +1579,7 @@ smSelect.innerHTML = `
                 background: rgba(var(--foreground-color), 1);
                 transition: opacity 0.3s, top 0.3s;
                 border: solid 1px rgba(var(--text-color), 0.2);
-                border-radius: 0.2rem;
+                border-radius: 0.3rem;
                 z-index: 2;
                 box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
             }
@@ -1874,32 +2144,33 @@ smPopup.innerHTML = `
         transition: opacity 0.3s ease;
     }
     .popup{
+        display: flex;
+        flex-direction: column;
+        position: relative;
         align-self: flex-end;
         align-items: flex-start;
-        flex-wrap: wrap;
         width: 100%;
         border-radius: 0.5rem 0.5rem 0 0;
-        position: relative;
-        display: flex;
         transform: translateY(100%);
         transition: transform 0.3s;
         background: rgba(var(--foreground-color), 1);
         box-shadow: 0 -1rem 2rem #00000020;
-        overflow-y: auto;
-        max-height: 100%;
+        max-height: 100vh;
     }
     .container-header{
         display: flex;
         width: 100%;
         align-items: center;
-        justify-content: space-between;
     }
     .popup-top{
         display: flex;
         width: 100%;
     }
     .popup-body{
+        flex: 1;
+        width: 100%;
         padding: 1.5rem;
+        overflow-y: auto;
     }
     .heading{
         font-weight: 400;
@@ -1911,32 +2182,14 @@ smPopup.innerHTML = `
         opacity: 0;
         pointer-events: none;
     }
-    .icon {
-        fill: none;
-        height: 1.6rem;
-        width: 1.6rem;
-        padding: 0.4rem;
-        stroke: rgba(var(--text-color), 0.7);
-        stroke-width: 8;
-        overflow: visible;
-        stroke-linecap: round;
-        border-radius: 1rem;
-        stroke-linejoin: round;
-        cursor: pointer;
-        min-width: 0;
-        -webkit-tap-highlight-color: transparent;
-    }
     @media screen and (min-width: 640px){
         .popup{
-            width: auto;
+            width: max-content;
             align-self: center;
             border-radius: 0.4rem;
             height: auto;
             transform: translateY(0) scale(0.9);
             box-shadow: 0 2rem 2rem #00000040;
-        }
-        .container-header{
-            padding: 1.2rem 1.5rem;
         }
     }
     @media screen and (max-width: 640px){
@@ -1966,14 +2219,7 @@ smPopup.innerHTML = `
     <div part="popup" class="popup">
         <div class="popup-top">
             <div class="handle"></div>
-            <div class="container-header">
-                <h3 class="heading"></h3>
-                <svg class="icon close" viewBox="0 0 64 64">
-                    <title>Close</title>
-                    <line x1="64" y1="0" x2="0" y2="64"/>
-                    <line x1="64" y1="64" x2="0" y2="0"/>
-                </svg>
-            </div>
+            <slot name="header"></slot>
         </div>
         <div class="popup-body">
             <slot></slot>
@@ -1996,6 +2242,7 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     show(pinned, popupStack) {
+        this.setAttribute('open', '')
         this.pinned = pinned
         this.popupStack = popupStack
         this.popupContainer.classList.remove('hide')
@@ -2006,11 +2253,12 @@ customElements.define('sm-popup', class extends HTMLElement {
         document.body.setAttribute('style', `overflow: hidden; top: -${window.scrollY}px`)
     }
     hide() {
-        this.popupContainer.classList.add('hide')
+        this.removeAttribute('open')
         if (window.innerWidth < 648)
             this.popup.style.transform = 'translateY(100%)';
         else
             this.popup.style.transform = 'scale(0.9)';
+        this.popupContainer.classList.add('hide')
         if (typeof this.popupStack !== 'undefined') {
             this.popupStack.pop()
             if (this.popupStack.items.length === 0) {
@@ -2019,6 +2267,17 @@ customElements.define('sm-popup', class extends HTMLElement {
         }
         else {
             this.resumeScrolling()
+        }
+
+        if (this.inputFields.length) {
+            setTimeout(() => {         
+                this.inputFields.forEach(field => {
+                    if (field.type === 'radio' || field.tagName === 'SM-CHECKBOX')
+                        field.checked = false
+                    if (field.tagName === 'SM-INPUT' || field.tagName === 'TEXTAREA')
+                        field.value = ''
+                })
+            }, 300);
         }
     }
 
@@ -2029,14 +2288,15 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     handleTouchMove(e) {
+        e.preventDefault()
         if (this.touchStartY < e.changedTouches[0].clientY) {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
-            this.touchEndAnimataion = window.requestAnimationFrame(this.movePopup)
+            this.touchEndAnimataion = window.requestAnimationFrame(() => this.movePopup())
         }
-        else {
-            offset = touchStartY - e.changedTouches[0].clientY;
-            this.popup.style.transform = `translateY(-${offset}px)`
-        }
+        /*else {
+            this.offset = this.touchStartY - e.changedTouches[0].clientY;
+            this.popup.style.transform = `translateY(-${this.offset}px)`
+        }*/
     }
 
     handleTouchEnd(e) {
@@ -2067,6 +2327,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.popupStack
         this.popupContainer = this.shadowRoot.querySelector('.popup-container')
         this.popup = this.shadowRoot.querySelector('.popup')
+        this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot')
         this.offset
         this.popupHeader = this.shadowRoot.querySelector('.popup-top')
         this.touchStartY = 0
@@ -2075,25 +2336,28 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.touchEndTime = 0
         this.threshold = this.popup.getBoundingClientRect().height * 0.3
         this.touchEndAnimataion;
-
-        if (this.hasAttribute('heading'))
-            this.shadowRoot.querySelector('.heading').textContent = this.getAttribute('heading')
-
-        if (this.hasAttribute('open') && this.getAttribute('open') === 'true')
+        
+        if (this.hasAttribute('open'))
             this.show()
         this.popupContainer.addEventListener('mousedown', e => {
             if (e.target === this.popupContainer && !this.pinned) {
                 this.hide()
             }
         })
-
-        this.shadowRoot.querySelector('.close').addEventListener('click', e => {
-            this.hide()
+        
+        this.popupBodySlot.addEventListener('slotchange', () => {
+            this.inputFields = this.popupBodySlot.assignedElements().filter(element => element.tagName === 'SM-INPUT' || element.tagName === 'SM-CHECKBOX' || element.tagName === 'TEXTAREA' || element.type === 'radio')
         })
 
-        this.popupHeader.addEventListener('touchstart', this.handleTouchStart.bind(this))
-        this.popupHeader.addEventListener('touchmove', this.handleTouchMove.bind(this))
-        this.popupHeader.addEventListener('touchend', this.handleTouchEnd.bind(this))
+        this.popupHeader.addEventListener('touchstart', (e) => {
+            this.handleTouchStart(e)
+        })
+        this.popupHeader.addEventListener('touchmove', (e) => {
+            this.handleTouchMove(e)
+        })
+        this.popupHeader.addEventListener('touchend', (e) => {
+            this.handleTouchEnd(e)
+        })
     }
     disconnectedCallback() {
         this.popupHeader.removeEventListener('touchstart', this.handleTouchStart.bind(this))
@@ -2349,24 +2613,22 @@ smNotifications.innerHTML = `
         overflow: hidden auto;
         overscroll-behavior: contain;
     }
-    .inner-body{
-        padding: 1rem 1.5rem;
-    }
     .no-transformations{
         transform: none;
         opacity: 1;
     }
     .notification{
+        display: flex;
         opacity: 0;
+        padding: 1rem 1.5rem;
         transform: translateY(-1rem);
         position: relative;
         border-radius: 0.3rem;
-        box-shadow: 0.1rem 0.2rem 0.2rem rgba(0, 0, 0, 0.1),
+        box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.1),
                     0.5rem 1rem 2rem rgba(0, 0, 0, 0.1);
         background: rgba(var(--foreground-color), 1);
         transition: height 0.3s, transform 0.3s, opacity 0.3s;
         overflow: hidden;
-        border-bottom: 1px solid rgba(var(--text-color), 0.2);
     }
     h4:first-letter,
     p:first-letter{
@@ -2377,17 +2639,13 @@ smNotifications.innerHTML = `
     }
     p{
         line-height: 1.6;
-        color: rgba(var(--text-color), 0.8);
+        flex: 1;
+        color: rgba(var(--text-color), 0.9);
         overflow-wrap: break-word;
+        word-wrap: break-word;
     }
     .notification:last-of-type{
         margin-bottom: 0;
-    }
-    header{
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.4rem;
-        width: 100%;
     }
     .icon {
         fill: none;
@@ -2399,7 +2657,6 @@ smNotifications.innerHTML = `
         border-radius: 1rem;
         stroke-linejoin: round;
         cursor: pointer;
-        min-width: 0;
     }
     .error-icon{
         stroke: #E53935;
@@ -2408,21 +2665,24 @@ smNotifications.innerHTML = `
         stroke: #00C853;
     }
     .close{
-        margin-left: auto;
+        margin-left: 1rem;
         padding: 0.5rem;
         stroke-width: 10;
     }
     .notification-icon{
-        height: 1.2rem;
-        width: 1.2rem;
+        height: 1.4rem;
+        width: 1.4rem;
         margin-right: 0.6rem;
         stroke-width: 6;
     }
     @media screen and (min-width: 640px){
         .notification-panel{
             width: 40vw;
+            justify-content: flex-end;
         }
         .notification{
+            justify-self: end;
+            width: auto;
             margin-right: 1.5rem;
             margin-bottom: 1rem;
             border-bottom: none;
@@ -2454,6 +2714,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
     }
 
     handleTouchMove(e) {
+        e.preventDefault()
         if (this.touchStartX < e.changedTouches[0].clientX) {
             this.offset = e.changedTouches[0].clientX - this.touchStartX;
             this.touchEndAnimataion = requestAnimationFrame(this.movePopup)
@@ -2465,7 +2726,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
     }
 
     handleTouchEnd(e) {
-        this.notification.style.transition = 'height 0.3s, transform 0.3s, opacity 0.3s'
+        this.notification.style.transition = 'transform 0.3s, opacity 0.3s'
         this.touchEndTime = e.timeStamp
         cancelAnimationFrame(this.touchEndAnimataion)
         this.touchEndX = e.changedTouches[0].clientX
@@ -2490,7 +2751,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         }
     }
 
-    movePopup() {
+    movePopup = () => {
         this.notification.style.transform = `translateX(${this.offset}px)`
     }
 
@@ -2498,17 +2759,12 @@ customElements.define('sm-notifications', class extends HTMLElement {
         this.notification.style.transform = `translateX(0)`
     }
 
-    push(messageHeader, messageBody, options) {
+    push(messageBody, type, pinned) {
         let notification = document.createElement('div'),
-            composition = ``,
-            { pinned, type } = options;
+            composition = ``
         notification.classList.add('notification')
         if (pinned)
             notification.classList.add('pinned')
-        composition += `
-                            <div class="inner-body">
-                        <header>
-        `
         if (type === 'error') {
             composition += `
             <svg class="notification-icon icon error-icon" viewBox="0 0 64 64">
@@ -2525,15 +2781,12 @@ customElements.define('sm-notifications', class extends HTMLElement {
             `
         }
         composition += `
-                            <h4>${messageHeader}</h4>
+                            <p>${messageBody}</p>
                             <svg class="icon close" viewBox="0 0 64 64">
                                 <title>Close</title>
                                 <line x1="64" y1="0" x2="0" y2="64"/>
                                 <line x1="64" y1="64" x2="0" y2="0"/>
-                            </svg>
-                        </header>
-                        <p>${messageBody}</p>
-                    </div>`
+                            </svg>`
         notification.innerHTML = composition
         this.notificationPanel.prepend(notification)
         if (window.innerWidth > 640) {
@@ -2559,7 +2812,6 @@ customElements.define('sm-notifications', class extends HTMLElement {
     }
 
     removeNotification(notification, toLeft) {
-        notification.style.height = notification.scrollHeight + 'px';
         if (!this.offset)
             this.offset = 0;
 
@@ -2574,7 +2826,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
                     opacity: '0'
                 }
             ], this.animationOptions).onfinish = () => {
-                notification.setAttribute('style', `height: 0; margin-bottom: 0`);
+                notification.remove()
             }
         else {
             notification.animate([
@@ -2587,12 +2839,9 @@ customElements.define('sm-notifications', class extends HTMLElement {
                     opacity: '0'
                 }
             ], this.animationOptions).onfinish = () => {
-                notification.setAttribute('style', `height: 0; margin-bottom: 0`);
+                notification.remove()
             }
         }
-        setTimeout(() => {
-            notification.remove()
-        }, this.animationOptions.duration * 2)
     }
 
     connectedCallback() {
@@ -2707,13 +2956,13 @@ smMenu.innerHTML = `
                 overflow: hidden auto;
                 position: absolute;
                 display: flex;
-                min-width: 100%;
+                min-width: max-content;
                 transform: translateY(-1rem);
                 flex-direction: column;
                 background: rgba(var(--foreground-color), 1);
                 transition: opacity 0.3s, transform 0.3s;
                 border: solid 1px rgba(var(--text-color), 0.2);
-                border-radius: 0.2rem;
+                border-radius: 0.3rem;
                 z-index: 2;
                 box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
                 top: 100%;
@@ -2766,14 +3015,14 @@ customElements.define('sm-menu', class extends HTMLElement {
     set value(val) {
         this.setAttribute('value', val)
     }
-    expand() {
+    expand = () => {
         if (!this.open) {
-            if (this.containerDimensions.left > this.containerDimensions.width) {
-                this.optionList.style.right = 0
+            /*if (this.containerDimensions.left > this.containerDimensions.width) {
+                this.optionList.setAttribute('style', 'right: 0')
             }
             else {
-                this.optionList.style.right = 'auto'
-            }
+                this.optionList.setAttribute('style', 'left: 0')
+            }*/
             this.optionList.classList.remove('hide')
             this.optionList.classList.add('no-transformations')
             this.open = true
@@ -2837,12 +3086,12 @@ customElements.define('sm-menu', class extends HTMLElement {
             this.availableOptions = slot.assignedElements()
             this.containerDimensions = this.optionList.getBoundingClientRect()
             this.menuDimensions = menu.getBoundingClientRect()
-            if (this.containerDimensions.left > this.containerDimensions.width) {
+            /*if (this.containerDimensions.left > this.containerDimensions.width) {
                 this.optionList.style.right = 0
             }
             else {
                 this.optionList.style.right = 'auto'
-            }
+            }*/
         });
         window.addEventListener('mousedown', e => {
             if (!this.contains(e.target) && e.button !== 2) {
@@ -2857,25 +3106,26 @@ customElements.define('sm-menu', class extends HTMLElement {
                 }
             })
         }
-        const intersectionObserver = new IntersectionObserver(entries => {
+       /* const intersectionObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                if (!entry.isIntersecting && this.open) {
+                if (this.open && !entry.isIntersecting) {
                     if (window.innerHeight - entry.intersectionRect.top < this.containerDimensions.height)
                         this.optionList.classList.add('moveUp')
                     else
                         this.optionList.classList.remove('moveUp')
+                    console.log(entry.intersectionRect.left > this.containerDimensions.width)
                     if (entry.intersectionRect.left > this.containerDimensions.width) {
-                        this.optionList.style.right = 0
+                        this.optionList.setAttribute('style', 'right: 0')
                     }
                     else {
-                        this.optionList.style.right = 'auto'
+                        this.optionList.setAttribute('style', 'left: 0')
                     }
                 }
             })
         }, {
             threshold: 1
         })
-        intersectionObserver.observe(this.optionList)
+        intersectionObserver.observe(this.optionList)*/
     }
 })
 
@@ -2892,8 +3142,9 @@ smMenuOption.innerHTML = `
                 display: flex;
             }
             .option{
+                opacity: 0.7;
                 min-width: 100%;
-                padding: 0.8rem 1.6rem;
+                padding: 0.6rem 2rem;
                 cursor: pointer;
                 overflow-wrap: break-word;
                 white-space: nowrap;
@@ -2908,6 +3159,7 @@ smMenuOption.innerHTML = `
             }
             @media (hover: hover){
                 .option:hover{
+                    opacity: 1;
                     background: rgba(var(--text-color), 0.1);
                 }
             }
@@ -2971,7 +3223,7 @@ smTabHeader.innerHTML = `
 }
 :host([variant="tab"]) .indicator{
     height: 100%;
-    border-radius: 0.2rem
+    border-radius: 0.3rem;
 }
 :host([variant="tab"]) .tab-header{
     border-bottom: none; 
@@ -2983,8 +3235,8 @@ smTabHeader.innerHTML = `
     gap: 0;
     display: inline-grid;
     justify-self: flex-start;
-    box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.2);
-    border-radius: 0.2rem;
+    background: rgba(var(--text-color), 0.1);
+    border-radius: 0.3rem;
 }
 :host([variant="tab"]) slot::slotted(.active){
     color: rgba(var(--foreground-color), 1);
@@ -3034,12 +3286,25 @@ customElements.define('sm-tab-header', class extends HTMLElement {
         )
     }
 
+    moveIndiactor(tabDimensions) {
+        //if(this.isTab)
+        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+        //else
+        //this.indicator.setAttribute('style', `width: calc(${tabDimensions.width}px - 1.6rem); transform: translateX(calc(${ tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px + 0.8rem)`)
+    }
+
     connectedCallback() {
         if (!this.hasAttribute('target') || this.getAttribute('target').value === '') return;
         this.prevTab
         this.allTabs
         this.activeTab
+        this.isTab = false
         this.target = this.getAttribute('target')
+
+        if (this.hasAttribute('variant') && this.getAttribute('variant') === 'tab') {
+            this.isTab = true
+        }
+
         this.tabSlot.addEventListener('slotchange', () => {
             this.tabSlot.assignedElements().forEach((tab, index) => {
                 tab.setAttribute('rank', index)
@@ -3055,7 +3320,7 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             e.target.classList.add('active')
 
             e.target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
-            this.indicator.setAttribute('style', `width: ${e.target.getBoundingClientRect().width}px; transform: translateX(${e.target.getBoundingClientRect().left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+            this.moveIndiactor(e.target.getBoundingClientRect())
             this.sendDetails(e.target)
             this.prevTab = e.target;
             this.activeTab = e.target;
@@ -3064,7 +3329,7 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             entries.forEach((entry) => {
                 if (this.prevTab) {
                     let tabDimensions = this.activeTab.getBoundingClientRect();
-                    this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                    this.moveIndiactor(tabDimensions)
                 }
             })
         })
@@ -3075,12 +3340,12 @@ customElements.define('sm-tab-header', class extends HTMLElement {
                     this.indicator.style.transition = 'none'
                     if (this.activeTab) {
                         let tabDimensions = this.activeTab.getBoundingClientRect();
-                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                        this.moveIndiactor(tabDimensions)
                     }
                     else {
                         this.allTabs[0].classList.add('active')
                         let tabDimensions = this.allTabs[0].getBoundingClientRect();
-                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                        this.moveIndiactor(tabDimensions)
                         this.sendDetails(this.allTabs[0])
                         this.prevTab = this.tabSlot.assignedElements()[0];
                         this.activeTab = this.prevTab;
@@ -3104,13 +3369,13 @@ smTabPanels.innerHTML = `
     box-sizing: border-box;
 } 
 :host{
-    display: flex;
     width: 100%;
 }
 .panel-container{
     position: relative;
     display: flex;
     width: 100%;
+    height: 100%
     overflow: hidden auto;
 }
 slot::slotted(.hide-completely){
@@ -3246,5 +3511,71 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
             this.previousRank = e.detail.rank
             this.prevPanel = this.allPanels[e.detail.rank];
         })
+    }
+})
+
+
+const slidingSection = document.createElement('template')
+slidingSection.innerHTML = `
+<style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizzing: border-box;
+}
+:host{
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+.section{
+    display: flex;
+    max-width: 100%;
+    overflow: hidden auto;
+    scroll-snap-type: mandatory x;
+}
+
+</style>
+<section class="section">
+<slot></slot>
+</section>
+`
+
+customElements.define('sm-sliding-section', class extends HTMLElement {
+    constructor() {
+        super()
+        this.attachShadow({ mode: 'open' }).append(slidingSection.content.cloneNode(true))
+    }
+    connectedCallback() {
+
+    }
+})
+
+const section = document.createElement('template')
+section.innerHTML = `
+<style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizzing: border-box;
+}
+:host{
+    display: flex;
+}
+.section{
+    min-width: 100%;
+    scroll-snap-align: start;
+}
+
+</style>
+<section class="section">
+<slot></slot>
+</section>
+`
+
+customElements.define('sm-section', class extends HTMLElement {
+    constructor() {
+        super()
+        this.attachShadow({ mode: 'open' }).append(section.content.cloneNode(true))
     }
 })
