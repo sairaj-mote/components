@@ -38,7 +38,6 @@
                 <li class="item" data-target="select_page">select</li>
                 <li class="item" data-target="strip_select_page">strip-select</li>
                 <li class="item" data-target="tabs_page">tabs</li>
-                <li class="item" data-target="new_tab_page">new tabs</li>
             </ul>
         </div>
         <div class="right language-html">
@@ -81,13 +80,13 @@
                 <sm-button variant="primary">primary</sm-button>
                 <sm-button variant="outlined">outlined</sm-button>
                 <sm-button variant="no-outline">no-outline</sm-button>
-                <sm-button variant="primary" disabled="true">disabled</sm-button>
+                <sm-button variant="primary" disable>disabled</sm-button>
                 <pre><code class="prettyprint">
                         &lt;sm-button&gt;default&lt;/sm-button&gt;
                         &lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
                         &lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
                         &lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
-                        &lt;sm-button variant="primary" disabled="true"&gt;disabled&lt;/sm-button&gt;
+                        &lt;sm-button variant="primary" disable&gt;disabled&lt;/sm-button&gt;
                     </code>
                 </pre>
             </div>
@@ -112,8 +111,8 @@
                 <label>
                 <sm-checkbox id="checkbox">Default</sm-checkbox>
                 <sm-checkbox id="checkbox" checked="true">Checked</sm-checkbox>
-                <sm-checkbox id="checkbox" disabled="true">Disabled</sm-checkbox>
-                <sm-checkbox id="checkbox" checked="true" disabled="true">Checked Disabled</sm-checkbox>
+                <sm-checkbox id="checkbox" disable>Disabled</sm-checkbox>
+                <sm-checkbox id="checkbox" checked="true" disable>Checked Disabled</sm-checkbox>
             </label>
             </div>
 
@@ -147,13 +146,13 @@
                 <h4>Example</h4>
                 
                 <sm-button
-                    onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit.Lorem ipsum dolor, sit amet consectetur adipisicing elit.', 'success')">
+                    onclick="document.getElementById('notify').push('Lorem ipsum dolor, consectetur adipisicing elit.', 'success')">
                     push success notification</sm-button>
-                <sm-button onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet.', 'error', true)">
+                <sm-button onclick="document.getElementById('notify').push('Lorem ipsum dolor, sit amet.', 'error')">
                     push error notification</sm-button>
                 <sm-button
-                    onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit.', '', true)">
-                    push notification</sm-button>
+                    onclick="document.getElementById('notify').push('Lorem ipsum dolor, sit amet consectetur adipisicing elit.', '', true)">
+                    push pinned notification</sm-button>
             </div>
 
             <div id="popup_page" class="page hide-completely">
@@ -182,9 +181,8 @@
                     To start using SM Components
                 </p>
                 <sm-switch id="switch"></sm-switch>
-                <sm-switch id="switch" checked="true"></sm-switch>
-                <sm-switch id="switch" disabled="true"></sm-switch>
-                <sm-switch id="switch"checked="true" disabled="true"></sm-switch>
+                <sm-switch id="switch" checked></sm-switch>
+                <sm-switch id="switch" disable></sm-switch>
             </div>
 
             <div id="select_page" class="page hide-completely">
@@ -213,42 +211,8 @@
                     <sm-strip-option>option1</sm-strip-option>
                 </sm-strip-select>
             </div>
-
+        
             <div id="tabs_page" class="page hide-completely">
-                <h1 class="headline">Tabs</h1>
-                <p class="description">
-                    To start using SM Components
-                </p>
-                <sm-tabs variant="tab">
-                    <sm-tab slot="tab">inbox</sm-tab>
-                    <sm-panel slot="panel">
-                        gjdhnsrfijbgn<br>bdfjnbj
-                    </sm-panel>
-                    <sm-tab slot="tab">sent</sm-tab>
-                    <sm-panel slot="panel">
-                        jadifjoaijdiajdo
-                        dosfighjoi<br>
-                        flkmgklfmzkl<br>
-                        hbdsfhb
-                    </sm-panel>
-                    <sm-tab slot="tab">draft</sm-tab>
-                    <sm-panel slot="panel">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facere neque incidunt aut laudantium, quam
-                        id,
-                        molestiae vero blanditiis nisi alias in magnam autem quasi cumque eveniet qui cupiditate nam
-                        corrupti?
-                    </sm-panel>
-                    <sm-tab slot="tab">spam</sm-tab>
-                    <sm-panel slot="panel">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis fuga ipsam, explicabo, eius
-                        accusamus
-                        consectetur ex sunt soluta voluptatem iure totam nulla expedita suscipit minus molestiae similique
-                        odio optio
-                        quibusdam.
-                    </sm-panel>
-                </sm-tabs>
-            </div>            
-            <div id="new_tab_page" class="page hide-completely">
                 <h1 class="headline">new Tabs</h1>
                 <p class="description">
                     To start using SM Components
@@ -286,7 +250,7 @@
             </div>            
         </div>
     </main>
-    <script src="https://cdn.jsdelivr.net/gh/sairaj-mote/components/components.js"></script>
+    <script src="components.js"></script>
     <script>
         let currentPage = document.getElementById('overview_page'),
             selectedItem = document.getElementById('overview_entry'),
@@ -307,6 +271,9 @@
         showPage(selectedItem, 'overview_page')
         document.getElementById('get_started_btn').addEventListener('click', e => {
             main.scrollIntoView()
+        })
+        document.addEventListener('change', e => {
+            console.log(e.target)
         })
     </script>
         <script src="prettify.js"></script>
