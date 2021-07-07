@@ -259,10 +259,13 @@ pre .atv, code .atv { color: var(--accent-color); } /* html/xml attribute value*
 pre .dec, code .dec { color: #3387CC; } /* decimal - blue */
 
 pre{
+    max-width: 100%;
 	margin: 1rem 0;
     padding: 0 1.5rem;
-    border-radius: 0.2rem;
+    overflow-x: auto;
+    font-size: 0.9rem;
     white-space: pre-line;
+    border-radius: 0.5rem;
     background: rgba(var(--text-color), .04);
 }
 code{
@@ -343,11 +346,12 @@ ol{
 }
 .card{
     display: flex;
-    height: 24rem;
+    flex-direction: column;
     margin-right: 1rem;
     border-radius: 0.4rem;
-    width: 100%;
-    object-fit: cover;
+    padding: 1.5rem;
+    min-width: min(24rem, 80%);
+    background-color: rgba(var(--text-color), .06);
 }
 sm-carousel{
     margin-bottom: 1rem;

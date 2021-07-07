@@ -350,10 +350,13 @@ pre .dec, code .dec {
 
 /* decimal - blue */
 pre {
+  max-width: 100%;
   margin: 1rem 0;
   padding: 0 1.5rem;
-  border-radius: 0.2rem;
+  overflow-x: auto;
+  font-size: 0.9rem;
   white-space: pre-line;
+  border-radius: 0.5rem;
   background: rgba(var(--text-color), 0.04);
 }
 
@@ -445,11 +448,12 @@ ol li::first-letter {
 
 .card {
   display: flex;
-  height: 24rem;
+  flex-direction: column;
   margin-right: 1rem;
   border-radius: 0.4rem;
-  width: 100%;
-  object-fit: cover;
+  padding: 1.5rem;
+  min-width: min(24rem, 80%);
+  background-color: rgba(var(--text-color), 0.06);
 }
 
 sm-carousel {

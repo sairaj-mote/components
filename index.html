@@ -13,7 +13,7 @@
         rel="stylesheet">
 </head>
 
-<body>
+<body class="hide-completely">
     <sm-notifications id="notification_drawer"></sm-notifications>
     <audio id="notification_sound">
         <source src="https://rmservices.duckdns.org/files/notification-sound.mp3" type="audio/mpeg">
@@ -40,12 +40,12 @@
             <h3>Getting Started</h3>
             <ul class="list">
                 <li>
-                    <a href="#overview_page" class="list__item list__item--active">
+                    <a href="#overview_page" class="list__item list__item--active interact">
                         Overview
                     </a>
                 </li>
                 <li>
-                    <a href="#download_page" class="list__item">
+                    <a href="#download_page" class="list__item interact">
                         Quick start
                     </a>
                 </li>
@@ -102,7 +102,8 @@
                 <sm-button variant="outlined">outlined</sm-button>
                 <sm-button variant="no-outline">no-outline</sm-button>
                 <sm-button variant="primary" disabled>disabled</sm-button>
-                <pre><code class="prettyprint">
+                <pre>
+                    <code class="prettyprint">
                         &lt;sm-button&gt;default&lt;/sm-button&gt;
                         &lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
                         &lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
@@ -117,10 +118,23 @@
                 <p class="description">
                     To start using SM Components
                 </p>
-                <sm-carousel>
-                    <img src="resources/background2.jpg" alt="" class="card">
-                    <img src="resources/background3.jpg" alt="" class="card">
-                    <img src="resources/background4.jpg" alt="" class="card">
+                <sm-carousel align-items="start">
+                    <div class="card">
+                        <h3>Title</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident, optio.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Title</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident, optio.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Title</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident, optio.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Title</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident, optio.</p>
+                    </div>
                 </sm-carousel>
             </section>
 
@@ -314,7 +328,7 @@
     </main>
     <template id="nav_item_template">
         <li>
-            <a class="list__item"></a>
+            <a class="list__item interact"></a>
         </li>
     </template>
     <script src="components.js"></script>
@@ -627,6 +641,7 @@
 
         window.addEventListener('hashchange', e => showPage(window.location.hash))
         window.addEventListener('load', e => {
+            document.body.classList.remove('hide-completely')
             renderComponentList()
             showPage(window.location.hash)
             PR.prettyPrint()
@@ -663,6 +678,10 @@
             {
                 name: 'File input',
                 pageId: 'file_input_page'
+            },
+            {
+                name: 'Form',
+                pageId: 'form_page'
             },
             {
                 name: 'Input',

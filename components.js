@@ -1798,6 +1798,7 @@ customElements.define('strip-select', class extends HTMLElement{
     }
 })
 
+//Strip option
 const stripOption = document.createElement('template')
 stripOption.innerHTML = `
 <style>
@@ -1838,8 +1839,6 @@ stripOption.innerHTML = `
     <slot></slot>
 </label>
 `
-
-//Strip option
 customElements.define('strip-option', class extends HTMLElement{
     constructor() {
         super()
