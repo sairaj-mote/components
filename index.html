@@ -5,93 +5,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SM Components</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Roboto+Mono&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
 </head>
 
-<body onload="PR.prettyPrint()">
-    <sm-notifications id="notify"></sm-notifications>
-    <section>
-        <div class="background-box"></div>
-        <h1>SM Web Components</h1>
-        <h4>UI components based on custom elements API.</h4>
-        <div>
-            <sm-button id="get_started_btn" variant="primary">Get started</sm-button>
-        </div>
-    </section>
+<body>
+    <sm-notifications id="notification_drawer"></sm-notifications>
+    <audio id="notification_sound">
+        <source src="https://rmservices.duckdns.org/files/notification-sound.mp3" type="audio/mpeg">
+        <source src="https://rmservices.duckdns.org/files/notification-sound.ogg" type="audio/ogg">
+    </audio>
     <main>
-        <div id="menu" class="left">
+        <header id="main_header" class="flex align-center space-between">
+            <h4>SM Web Components</h4>
+            <label class="theme-switcher" title="Change theme">
+                <input id="theme_switcher" class="theme-switcher__checkbox" type="checkbox">
+                <svg class="icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="none" d="M0 0h24v24H0z" />
+                    <path
+                        d="M10 6a8 8 0 0 0 11.955 6.956C21.474 18.03 17.2 22 12 22 6.477 22 2 17.523 2 12c0-5.2 3.97-9.474 9.044-9.955A7.963 7.963 0 0 0 10 6zm-6 6a8 8 0 0 0 8 8 8.006 8.006 0 0 0 6.957-4.045c-.316.03-.636.045-.957.045-5.523 0-10-4.477-10-10 0-.321.015-.64.045-.957A8.006 8.006 0 0 0 4 12zm14.164-9.709L19 2.5v1l-.836.209a2 2 0 0 0-1.455 1.455L16.5 6h-1l-.209-.836a2 2 0 0 0-1.455-1.455L13 3.5v-1l.836-.209A2 2 0 0 0 15.29.836L15.5 0h1l.209.836a2 2 0 0 0 1.455 1.455zm5 5L24 7.5v1l-.836.209a2 2 0 0 0-1.455 1.455L21.5 11h-1l-.209-.836a2 2 0 0 0-1.455-1.455L18 8.5v-1l.836-.209a2 2 0 0 0 1.455-1.455L20.5 5h1l.209.836a2 2 0 0 0 1.455 1.455z" />
+                </svg>
+                <svg class="icon sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="none" d="M0 0h24v24H0z" />
+                    <path
+                        d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z" />
+                </svg>
+            </label>
+        </header>
+        <nav id="menu" class="left">
             <h3>Getting Started</h3>
             <ul class="list">
-                <li id="overview_entry" class="item active" data-target="overview_page">Overview</li>
-                <li id="download_entry" class="item" data-target="download_page">Quick start</li>
+                <li>
+                    <a href="#overview_page" class="list__item list__item--active">
+                        Overview
+                    </a>
+                </li>
+                <li>
+                    <a href="#download_page" class="list__item">
+                        Quick start
+                    </a>
+                </li>
             </ul>
             <h3>Components</h3>
-            <ul class="list">
-                <li id="button_entry" class="item" data-target="button_page">button</li>
-                <li class="item" data-target="carousel_page">carousel</li>
-                <li class="item" data-target="checkbox_page">checkbox</li>
-                <li class="item" data-target="input_page">input</li>
-                <li class="item" data-target="menu_page">menu</li>
-                <li class="item" data-target="notification_page">notifications</li>
-                <li class="item" data-target="popup_page">popup</li>
-                <li class="item" data-target="switch_page">switch</li>
-                <li class="item" data-target="select_page">select</li>
-                <li class="item" data-target="strip_select_page">strip-select</li>
-                <li class="item" data-target="tabs_page">tabs</li>
-            </ul>
-        </div>
+            <ul id="components_list" class="list"></ul>
+        </nav>
         <div class="right language-html">
-            <div id="overview_page" class="page">
+            <section id="overview_page" class="page">
                 <h1 class="headline">Overview</h1>
                 <p class="description">
-                    These components are based on HTML5 custom elements API. This is an attempt to unify UI development patterns and
-                    elements that are used multiple times throughout any general web app.It uses 'sm' namespace for all components. So every
+                    These components are based on HTML5 custom elements API. This is an attempt to unify UI development
+                    patterns and
+                    elements that are used multiple times throughout any general web app.It uses 'sm' namespace for all
+                    components. So every
                     component tag starts with <strong>'sm-'</strong>
                 </p>
                 <p>
-                    They can replace some older UI elements like <code>&lt;select&gt;</code> <code>&lt;input&gt;</code> <code>&lt;checkbox&gt;</code> <code>&lt;button&gt;</code>
-                    But also more modern additions like <strong>popups(modals), tabs and many more.</strong> 
+                    They can replace some older UI elements like <code>&lt;select&gt;</code> <code>&lt;input&gt;</code>
+                    <code>&lt;checkbox&gt;</code> <code>&lt;button&gt;</code>
+                    But also more modern additions like <strong>popups(modals), tabs and many more.</strong>
                 </p>
                 <p>
-                    Some of the components have some cool tricks under their sleeves like <strong>custom events and variantions</strong>.
-                    They allow developers to access more information about component or simply react to whatever state change happen to them.
-                    We will go more in-depth about all the variantions and customs events related to each event as we go further.
+                    Some of the components have some cool tricks under their sleeves like <strong>custom events and
+                        variantions</strong>.
+                    They allow developers to access more information about component or simply react to whatever state
+                    change happen to them.
+                    We will go more in-depth about all the variantions and customs events related to each event as we go
+                    further.
                 </p>
-            </div>
+            </section>
 
-            <div id="download_page" class="page hide-completely">
+            <section id="download_page" class="page hide-completely">
                 <h1 class="headline">Quick Start</h1>
                 <p class="description">
                     To start using SM Components
                 </p>
                 <ol type="1">
-                    <li>Download <a href="https://github.com/sairaj-mote/components"> components.js from Github.</a></li>
-                    <li>Add file to bottom of your HTML file just before closing <code>&lt;/body&gt;</code> tag with <code>&lt;script&gt;</code>tag.</li>
+                    <li>Download <a href="https://github.com/sairaj-mote/components"> components.js from Github.</a>
+                    </li>
+                    <li>Add file to bottom of your HTML file just before closing <code>&lt;/body&gt;</code> tag with
+                        <code>&lt;script&gt;</code>tag.</li>
                 </ol>
                 <p>Now you are ready to use them in your HTML markup as any other standard HMTL tags 😄.</p>
-            </div>
+            </section>
 
-            <div id="button_page" class="page hide-completely">
+            <section id="button_page" class="page hide-completely">
                 <h1 class="headline">Buttons</h1>
                 <p class="description">
-                    Buttons are used in various basic UI interactions to perform an action.  
+                    Buttons are used in various basic UI interactions to perform an action.
                 </p>
                 <sm-button>default</sm-button>
                 <sm-button variant="primary">primary</sm-button>
                 <sm-button variant="outlined">outlined</sm-button>
                 <sm-button variant="no-outline">no-outline</sm-button>
-                <sm-button variant="primary" disable>disabled</sm-button>
+                <sm-button variant="primary" disabled>disabled</sm-button>
                 <pre><code class="prettyprint">
                         &lt;sm-button&gt;default&lt;/sm-button&gt;
                         &lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
                         &lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
                         &lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
-                        &lt;sm-button variant="primary" disable&gt;disabled&lt;/sm-button&gt;
+                        &lt;sm-button variant="primary" disabled&gt;disabled&lt;/sm-button&gt;
                     </code>
                 </pre>
-            </div>
+            </section>
 
-            <div id="carousel_page" class="page hide-completely">
+            <section id="carousel_page" class="page hide-completely">
                 <h1 class="headline">Carousel</h1>
                 <p class="description">
                     To start using SM Components
@@ -101,31 +122,51 @@
                     <img src="resources/background3.jpg" alt="" class="card">
                     <img src="resources/background4.jpg" alt="" class="card">
                 </sm-carousel>
-            </div>
+            </section>
 
-            <div id="checkbox_page" class="page hide-completely">
+            <section id="checkbox_page" class="page hide-completely">
                 <h1 class="headline">Checkbox</h1>
                 <p class="description">
                     To start using SM Components
                 </p>
                 <label>
-                <sm-checkbox id="checkbox">Default</sm-checkbox>
-                <sm-checkbox id="checkbox" checked="true">Checked</sm-checkbox>
-                <sm-checkbox id="checkbox" disable>Disabled</sm-checkbox>
-                <sm-checkbox id="checkbox" checked="true" disable>Checked Disabled</sm-checkbox>
-            </label>
-            </div>
+                    <sm-checkbox id="checkbox">Default</sm-checkbox>
+                    <sm-checkbox id="checkbox" checked>Checked</sm-checkbox>
+                    <sm-checkbox id="checkbox" disabled>Disabled</sm-checkbox>
+                    <sm-checkbox id="checkbox" checked disabled>Checked Disabled</sm-checkbox>
+                </label>
+            </section>
 
-            <div id="input_page" class="page hide-completely">
+            <section id="file_input_page" class="page hide-completely">
+                <h1 class="headline">File input</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <file-input></file-input>
+                <p id="insert_text"></p>
+            </section>
+            <section id="form_page" class="page hide-completely">
+                <h1 class="headline">Form</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <sm-form>
+                    <sm-input placeholder="Enter name" required animate></sm-input>
+                    <sm-button variant="primary" disabled>Submit</sm-button>
+                </sm-form>
+                <p id="insert_text"></p>
+            </section>
+            <section id="input_page" class="page hide-completely">
                 <h1 class="headline">Input</h1>
                 <p class="description">
                     To start using SM Components
                 </p>
-                <sm-input id="my_input" placeholder="something" type="email" helper-text="please enter correct email" animate></sm-input>
+                <sm-input id="my_input" placeholder="something" type="email" helper-text="please enter correct email"
+                    animate></sm-input>
                 <p id="insert_text"></p>
-            </div>
+            </section>
 
-            <div id="menu_page" class="page hide-completely">
+            <section id="menu_page" class="page hide-completely">
                 <h1 class="headline">Menu</h1>
                 <p class="description">
                     To start using SM Components
@@ -136,29 +177,30 @@
                     <sm-menu-option>third option</sm-menu-option>
                 </sm-menu>
                 <p id="insert_text"></p>
-            </div>
+            </section>
 
-            <div id="notification_page" class="page hide-completely">
+            <section id="notification_page" class="page hide-completely">
                 <h1 class="headline">Notifications</h1>
                 <p class="description">
                     To start using SM Components
                 </p>
                 <h4>Example</h4>
-                
+
                 <sm-button
-                    onclick="document.getElementById('notify').push('Lorem ipsum dolor, consectetur adipisicing elit.', 'success')">
+                    onclick="getRef('notify').push('Lorem ipsum dolor, consectetur adipisicing elit.', 'success')">
                     push success notification</sm-button>
-                <sm-button onclick="document.getElementById('notify').push('Lorem ipsum dolor, sit amet.', 'error')">
+                <sm-button onclick="getRef('notify').push('Lorem ipsum dolor, sit amet.', 'error')">
                     push error notification</sm-button>
                 <sm-button
-                    onclick="document.getElementById('notify').push('Lorem ipsum dolor, sit amet consectetur adipisicing elit.', '', true)">
+                    onclick="getRef('notify').push('Lorem ipsum dolor, sit amet consectetur adipisicing elit.', '', true)">
                     push pinned notification</sm-button>
-            </div>
+            </section>
 
-            <div id="popup_page" class="page hide-completely">
+            <section id="popup_page" class="page hide-completely">
                 <h1 class="headline">Popup(Modal)</h1>
                 <p class="description">
-                    Popups are used to show addition UI elements that you may want to hide at first and reveal them when needed.
+                    Popups are used to show addition UI elements that you may want to hide at first and reveal them when
+                    needed.
                 </p>
                 <sm-popup id="popup" heading="something">
                     idhfioushdfiuh<br>
@@ -171,49 +213,53 @@
                     idhfioushdfiuh<br>
                     idhfioushdfiuh<br>
                 </sm-popup>
-                
-                <sm-button variant="primary" onclick="document.getElementById('popup').show()">show popup</sm-button>
-            </div>
 
-            <div id="switch_page" class="page hide-completely">
+                <sm-button variant="primary" onclick="getRef('popup').show()">show popup</sm-button>
+            </section>
+
+            <section id="switch_page" class="page hide-completely">
                 <h1 class="headline">Switch</h1>
                 <p class="description">
                     To start using SM Components
                 </p>
                 <sm-switch id="switch"></sm-switch>
                 <sm-switch id="switch" checked></sm-switch>
-                <sm-switch id="switch" disable></sm-switch>
-            </div>
+                <sm-switch id="switch" disabled></sm-switch>
+            </section>
 
-            <div id="select_page" class="page hide-completely">
+            <section id="select_page" class="page hide-completely">
                 <h1 class="headline">Select</h1>
                 <p>
-                    <code>&lt;sm-select&gt;</code> is very similar to starndatd HTML5 select and it's markup stucture is also identical.</p>
-                <sm-select >
+                    <code>&lt;sm-select&gt;</code> is very similar to starndatd HTML5 select and it's markup stucture is
+                    also identical.
+                </p>
+                <sm-select>
                     <sm-option value="1">option1</sm-option>
                     <sm-option value="2">option2 something</sm-option>
                     <sm-option value="3">option3</sm-option>
                 </sm-select>
-            </div>
+            </section>
 
-            <div id="strip_select_page" class="page hide-completely">
+            <section id="strip_select_page" class="page hide-completely">
                 <h1 class="headline">Strip-select</h1>
                 <p class="description">
                     To start using SM Components
                 </p>
-                <sm-strip-select>
-                    <sm-strip-option value="something">option1</sm-strip-option>
-                    <sm-strip-option>option1</sm-strip-option>
-                    <sm-strip-option>option1</sm-strip-option>
-                    <sm-strip-option>option1</sm-strip-option>
-                    <sm-strip-option>option1</sm-strip-option>
-                    <sm-strip-option>option1</sm-strip-option>
-                    <sm-strip-option>option1</sm-strip-option>
-                </sm-strip-select>
-            </div>
-        
-            <div id="tabs_page" class="page hide-completely">
-                <h1 class="headline">new Tabs</h1>
+                <strip-select id="browse_category_selector">
+                    <strip-option value="movie" selected>Movie</strip-option>
+                    <strip-option value="tv series">TV series</strip-option>
+                    <strip-option value="video">Video</strip-option>
+                    <strip-option value="music">Music</strip-option>
+                    <strip-option value="software">Software</strip-option>
+                    <strip-option value="game">Game</strip-option>
+                    <strip-option value="image">Image</strip-option>
+                    <strip-option value="audio">Audio</strip-option>
+                    <strip-option value="misc">Misc</strip-option>
+                </strip-select>
+            </section>
+
+            <section id="tabs_page" class="page hide-completely">
+                <h1 class="headline">Tabs</h1>
                 <p class="description">
                     To start using SM Components
                 </p>
@@ -234,7 +280,8 @@
                         hbdsfhb
                     </sm-panel>
                     <sm-panel>
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facere neque incidunt aut laudantium, quam
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facere neque incidunt aut laudantium,
+                        quam
                         id,
                         molestiae vero blanditiis nisi alias in magnam autem quasi cumque eveniet qui cupiditate nam
                         corrupti?
@@ -242,41 +289,433 @@
                     <sm-panel>
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis fuga ipsam, explicabo, eius
                         accusamus
-                        consectetur ex sunt soluta voluptatem iure totam nulla expedita suscipit minus molestiae similique
+                        consectetur ex sunt soluta voluptatem iure totam nulla expedita suscipit minus molestiae
+                        similique
                         odio optio
                         quibusdam.
                     </sm-panel>
                 </sm-tab-panels>
-            </div>            
+            </section>
+            <section id="tags_input_page" class="page hide-completely">
+                <h1 class="headline">Tags input</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <tags-input placeholder="Add tags..."></tags-input>
+            </section>
+            <section id="textarea_page" class="page hide-completely">
+                <h1 class="headline">Textarea</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <sm-textarea placeholder="Add some text here..." rows="4"></sm-textarea>
+            </section>
         </div>
     </main>
+    <template id="nav_item_template">
+        <li>
+            <a class="list__item"></a>
+        </li>
+    </template>
     <script src="components.js"></script>
-    <script>
-        let currentPage = document.getElementById('overview_page'),
-            selectedItem = document.getElementById('overview_entry'),
-            main = document.querySelector('main');
-        function showPage(item, targetPage){
-            let page = document.getElementById(targetPage)
-            currentPage.classList.add('hide-completely')
-            selectedItem.classList.remove('active')
-            page.classList.remove('hide-completely')
-            item.classList.add('active')
-            currentPage = page
-            selectedItem = item
+    <script id="default_ui_library">
+        const domRefs = {};
+
+        function getRef(elementId) {
+            if (!domRefs.hasOwnProperty(elementId)) {
+                domRefs[elementId] = {
+                    count: 1,
+                    ref: null,
+                };
+                return document.getElementById(elementId);
+            } else {
+                if (domRefs[elementId].count < 3) {
+                    domRefs[elementId].count = domRefs[elementId].count + 1;
+                    return document.getElementById(elementId);
+                } else {
+                    if (!domRefs[elementId].ref)
+                        domRefs[elementId].ref = document.getElementById(elementId);
+                    return domRefs[elementId].ref;
+                }
+            }
         }
-        document.getElementById('menu').addEventListener('click', e => {
-            if(e.target.closest('.item'))
-                showPage(e.target.closest('.item'), e.target.closest('.item').dataset.target)
-        })
-        showPage(selectedItem, 'overview_page')
-        document.getElementById('get_started_btn').addEventListener('click', e => {
-            main.scrollIntoView()
-        })
-        document.addEventListener('change', e => {
-            console.log(e.target)
-        })
+
+        function create(tagName, obj) {
+            const { className, textContent, innerHTML } = obj
+            const elem = document.createElement(tagName)
+            if (className)
+                elem.className = className
+            elem.textContent = textContent
+            if (innerHTML)
+                elem.innerHTML = innerHTML
+            return elem
+        }
+        const debounce = (callback, wait) => {
+            let timeoutId = null;
+            return (...args) => {
+                window.clearTimeout(timeoutId);
+                timeoutId = window.setTimeout(() => {
+                    callback.apply(null, args);
+                }, wait);
+            };
+        }
+
+        let timerId;
+        function throttle(func, delay) {
+            // If setTimeout is already scheduled, no need to do anything
+            if (timerId) {
+                return;
+            }
+
+            // Schedule a setTimeout after delay seconds
+            timerId = setTimeout(function () {
+                func();
+
+                // Once setTimeout function execution is finished, timerId = undefined so that in
+                // the next scroll event function execution can be scheduled by the setTimeout
+                timerId = undefined;
+            }, delay);
+        }
+
+        //Checks for internet connection status
+        if (!navigator.onLine)
+            notify(
+                "There seems to be a problem connecting to the internet, Please check you internet connection.",
+                "error",
+                "",
+                true
+            );
+        window.addEventListener("offline", () => {
+            notify(
+                "There seems to be a problem connecting to the internet, Please check you internet connection.",
+                "error",
+                true,
+                true
+            );
+        });
+        window.addEventListener("online", () => {
+            getRef("notification_drawer").clearAll();
+            notify("We are back online.", "success");
+        });
+
+        if (getRef("theme_switcher")) {
+            if (localStorage.theme === "dark") {
+                nightlight();
+                getRef("theme_switcher").checked = true;
+            } else if (localStorage.theme === "light") {
+                daylight();
+                getRef("theme_switcher").checked = false;
+            }
+            else {
+                if (window.matchMedia(`(prefers-color-scheme: dark)`).matches) {
+                    nightlight();
+                    getRef("theme_switcher").checked = true;
+                } else {
+                    daylight();
+                    getRef("theme_switcher").checked = false;
+                }
+            }
+
+            function daylight() {
+                document.body.setAttribute("data-theme", "light");
+            }
+
+            function nightlight() {
+                document.body.setAttribute("data-theme", "dark");
+            }
+            getRef("theme_switcher").addEventListener("change", function (e) {
+                if (this.checked) {
+                    nightlight();
+                    localStorage.setItem("theme", "dark");
+                } else {
+                    daylight();
+                    localStorage.setItem("theme", "light");
+                }
+            });
+        }
+
+        // function required for popups or modals to appear
+        class Stack {
+            constructor() {
+                this.items = [];
+            }
+            push(element) {
+                this.items.push(element);
+            }
+            pop() {
+                if (this.items.length == 0)
+                    return "Underflow";
+                return this.items.pop();
+            }
+            peek() {
+                return this.items[this.items.length - 1];
+            }
+        }
+        let popupStack = new Stack(),
+            zIndex = 10;
+
+        async function showPopup(popup, pinned) {
+            zIndex++
+            getRef(popup).setAttribute('style', `z-index: ${zIndex}`)
+            popupStack = getRef(popup).show(pinned, popupStack)
+            return getRef(popup);
+        }
+
+        // hides the popup or modal 
+        function hidePopup() {
+            if (popupStack.peek() === undefined)
+                return;
+            popupStack.peek().popup.hide()
+        }
+
+        // displays a popup for asking permission. Use this instead of JS confirm
+        let confirmation = (title, message, cancelText = 'Cancel', confirmText = 'OK') => {
+            return new Promise(resolve => {
+                showPopup('confirmation_popup', true)
+                getRef('confirm_title').textContent = title;
+                getRef('confirm_message').textContent = message;
+                let cancelButton = getRef('confirmation_popup').children[2].children[0],
+                    submitButton = getRef('confirmation_popup').children[2].children[1]
+                submitButton.textContent = confirmText
+                cancelButton.textContent = cancelText
+                submitButton.onclick = () => {
+                    hidePopup()
+                    resolve(true);
+                }
+                cancelButton.onclick = () => {
+                    hidePopup()
+                    resolve(false);
+                }
+            })
+        }
+        // displays a popup for asking user input. Use this instead of JS prompt
+        async function getPromptInput(title, message = '', showText = true, trueBtn = "Ok", falseBtn = "Cancel") {
+            showPopup('prompt_popup', true)
+            getRef('prompt_title').textContent = title;
+            let input = getRef('prompt_input');
+            input.setAttribute("placeholder", message)
+            let buttons = getRef('prompt_popup').querySelectorAll("sm-button");
+            if (showText)
+                input.setAttribute("type", "text")
+            else
+                input.setAttribute("type", "password")
+            input.focusIn()
+            buttons[0].textContent = falseBtn;
+            buttons[1].textContent = trueBtn;
+            return new Promise((resolve, reject) => {
+                buttons[0].onclick = () => {
+                    hidePopup()
+                    return;
+                }
+                buttons[1].onclick = () => {
+                    let value = input.value;
+                    hidePopup()
+                    resolve(value)
+                }
+            })
+        }
+
+        //Function for displaying toast notifications. pass in error for mode param if you want to show an error.
+        function notify(message, mode, pinned, sound) {
+            if (mode === "error") console.error(message);
+            else console.log(message);
+            getRef("notification_drawer").push(message, mode, pinned);
+            if (navigator.onLine && sound) {
+                getRef("notification_sound").currentTime = 0;
+                getRef("notification_sound").play();
+            }
+        }
+
+        const currentYear = new Date().getFullYear();
+        function getFormatedTime(time, relative) {
+            try {
+                if (String(time).indexOf("_")) time = String(time).split("_")[0];
+                const intTime = parseInt(time);
+                if (String(intTime).length < 13) time *= 1000;
+                let timeFrag = new Date(intTime).toString().split(" "),
+                    day = timeFrag[0],
+                    month = timeFrag[1],
+                    date = timeFrag[2],
+                    year = timeFrag[3],
+                    minutes = new Date(intTime).getMinutes(),
+                    hours = new Date(intTime).getHours(),
+                    currentTime = new Date().toString().split(" ");
+
+                minutes = minutes < 10 ? `0${minutes}` : minutes;
+                let finalHours = ``;
+                if (hours > 12) finalHours = `${hours - 12}:${minutes}`;
+                else if (hours === 0) finalHours = `12:${minutes}`;
+                else finalHours = `${hours}:${minutes}`;
+
+                finalHours = hours >= 12 ? `${finalHours} PM` : `${finalHours} AM`;
+                if (relative) {
+                    return `${date} ${month} ${year}`;
+                } else return `${finalHours} ${month} ${date} ${year}`;
+            } catch (e) {
+                console.error(e);
+                return time;
+            }
+        }
+
+        const inputValidation = debounce((e) => {
+            if (e.target.closest('sm-input')) {
+                const input = e.target.closest('sm-input')
+                if (input.value === '')
+                    input.setValidity('')
+                if (input.hasAttribute('data-flo-id')) {
+                    if (validateAddr(input.value.trim()) || input.value.trim() === '')
+                        input.setValidity('')
+                    else
+                        input.setValidity('Invalid FLO address.')
+                }
+            }
+        }, 100)
+
+        window.addEventListener("load", () => {
+            // document.querySelectorAll('sm-input[data-flo-id]').forEach(input => input.customValidation = validateAddr)
+            document.addEventListener('input', inputValidation)
+            document.addEventListener('keyup', (e) => {
+                if (e.code === 'Escape') {
+                    hidePopup()
+                }
+            })
+            document.addEventListener("pointerdown", (e) => {
+                if (e.target.closest("button, sm-button:not([disabled]), .interact")) {
+                    createRipple(e, e.target.closest("button, sm-button, .interact"));
+                }
+            });
+        });
+        function createRipple(event, target) {
+            const circle = document.createElement("span");
+            const diameter = Math.max(target.clientWidth, target.clientHeight);
+            const radius = diameter / 2;
+            const targetDimensions = target.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - (targetDimensions.left + radius)}px`;
+            circle.style.top = `${event.clientY - (targetDimensions.top + radius)}px`;
+            circle.classList.add("ripple");
+            const rippleAnimation = circle.animate(
+                [
+                    {
+                        transform: "scale(3)",
+                        opacity: 0,
+                    },
+                ],
+                {
+                    duration: 1000,
+                    fill: "forwards",
+                    easing: "ease-out",
+                }
+            );
+            target.append(circle);
+            rippleAnimation.onfinish = () => {
+                circle.remove();
+            };
+        }
     </script>
-        <script src="prettify.js"></script>
+    <script>
+        const render = {
+            navListItem(obj){
+                const {name, pageId} = obj
+                const item = getRef('nav_item_template').content.cloneNode(true).firstElementChild
+                const itemLink = item.firstElementChild
+                itemLink.textContent = name
+                itemLink.href = `#${pageId}`
+                return item
+            }
+        }
+
+        window.addEventListener('hashchange', e => showPage(window.location.hash))
+        window.addEventListener('load', e => {
+            renderComponentList()
+            showPage(window.location.hash)
+            PR.prettyPrint()
+        })
+        function showPage(targetPage) {
+            const pageId = targetPage.includes('#') ? targetPage.split('#')[1] : targetPage
+            document.querySelector('.page:not(.hide-completely)').classList.add('hide-completely')
+            document.querySelector('.list__item--active').classList.remove('list__item--active')
+            getRef(pageId).classList.remove('hide-completely')
+            getRef(pageId).animate([
+                {
+                    transform: 'translateX(-1rem)'
+                },
+                {
+                    transform: 'none'
+                },
+            ],
+            {
+                duration: 300,
+                easing: 'ease'
+            })
+            document.querySelector(`.list__item[href="#${pageId}"]`).classList.add('list__item--active')
+        }
+
+        const componentsList = [
+            {
+                name: 'button',
+                pageId: 'button_page'
+            },
+            {
+                name: 'Carousel',
+                pageId: 'carousel_page'
+            },
+            {
+                name: 'File input',
+                pageId: 'file_input_page'
+            },
+            {
+                name: 'Input',
+                pageId: 'input_page'
+            },
+            {
+                name: 'Menu',
+                pageId: 'menu_page'
+            },
+            {
+                name: 'Notification',
+                pageId: 'notification_page'
+            },
+            {
+                name: 'Popup/dialog',
+                pageId: 'popup_page'
+            },
+            {
+                name: 'Switch',
+                pageId: 'switch_page'
+            },
+            {
+                name: 'Select',
+                pageId: 'select_page'
+            },
+            {
+                name: 'Strip select',
+                pageId: 'strip_select_page'
+            },
+            {
+                name: 'Tabs',
+                pageId: 'tabs_page'
+            },
+            {
+                name: 'Tags input',
+                pageId: 'tags_input_page'
+            },
+            {
+                name: 'textarea',
+                pageId: 'textarea_page'
+            },
+        ]
+
+        function renderComponentList(){
+            const frag = document.createDocumentFragment()
+            componentsList.forEach(component => {
+                frag.append(render.navListItem(component))
+            })
+            getRef('components_list').innerHTML = ''
+            getRef('components_list').append(frag)
+        }
+    </script>
+    <script src="prettify.js"></script>
 </body>
 
 </html>
