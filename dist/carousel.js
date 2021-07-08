@@ -36,9 +36,6 @@ smCarousel.innerHTML = `
     -webkit-box-shadow: var(--arrow-box-shadow);
             box-shadow:  var(--arrow-box-shadow); 
     -webkit-tap-highlight-color: transparent;
-    -webkit-transform: scale(0);
-        -ms-transform: scale(0);
-            transform: scale(0);
     z-index: 1;
     border-radius: 3rem;
     padding: 0.5rem;
@@ -48,6 +45,9 @@ button:focus{
 }
 button:focus-visible{
     outline: rgba(var(--text-color), 1) 0.1rem solid;
+}
+.carousel__button:active{
+
 }
 .carousel__button--left{
     left: var(--arrow-left);
@@ -61,13 +61,7 @@ button:focus-visible{
     fill: var(--arrow-fill);
 }
 .hide{
-    pointer-events: none;
-    opacity: 0;
-}
-.expand{
-    -webkit-transform: scale(1);
-        -ms-transform: scale(1);
-            transform: scale(1)
+    display: none !important;
 }
 .carousel-container{
     position: relative;
@@ -157,13 +151,13 @@ slot::slotted(*){
 }
 </style>
 <div class="carousel-container">
-    <button class="carousel__button carousel__button--left">
+    <button class="carousel__button carousel__button--left hide">
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10.828 12l4.95 4.95-1.414 1.414L8 12l6.364-6.364 1.414 1.414z"/></svg>
     </button>
     <div part="carousel" class="carousel">
         <slot></slot>
     </div>
-    <button class="carousel__button carousel__button--right">
+    <button class="carousel__button carousel__button--right hide">
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/></svg>
     </button>
     <div class="indicators"></div>
@@ -188,10 +182,10 @@ customElements.define('sm-carousel', class extends HTMLElement {
         this.carousel = this.shadowRoot.querySelector('.carousel')
         this.carouselContainer = this.shadowRoot.querySelector('.carousel-container')
         this.carouselSlot = this.shadowRoot.querySelector('slot')
-        this.nextArrow = this.shadowRoot.querySelector('.carousel__button--right')
-        this.previousArrow = this.shadowRoot.querySelector('.carousel__button--left')
+        this.navButtonRight = this.shadowRoot.querySelector('.carousel__button--right')
+        this.navButtonLeft = this.shadowRoot.querySelector('.carousel__button--left')
         this.indicatorsContainer = this.shadowRoot.querySelector('.indicators')
-        
+
         this.scrollLeft = this.scrollLeft.bind(this)
         this.scrollRight = this.scrollRight.bind(this)
         this.handleIndicatorClick = this.handleIndicatorClick.bind(this)
@@ -206,43 +200,34 @@ customElements.define('sm-carousel', class extends HTMLElement {
         return ['indicator', 'autoplay', 'interval']
     }
 
-    scrollLeft(){
+    scrollLeft() {
         this.carousel.scrollBy({
             left: -this.scrollDistance,
             behavior: 'smooth'
         })
     }
 
-    scrollRight(){
+    scrollRight() {
         this.carousel.scrollBy({
             left: this.scrollDistance,
             behavior: 'smooth'
         })
     }
 
-    handleIndicatorClick(e){
-        if (e.target.closest('.dot')) {
-            const slideNum = parseInt(e.target.closest('.dot').dataset.rank)
-            if (this.activeSlideNum !== slideNum) {
-                this.showSlide(slideNum)
-            }
-        }
-    }
-
-    showSlide(slideNum){
+    showSlide(slideNum) {
         this.carousel.scrollTo({
             left: (this.carouselItems[slideNum].getBoundingClientRect().left - this.carousel.getBoundingClientRect().left + this.carousel.scrollLeft),
             behavior: 'smooth'
         })
     }
 
-    nextSlide(){
+    nextSlide() {
         if (!this.carouselItems) return
         let showSlideNo = (this.activeSlideNum + 1) < this.carouselItems.length ? this.activeSlideNum + 1 : 0
         this.showSlide(showSlideNo)
     }
-    
-    autoPlay(){
+
+    autoPlay() {
         this.nextSlide()
         if (this.isAutoPlaying) {
             this.autoPlayTimeout = setTimeout(() => {
@@ -251,26 +236,73 @@ customElements.define('sm-carousel', class extends HTMLElement {
         }
     }
 
-    startAutoPlay(){
+    startAutoPlay() {
         this.setAttribute('autoplay', '')
     }
 
-    stopAutoPlay(){
+    stopAutoPlay() {
         this.removeAttribute('autoplay')
     }
 
+    createIndicator(index) {
+        let dot = document.createElement('div')
+        dot.classList.add('dot')
+        dot.dataset.rank = index
+        return dot
+    }
+
+    handleIndicatorClick(e) {
+        if (e.target.closest('.dot')) {
+            const slideNum = parseInt(e.target.closest('.dot').dataset.rank)
+            if (this.activeSlideNum !== slideNum) {
+                this.showSlide(slideNum)
+            }
+        }
+    }
+
+    handleKeyDown(e) {
+        if (e.code === 'ArrowLeft')
+            this.scrollRight()
+        else if (e.code === 'ArrowRight')
+            this.scrollRight()
+    }
+
     connectedCallback() {
-        this.scrollDistance = this.carouselContainer.getBoundingClientRect().width / 3
         let frag = document.createDocumentFragment();
-        if (this.hasAttribute('indicator'))
-            this.showIndicator = true
 
+        this.carouselSlot.addEventListener('slotchange', e => {
+            this.carouselItems = this.carouselSlot.assignedElements()
+            this.carouselItems.forEach(item => allElementsObserver.observe(item))
+            if (this.carouselItems.length > 0) {
+                firstOptionObserver.observe(this.carouselItems[0])
+                lastOptionObserver.observe(this.carouselItems[this.carouselItems.length - 1])
+            }
+            else {
+                navButtonLeft.classList.add('hide')
+                navButtonRight.classList.add('hide')
+                firstOptionObserver.disconnect()
+                lastOptionObserver.disconnect()
+            }
+            if (this.showIndicator) {
+                this.indicatorsContainer.innerHTML = ``
+                this.carouselItems.forEach((item, index) => {
+                    frag.append(
+                        this.createIndicator(index)
+                    )
+                    item.dataset.rank = index
+                })
+                this.indicatorsContainer.append(frag)
+                this.indicators = this.indicatorsContainer.children
+            }
+        })
 
-        let firstVisible = false,
-            lastVisible = false
+        const IOOoptions = {
+            threshold: 0.9,
+            root: this
+        }
         const allElementsObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                if (this.showIndicator) {                    
+                if (this.showIndicator) {
                     const activeRank = parseInt(entry.target.dataset.rank)
                     if (entry.isIntersecting) {
                         this.indicators[activeRank].classList.add('active')
@@ -279,79 +311,61 @@ customElements.define('sm-carousel', class extends HTMLElement {
                     else
                         this.indicators[activeRank].classList.remove('active')
                 }
-                if (!entry.target.previousElementSibling)
-                    if (entry.isIntersecting) {
-                        this.previousArrow.classList.remove('expand')
-                        firstVisible = true
-                    }
-                else {
-                    this.previousArrow.classList.add('expand')
-                    firstVisible = false
-                }
-                if (!entry.target.nextElementSibling)
-                    if (entry.isIntersecting) {
-                        this.nextArrow.classList.remove('expand')
-                        lastVisible = true
-                    }
-                else {
-                    this.nextArrow.classList.add('expand')
-                    lastVisible = false
-                }
-                if (firstVisible && lastVisible)
-                    this.indicatorsContainer.classList.add('hide')
-                else
-                    this.indicatorsContainer.classList.remove('hide')
             })
-        }, {
-            root: this.carouselContainer,
-            threshold: 0.9
+        }, IOOoptions)
+
+
+        const firstOptionObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.navButtonLeft.classList.add('hide')
+                }
+                else {
+                    this.navButtonLeft.classList.remove('hide')
+                }
+            })
+        },
+            IOOoptions
+        )
+        const lastOptionObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.navButtonRight.classList.add('hide')
+                }
+                else {
+                    this.navButtonRight.classList.remove('hide')
+                }
+            })
+        },
+            IOOoptions
+        )
+
+        const resObs = new ResizeObserver(entries => {
+            entries.forEach(entry => {
+                if(entry.contentBoxSize) {
+                    // Firefox implements `contentBoxSize` as a single content rect, rather than an array
+                    const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
+                    
+                    this.scrollDistance = contentBoxSize.inlineSize * 0.6
+                } else {
+                    this.scrollDistance = entry.contentRect.width * 0.6
+                  }
+            })
         })
+        resObs.observe(this)
 
-        const carouselObserver = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting) {
-                this.scrollDistance = this.carouselContainer.getBoundingClientRect().width / 3
-            }
-        })
+        this.addEventListener('keydown', this.handleKeyDown)
 
-        carouselObserver.observe(this.carouselContainer)
-
-        this.carouselSlot.addEventListener('slotchange', e => {
-            this.carouselItems = this.carouselSlot.assignedElements()
-            this.carouselItems.forEach(item => allElementsObserver.observe(item))
-            if (this.showIndicator) {
-                this.indicatorsContainer.innerHTML = ``
-                this.carouselItems.forEach((item, index) => {
-                    let dot = document.createElement('div')
-                    dot.classList.add('dot')
-                    dot.dataset.rank = index
-                    frag.append(dot)
-                    item.dataset.rank = index
-                })
-                this.indicatorsContainer.append(frag)
-                this.indicators = this.indicatorsContainer.children
-            }
-        })
-
-        this.addEventListener('keyup', e => {
-            if (e.code === 'ArrowLeft')
-                this.scrollRight()
-            else if (e.code === 'ArrowRight')
-                this.scrollRight()
-        })
-
-        this.nextArrow.addEventListener('click', this.scrollRight)
-        this.previousArrow.addEventListener('click', this.scrollLeft)
+        this.navButtonRight.addEventListener('click', this.scrollRight)
+        this.navButtonLeft.addEventListener('click', this.scrollLeft)
         this.indicatorsContainer.addEventListener('click', this.handleIndicatorClick)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue !== newValue) {            
+        if (oldValue !== newValue) {
             if (name === 'indicator') {
-                if (this.hasAttribute('indicator'))
-                    this.showIndicator = true
-                else
-                    this.showIndicator = false
-                }
+                this.showIndicator = this.hasAttribute('indicator')
+            }
             if (name === 'autoplay') {
                 if (this.hasAttribute('autoplay')) {
                     this.initialTimeout = setTimeout(() => {
@@ -364,7 +378,7 @@ customElements.define('sm-carousel', class extends HTMLElement {
                     clearTimeout(this.autoPlayTimeout)
                     clearTimeout(this.initialTimeout)
                 }
-                
+
             }
             if (name === 'interval') {
                 if (this.hasAttribute('interval') && this.getAttribute('interval').trim() !== '') {
@@ -378,8 +392,8 @@ customElements.define('sm-carousel', class extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.nextArrow.removeEventListener('click', this.scrollRight)
-        this.previousArrow.removeEventListener('click', this.scrollLeft)
+        this.navButtonRight.removeEventListener('click', this.scrollRight)
+        this.navButtonLeft.removeEventListener('click', this.scrollLeft)
         this.indicatorsContainer.removeEventListener('click', this.handleIndicatorClick)
     }
 })

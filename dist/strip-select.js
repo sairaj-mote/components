@@ -233,6 +233,10 @@ customElements.define('strip-select', class extends HTMLElement{
         navButtonLeft.addEventListener('click', this.scrollLeft)
         navButtonRight.addEventListener('click', this.scrollRight)
     }
+    disconnectedCallback() {
+        navButtonLeft.removeEventListener('click', this.scrollLeft)
+        navButtonRight.removeEventListener('click', this.scrollRight)    
+    }
 })
 
 //Strip option

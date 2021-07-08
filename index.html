@@ -21,6 +21,9 @@
     </audio>
     <main>
         <header id="main_header" class="flex align-center space-between">
+            <button id="side_nav_button" class="interact" onclick="sideNav()">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M16 18v2H5v-2h11zm5-7v2H3v-2h18zm-2-7v2H8V4h11z"/></svg>
+            </button>
             <h4>SM Components</h4>
             <label class="theme-switcher" title="Change theme">
                 <input id="theme_switcher" class="theme-switcher__checkbox" type="checkbox">
@@ -36,7 +39,7 @@
                 </svg>
             </label>
         </header>
-        <nav id="menu" class="left">
+        <nav id="side_nav">
             <h3>Getting Started</h3>
             <ul class="list">
                 <li>
@@ -53,29 +56,36 @@
             <h3>Components</h3>
             <ul id="components_list" class="list"></ul>
         </nav>
+        <section id="backdrop" class="hide-completely" onclick="sideNav(false)"></section>
         <div class="right language-html">
             <section id="overview_page" class="page">
-                <h1 class="headline">Overview</h1>
-                <p class="description">
-                    These components are based on HTML5 custom elements API. This is an attempt to unify UI development
-                    patterns and
-                    elements that are used multiple times throughout any general web app.It uses 'sm' namespace for all
-                    components. So every
-                    component tag starts with <strong>'sm-'</strong>
-                </p>
-                <p>
-                    They can replace some older UI elements like <code>&lt;select&gt;</code> <code>&lt;input&gt;</code>
-                    <code>&lt;checkbox&gt;</code> <code>&lt;button&gt;</code>
-                    But also more modern additions like <strong>popups(modals), tabs and many more.</strong>
-                </p>
-                <p>
-                    Some of the components have some cool tricks under their sleeves like <strong>custom events and
-                        variantions</strong>.
-                    They allow developers to access more information about component or simply react to whatever state
-                    change happen to them.
-                    We will go more in-depth about all the variantions and customs events related to each event as we go
-                    further.
-                </p>
+                <div>
+                    <h5 class="color-0-8 weight-500">Total components</h5>
+                    <h1 id="total_components_count" class="h1"></h1>
+                </div>
+                <div>
+                    <h1 class="headline">Overview</h1>
+                    <p class="description">
+                        These components are based on HTML5 custom elements API. This is an attempt to unify UI development
+                        patterns and
+                        elements that are used multiple times throughout any general web app.It uses 'sm' namespace for all
+                        components. So every
+                        component tag starts with <strong>'sm-'</strong>
+                    </p>
+                    <p>
+                        They can replace some older UI elements like <code>&lt;select&gt;</code> <code>&lt;input&gt;</code>
+                        <code>&lt;checkbox&gt;</code> <code>&lt;button&gt;</code>
+                        But also more modern additions like <strong>popups(modals), tabs and many more.</strong>
+                    </p>
+                    <p>
+                        Some of the components have some cool tricks under their sleeves like <strong>custom events and
+                            variantions</strong>.
+                        They allow developers to access more information about component or simply react to whatever state
+                        change happen to them.
+                        We will go more in-depth about all the variantions and customs events related to each event as we go
+                        further.
+                    </p>
+                </div>
             </section>
 
             <section id="download_page" class="page hide-completely">
@@ -118,7 +128,7 @@
                 <p class="description">
                     To start using SM Components
                 </p>
-                <sm-carousel align-items="start">
+                <sm-carousel align-items="start" indicator>
                     <div class="card">
                         <h3>Title</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident, optio.</p>
@@ -263,7 +273,7 @@
             </section>
 
             <section id="strip_select_page" class="page hide-completely">
-                <h1 class="headline">Strip-select</h1>
+                <h1 class="headline">Strip select</h1>
                 <p class="description">
                     To start using SM Components
                 </p>
@@ -339,20 +349,21 @@
             <a class="list__item interact"></a>
         </li>
     </template>
-    <script src="dist/button.min.js"></script>
-    <script src="dist/carousel.min.js"></script>
-    <script src="dist/copy.min.js"></script>
-    <script src="dist/file-input.min.js"></script>
-    <script src="dist/form.min.js"></script>
-    <script src="dist/input.min.js"></script>
-    <script src="dist/menu.min.js"></script>
-    <script src="dist/notifications.min.js"></script>
-    <script src="dist/select.min.js"></script>
-    <script src="dist/strip-select.min.js"></script>
-    <script src="dist/switch.min.js"></script>
-    <script src="dist/tabs.min.js"></script>
-    <script src="dist/tags-input.min.js"></script>
-    <script src="dist/textarea.min.js"></script>
+    <script src="dist/button.js"></script>
+    <script src="dist/carousel.js"></script>
+    <script src="dist/copy.js"></script>
+    <script src="dist/file-input.js"></script>
+    <script src="dist/form.js"></script>
+    <script src="dist/input.js"></script>
+    <script src="dist/menu.js"></script>
+    <script src="dist/notifications.js"></script>
+    <script src="dist/popup.js"></script>
+    <script src="dist/select.js"></script>
+    <script src="dist/strip-select.js"></script>
+    <script src="dist/switch.js"></script>
+    <script src="dist/tabs.js"></script>
+    <script src="dist/tags-input.js"></script>
+    <script src="dist/textarea.js"></script>
     <script id="default_ui_library">
         const domRefs = {};
 
@@ -660,14 +671,16 @@
             }
         }
 
-        window.addEventListener('hashchange', e => showPage(window.location.hash))
+        window.addEventListener('hashchange', e => showPage(window.location.hash, {hashChange: true}))
         window.addEventListener('load', e => {
             document.body.classList.remove('hide-completely')
             renderComponentList()
-            showPage(window.location.hash)
+            showPage(window.location.hash, {firstLoad: true})
+            getRef('total_components_count').textContent = componentsList.length
             PR.prettyPrint()
         })
-        function showPage(targetPage) {
+        function showPage(targetPage, options = {}) {
+            const {firstLoad, hashChange} = options
             let pageId
             if(targetPage === ''){
                 pageId = 'copy_page'
@@ -680,9 +693,11 @@
             getRef(pageId).classList.remove('hide-completely')
             getRef(pageId).animate([
                 {
+                    opacity: 0,
                     transform: 'translateX(-1rem)'
                 },
                 {
+                    opacity: 1,
                     transform: 'none'
                 },
             ],
@@ -690,7 +705,17 @@
                 duration: 300,
                 easing: 'ease'
             })
-            document.querySelector(`.list__item[href="#${pageId}"]`).classList.add('list__item--active')
+            const targetListItem = document.querySelector(`.list__item[href="#${pageId}"]`)
+            targetListItem.classList.add('list__item--active')
+            if(firstLoad && window.innerWidth > 640){
+                getRef('side_nav').scrollTo({
+                    top: (targetListItem.getBoundingClientRect().top - getRef('side_nav').getBoundingClientRect().top + getRef('side_nav').scrollTop),
+                    behavior: 'smooth'
+                })
+            }
+            if(hashChange && window.innerWidth < 640){
+                sideNav(false)
+            }
         }
 
         const componentsList = [
@@ -763,6 +788,43 @@
             })
             getRef('components_list').innerHTML = ''
             getRef('components_list').append(frag)
+        }
+
+        function sideNav(show = true){
+            if(show){
+                getRef('side_nav').classList.add('reveal')
+                getRef('backdrop').classList.remove('hide-completely')
+                getRef('backdrop').animate([
+                    {
+                        opacity: 0
+                    },
+                    {
+                        opacity: 1
+                    },
+                ],
+                {
+                    duration: 300,
+                    easing: 'ease'
+                })
+            }
+            else{
+                getRef('side_nav').classList.remove('reveal')
+                getRef('backdrop').animate([
+                    {
+                        opacity: 1
+                    },
+                    {
+                        opacity: 0
+                    },
+                ],
+                {
+                    duration: 300,
+                    easing: 'ease'
+                })
+                .onfinish = () => {
+                    getRef('backdrop').classList.add('hide-completely')
+                }
+            }
         }
     </script>
     <script src="prettify.js"></script>
