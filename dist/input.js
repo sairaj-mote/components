@@ -223,6 +223,16 @@ customElements.define('sm-input',
             this.feedbackText = this.shadowRoot.querySelector('.feedback-text')
             this.validationFunction
             this.observeList = ['type', 'required', 'disabled', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step']
+        
+            this.reset = this.reset.bind(this)
+            this.setValidity = this.setValidity.bind(this)
+            this.showValidity = this.showValidity.bind(this)
+            this.hideValidity = this.hideValidity.bind(this)
+            this.focusIn = this.focusIn.bind(this)
+            this.focusOut = this.focusOut.bind(this)
+            this.fireEvent = this.fireEvent.bind(this)
+            this.debounce = this.debounce.bind(this)
+            this.checkInput = this.checkInput.bind(this)
         }
 
         static get observedAttributes() {
@@ -284,31 +294,31 @@ customElements.define('sm-input',
         set customValidation(val) {
             this.validationFunction = val
         }
-        reset = () => {
+        reset(){
             this.value = ''
         }
 
-        setValidity = (message) => {
+        setValidity(message){
             this.feedbackText.textContent = message
         }
 
-        showValidity = () => {
+        showValidity(){
             this.feedbackText.classList.remove('hide-completely')
         }
 
-        hideValidity = () => {
+        hideValidity(){
             this.feedbackText.classList.add('hide-completely')
         }
 
-        focusIn = () => {
+        focusIn(){
             this.input.focus()
         }
 
-        focusOut = () => {
+        focusOut(){
             this.input.blur()
         }
 
-        fireEvent = () => {
+        fireEvent(){
             let event = new Event('input', {
                 bubbles: true,
                 cancelable: true,
@@ -316,8 +326,17 @@ customElements.define('sm-input',
             });
             this.dispatchEvent(event);
         }
+        debounce(callback, wait){
+            let timeoutId = null;
+            return (...args) => {
+                window.clearTimeout(timeoutId);
+                timeoutId = window.setTimeout(() => {
+                    callback.apply(null, args);
+                }, wait);
+            };
+        }
 
-        checkInput = (e) => {
+        checkInput(e){
             if (!this.hasAttribute('readonly')) {
                 if (this.input.value !== '') {
                     this.clearBtn.classList.remove('hide')
@@ -353,12 +372,10 @@ customElements.define('sm-input',
                 this.setAttribute('type', 'text')
             }
 
-            this.input.addEventListener('input', e => {
-                this.checkInput(e)
-            })
+            this.input.addEventListener('input', this.checkInput)
             this.clearBtn.addEventListener('click', this.reset)
         }
-
+        
         attributeChangedCallback(name, oldValue, newValue) {
             if (oldValue !== newValue) {
                 if (this.observeList.includes(name)) {
@@ -394,5 +411,9 @@ customElements.define('sm-input',
                     }
                 }
             }
+        }
+        disconnectedCallback() {
+            this.input.removeEventListener('input', this.checkInput)
+            this.clearBtn.removeEventListener('click', this.reset)
         }
     })

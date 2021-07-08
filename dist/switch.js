@@ -146,6 +146,8 @@ customElements.define('sm-switch', class extends HTMLElement {
         this.input = this.shadowRoot.querySelector('input')
         this.isChecked = false
         this.isDisabled = false
+
+        this.dispatch = this.dispatch.bind(this)
     }
 
     static get observedAttributes() {
@@ -176,7 +178,7 @@ customElements.define('sm-switch', class extends HTMLElement {
         }
     }
 
-    dispatch = () => {
+    dispatch(){
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true,

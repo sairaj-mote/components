@@ -131,7 +131,6 @@ customElements.define('sm-button',
                 this.removeAttribute('disabled')
             }
         }
-
         dispatch() {
             if (this.isDisabled) {
                 this.dispatchEvent(new CustomEvent('disabled', {

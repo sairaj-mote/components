@@ -171,13 +171,21 @@ customElements.define('sm-popup', class extends HTMLElement {
 
         this.allowClosing = false
         this.isOpen = false
+
+        this.resumeScrolling = this.resumeScrolling.bind(this)
+        this.show = this.show.bind(this)
+        this.hide = this.hide.bind(this)
+        this.handleTouchStart = this.handleTouchStart.bind(this)
+        this.handleTouchMove = this.handleTouchMove.bind(this)
+        this.handleTouchEnd = this.handleTouchEnd.bind(this)
+        this.movePopup = this.movePopup.bind(this)
     }
 
     get open() {
         return this.isOpen
     }
 
-    resumeScrolling = () => {
+    resumeScrolling(){
         const scrollY = document.body.style.top;
         window.scrollTo(0, parseInt(scrollY || '0') * -1);
         setTimeout(() => {
@@ -186,7 +194,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         }, 300);
     }
 
-    show = (pinned, popupStack) => {
+    show(pinned, popupStack){
         if (popupStack)
             this.popupStack = popupStack
         if (this.popupStack && !this.hasAttribute('open')) {
@@ -216,7 +224,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         document.body.style.top= `-${window.scrollY}px`
         return this.popupStack
     }
-    hide = () => {
+    hide(){
         if (window.innerWidth < 640)
             this.popup.style.transform = 'translateY(100%)';
         else
@@ -258,13 +266,13 @@ customElements.define('sm-popup', class extends HTMLElement {
         }, 300);
     }
 
-    handleTouchStart = (e) => {
+    handleTouchStart(e){
         this.touchStartY = e.changedTouches[0].clientY
         this.popup.style.transition = 'transform 0.1s'
         this.touchStartTime = e.timeStamp
     }
 
-    handleTouchMove = (e) => {
+    handleTouchMove(e){
         if (this.touchStartY < e.changedTouches[0].clientY) {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
             this.touchEndAnimataion = window.requestAnimationFrame(() => this.movePopup())
@@ -275,7 +283,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         }*/
     }
 
-    handleTouchEnd = (e) => {
+    handleTouchEnd(e){
         this.touchEndTime = e.timeStamp
         cancelAnimationFrame(this.touchEndAnimataion)
         this.touchEndY = e.changedTouches[0].clientY
@@ -302,7 +310,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         }
     }
 
-    movePopup = () => {
+    movePopup(){
         this.popup.style.transform = `translateY(${this.offset}px)`
     }
 

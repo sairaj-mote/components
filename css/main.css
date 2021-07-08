@@ -397,7 +397,8 @@ main {
 
 #main_header {
   grid-area: main-header;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(var(--text-color), 0.1);
 }
 
 ol {
@@ -413,11 +414,13 @@ ol li::first-letter {
   text-transform: capitalize;
 }
 
-.left {
+.left,
+.right {
   max-height: 100%;
   overflow-y: auto;
   padding-bottom: 3rem;
 }
+
 .left h3 {
   padding: 1.5rem;
 }
@@ -467,7 +470,6 @@ sm-tab-header {
 .page {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 }
 
 @media screen and (min-width: 640px) {

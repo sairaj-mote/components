@@ -163,16 +163,25 @@ customElements.define('sm-notifications', class extends HTMLElement {
         this.shadow = this.attachShadow({
             mode: 'open'
         }).append(smNotifications.content.cloneNode(true))
+        this.handleTouchStart = this.handleTouchStart.bind(this)
+        this.handleTouchMove = this.handleTouchMove.bind(this)
+        this.handleTouchEnd = this.handleTouchEnd.bind(this)
+        this.movePopup = this.movePopup.bind(this)
+        this.resetPosition = this.resetPosition.bind(this)
+        this.push = this.push.bind(this)
+        this.removeNotification = this.removeNotification.bind(this)
+        this.clearAll = this.clearAll.bind(this)
+        
     }
 
-    handleTouchStart = (e) => {
+    handleTouchStart(e){
         this.notification = e.target.closest('.notification')
         this.touchStartX = e.changedTouches[0].clientX
         this.notification.style.transition = 'initial'
         this.touchStartTime = e.timeStamp
     }
 
-    handleTouchMove = (e) => {
+    handleTouchMove(e){
         e.preventDefault()
         if (this.touchStartX < e.changedTouches[0].clientX) {
             this.offset = e.changedTouches[0].clientX - this.touchStartX;
@@ -183,7 +192,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         }
     }
 
-    handleTouchEnd = (e) => {
+    handleTouchEnd(e){
         this.notification.style.transition = 'transform 0.3s, opacity 0.3s'
         this.touchEndTime = e.timeStamp
         cancelAnimationFrame(this.touchEndAnimataion)
@@ -205,15 +214,15 @@ customElements.define('sm-notifications', class extends HTMLElement {
         }
     }
 
-    movePopup = () => {
+    movePopup(){
         this.notification.style.transform = `translateX(${this.offset}px)`
     }
 
-    resetPosition = () => {
+    resetPosition(){
         this.notification.style.transform = `translateX(0)`
     }
 
-    push = (messageBody, type, pinned) => {
+    push(messageBody, type, pinned){
         let notification = document.createElement('div'),
             composition = ``
         notification.classList.add('notification')
@@ -261,7 +270,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         notification.addEventListener('touchend', this.handleTouchEnd)
     }
 
-    removeNotification = (notification, toLeft) => {
+    removeNotification(notification, toLeft){
         if (!this.offset)
             this.offset = 0;
 
@@ -292,7 +301,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         }
     }
 
-    clearAll = () => {
+    clearAll(){
         Array.from(this.notificationPanel.children).forEach(child => {
             this.removeNotification(child)
         })

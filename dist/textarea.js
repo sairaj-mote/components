@@ -119,6 +119,11 @@ customElements.define('sm-textarea',
             this.textareaBox = this.shadowRoot.querySelector('.textarea')
             this.placeholder = this.shadowRoot.querySelector('.placeholder')
             this.observeList = ['required', 'readonly', 'rows', 'minlength', 'maxlength']
+        
+            this.reset = this.reset.bind(this)
+            this.focusIn = this.focusIn.bind(this)
+            this.fireEvent = this.fireEvent.bind(this)
+            this.checkInput = this.checkInput.bind(this)
         }
         static get observedAttributes() {
             return ['value', 'placeholder', 'required', 'readonly', 'rows', 'minlength', 'maxlength']
@@ -133,13 +138,13 @@ customElements.define('sm-textarea',
         get isValid() {
             return this.textarea.checkValidity()
         }
-        reset = () => {
+        reset(){
             this.setAttribute('value', '')
         }
-        focusIn = () => {
+        focusIn(){
             this.textarea.focus()
         }
-        fireEvent = () => {
+        fireEvent(){
             let event = new Event('input', {
                 bubbles: true,
                 cancelable: true,
@@ -147,7 +152,7 @@ customElements.define('sm-textarea',
             });
             this.dispatchEvent(event);
         }
-        checkInput = () => {
+        checkInput(){
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '')
                 return;
             if (this.textarea.value !== '') {

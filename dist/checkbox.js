@@ -100,6 +100,10 @@ customElements.define('sm-checkbox', class extends HTMLElement {
 
         this.isChecked = false
         this.isDisabled = false
+
+        this.dispatch = this.dispatch.bind(this)
+        this.handleKeyup = this.handleKeyup.bind(this)
+        this.handleChange = this.handleChange.bind(this)
     }
 
     static get observedAttributes() {
@@ -140,13 +144,13 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         return getAttribute('value')
     }
 
-    dispatch = () => {
+    dispatch(){
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true
         }))
     }
-    handleKeyup = e => {
+    handleKeyup(e){
         if ((e.code === "Enter" || e.code === "Space") && this.isDisabled == false) {
             if (this.hasAttribute('checked')) {
                 this.input.checked = false
@@ -158,7 +162,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
             }
         }
     }
-    handleChange = e => {
+    handleChange(e){
         if (this.input.checked) {
             this.setAttribute('checked', '')
         }

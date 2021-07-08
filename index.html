@@ -21,7 +21,7 @@
     </audio>
     <main>
         <header id="main_header" class="flex align-center space-between">
-            <h4>SM Web Components</h4>
+            <h4>SM Components</h4>
             <label class="theme-switcher" title="Change theme">
                 <input id="theme_switcher" class="theme-switcher__checkbox" type="checkbox">
                 <svg class="icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
@@ -149,6 +149,14 @@
                     <sm-checkbox id="checkbox" disabled>Disabled</sm-checkbox>
                     <sm-checkbox id="checkbox" checked disabled>Checked Disabled</sm-checkbox>
                 </label>
+            </section>
+
+            <section id="copy_page" class="page hide-completely">
+                <h1 class="headline">Copy</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <sm-copy value="copy this message"></sm-copy>
             </section>
 
             <section id="file_input_page" class="page hide-completely">
@@ -331,7 +339,20 @@
             <a class="list__item interact"></a>
         </li>
     </template>
-    <script src="components.js"></script>
+    <script src="dist/button.min.js"></script>
+    <script src="dist/carousel.min.js"></script>
+    <script src="dist/copy.min.js"></script>
+    <script src="dist/file-input.min.js"></script>
+    <script src="dist/form.min.js"></script>
+    <script src="dist/input.min.js"></script>
+    <script src="dist/menu.min.js"></script>
+    <script src="dist/notifications.min.js"></script>
+    <script src="dist/select.min.js"></script>
+    <script src="dist/strip-select.min.js"></script>
+    <script src="dist/switch.min.js"></script>
+    <script src="dist/tabs.min.js"></script>
+    <script src="dist/tags-input.min.js"></script>
+    <script src="dist/textarea.min.js"></script>
     <script id="default_ui_library">
         const domRefs = {};
 
@@ -647,7 +668,13 @@
             PR.prettyPrint()
         })
         function showPage(targetPage) {
-            const pageId = targetPage.includes('#') ? targetPage.split('#')[1] : targetPage
+            let pageId
+            if(targetPage === ''){
+                pageId = 'copy_page'
+            }
+            else{
+                pageId = targetPage.includes('#') ? targetPage.split('#')[1] : targetPage
+            }
             document.querySelector('.page:not(.hide-completely)').classList.add('hide-completely')
             document.querySelector('.list__item--active').classList.remove('list__item--active')
             getRef(pageId).classList.remove('hide-completely')
@@ -674,6 +701,10 @@
             {
                 name: 'Carousel',
                 pageId: 'carousel_page'
+            },
+            {
+                name: 'Copy',
+                pageId: 'copy_page'
             },
             {
                 name: 'File input',

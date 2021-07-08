@@ -71,6 +71,12 @@ customElements.define('file-input', class extends HTMLElement {
 		this.fileInput = this.shadowRoot.querySelector('.file-input')
 		this.filesPreviewWraper = this.shadowRoot.querySelector('.files-preview-wrapper')
 		this.observeList = ['accept', 'multiple', 'capture']
+
+		this.reset = this.reset.bind(this)
+		this.formatBytes = this.formatBytes.bind(this)
+		this.createFilePreview = this.createFilePreview.bind(this)
+		this.handleChange = this.handleChange.bind(this)
+		this.handleKeyDown = this.handleKeyDown.bind(this)
 	}
 	static get observedAttributes() {
 		return ['accept', 'multiple', 'capture']
@@ -98,12 +104,12 @@ customElements.define('file-input', class extends HTMLElement {
     get isValid() {
         return this.input.value !== ''
     }
-    reset = () => {
+    reset(){
         this.input.value = ''
         this.filesPreviewWraper.innerHTML = ''
     }
-    formatBytes = (a,b=2) => {if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
-	createFilePreview = (file) => {
+    formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
+	createFilePreview(file){
         const filePreview = document.createElement('li')
         const {name, size} = file
 		filePreview.className = 'file-preview'
@@ -113,7 +119,7 @@ customElements.define('file-input', class extends HTMLElement {
 		`
 		return filePreview
 	}
-	handleChange = (e) => {
+	handleChange(e){
 		this.filesPreviewWraper.innerHTML = ''
 		const frag = document.createDocumentFragment()
 		Array.from(e.target.files).forEach(file => {
@@ -123,7 +129,7 @@ customElements.define('file-input', class extends HTMLElement {
 		});
 		this.filesPreviewWraper.append(frag)
     }
-    handleKeyDown = e => {
+    handleKeyDown(e){
         if (e.key === 'Enter' || e.code === 'Space') {
             e.preventDefault()
             this.input.click()

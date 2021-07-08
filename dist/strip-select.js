@@ -117,24 +117,28 @@ customElements.define('strip-select', class extends HTMLElement{
         this.slottedOptions
         this._value
         this.scrollDistance
+
+        this.scrollLeft = this.scrollLeft.bind(this)
+        this.scrollRight = this.scrollRight.bind(this)
+        this.fireEvent = this.fireEvent.bind(this)
     }
     get value() {
         return this._value
     }
-    scrollLeft = () => {
+    scrollLeft(){
         this.stripSelect.scrollBy({
             left: -this.scrollDistance,
             behavior: 'smooth'
         })
     }
 
-    scrollRight = () => {
+    scrollRight(){
         this.stripSelect.scrollBy({
             left: this.scrollDistance,
             behavior: 'smooth'
         })
     }
-    fireEvent = () => {
+    fireEvent(){
         this.dispatchEvent(
             new CustomEvent("change", {
                 bubbles: true,
@@ -280,11 +284,14 @@ customElements.define('strip-option', class extends HTMLElement{
         }).append(stripOption.content.cloneNode(true))
         this._value
         this.radioButton = this.shadowRoot.querySelector('input')
+        
+        this.fireEvent = this.fireEvent.bind(this)
+        this.handleKeyDown = this.handleKeyDown.bind(this)
     }
     get value() {
         return this._value
     }
-    fireEvent = () => {
+    fireEvent(){
         this.dispatchEvent(
             new CustomEvent("option-clicked", {
                 bubbles: true,
@@ -295,7 +302,7 @@ customElements.define('strip-option', class extends HTMLElement{
             })
         )
     }
-    handleKeyDown = (e) => {
+    handleKeyDown(e){
         if (e.key === 'Enter' || e.key === 'Space') {
             this.fireEvent()
         }

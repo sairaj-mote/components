@@ -134,6 +134,8 @@ customElements.define('sm-select', class extends HTMLElement {
         this.attachShadow({
             mode: 'open'
         }).append(smSelect.content.cloneNode(true))
+
+        this.reset = this.reset.bind(this)
     }
     static get observedAttributes() {
         return ['value']
@@ -145,7 +147,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.setAttribute('value', val)
     }
 
-    reset = () => {
+    reset(){
 
     }
 

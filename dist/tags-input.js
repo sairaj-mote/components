@@ -86,39 +86,45 @@ customElements.define('tags-input', class extends HTMLElement {
 		this.input = this.shadowRoot.querySelector('input')
 		this.tagsWrapper = this.shadowRoot.querySelector('.tags-wrapper')
 		this.placeholder = this.shadowRoot.querySelector('.placeholder')
-        this.observeList = ['placeholder', 'limit']
-        this.limit = undefined
-        this.tags = new Set()
-    }
-    static get observedAttributes() {
-        return ['placeholder', 'limit']
-    }
+		this.observeList = ['placeholder', 'limit']
+		this.limit = undefined
+		this.tags = new Set()
+
+		this.reset = this.reset.bind(this)
+		this.handleInput = this.handleInput.bind(this)
+		this.handleKeydown = this.handleKeydown.bind(this)
+		this.handleClick = this.handleClick.bind(this)
+		this.removeTag = this.removeTag.bind(this)
+	}
+	static get observedAttributes() {
+		return ['placeholder', 'limit']
+	}
 	get value() {
 		return [...this.tags].join()
-    }
-    reset = () => {
-        this.input.value = ''
-        this.tags.clear()
-        while (this.input.previousElementSibling) {
-            this.input.previousElementSibling.remove()
-        }
-    }
-    handleInput = e => {
-        const inputValueLength = e.target.value.trim().length
-        e.target.setAttribute('size', inputValueLength ? inputValueLength : '3')
-        if (inputValueLength) {
-            this.placeholder.classList.add('hide')
-        }
-        else if (!inputValueLength && !this.tags.size) {
-            this.placeholder.classList.remove('hide')
-        }
 	}
-    handleKeydown = e => {
+	reset(){
+		this.input.value = ''
+		this.tags.clear()
+		while (this.input.previousElementSibling) {
+			this.input.previousElementSibling.remove()
+		}
+	}
+	handleInput(e){
+		const inputValueLength = e.target.value.trim().length
+		e.target.setAttribute('size', inputValueLength ? inputValueLength : '3')
+		if (inputValueLength) {
+			this.placeholder.classList.add('hide')
+		}
+		else if (!inputValueLength && !this.tags.size) {
+			this.placeholder.classList.remove('hide')
+		}
+	}
+	handleKeydown(e){
 		if (e.key === ',' || e.key === '/') {
 			e.preventDefault()
 		}
 		if (e.target.value.trim() !== '') {
-            if (e.key === 'Enter' || e.key === ',' || e.key === '/' || e.code === 'Space') {
+			if (e.key === 'Enter' || e.key === ',' || e.key === '/' || e.code === 'Space') {
 				const tagValue = e.target.value.trim()
 				if (this.tags.has(tagValue)) {
 					this.tagsWrapper.querySelector(`[data-value="${tagValue}"]`).animate([
@@ -146,24 +152,24 @@ customElements.define('tags-input', class extends HTMLElement {
 					this.input.before(tag)
 					this.tags.add(tagValue)
 				}
-                e.target.value = ''
-                e.target.setAttribute('size', '3')
-                if (this.limit && this.limit < this.tags.size + 1) {
-                    this.input.readOnly = true
-                    return
-                }
+				e.target.value = ''
+				e.target.setAttribute('size', '3')
+				if (this.limit && this.limit < this.tags.size + 1) {
+					this.input.readOnly = true
+					return
+				}
 			}
 		}
 		else {
-            if (e.key === 'Backspace' && this.input.previousElementSibling) {
-                this.removeTag(this.input.previousElementSibling)
+			if (e.key === 'Backspace' && this.input.previousElementSibling) {
+				this.removeTag(this.input.previousElementSibling)
 			}
-            if (this.limit && this.limit > this.tags.size){
-                this.input.readOnly = false
-            }
+			if (this.limit && this.limit > this.tags.size) {
+				this.input.readOnly = false
+			}
 		}
 	}
-	handleClick = e => {
+	handleClick(e){
 		if (e.target.closest('.tag')) {
 			this.removeTag(e.target.closest('.tag'))
 		}
@@ -171,26 +177,26 @@ customElements.define('tags-input', class extends HTMLElement {
 			this.input.focus()
 		}
 	}
-	removeTag = (tag) => {
+	removeTag(tag){
 		this.tags.delete(tag.dataset.value)
-        tag.remove()
-        if (!this.tags.size) {
-            this.placeholder.classList.remove('hide')
-        }
+		tag.remove()
+		if (!this.tags.size) {
+			this.placeholder.classList.remove('hide')
+		}
 	}
-    connectedCallback() {
+	connectedCallback() {
 		this.input.addEventListener('input', this.handleInput)
 		this.input.addEventListener('keydown', this.handleKeydown)
 		this.tagsWrapper.addEventListener('click', this.handleClick)
-    }
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'placeholder') {
-            this.placeholder.textContent = newValue
-        }
-        if (name === 'limit') {
-            this.limit = parseInt(newValue)
-        }
-    }
+	}
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (name === 'placeholder') {
+			this.placeholder.textContent = newValue
+		}
+		if (name === 'limit') {
+			this.limit = parseInt(newValue)
+		}
+	}
 	disconnectedCallback() {
 		this.input.removeEventListener('input', this.handleInput)
 		this.input.removeEventListener('keydown', this.handleKeydown)

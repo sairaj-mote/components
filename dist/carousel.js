@@ -43,9 +43,6 @@ smCarousel.innerHTML = `
     border-radius: 3rem;
     padding: 0.5rem;
 }
-.carousel__button:active{
-    background: rgba(var(--text-color), 0.1);
-}
 button:focus{
     outline: none;
 }
@@ -138,9 +135,6 @@ slot::slotted(*){
     .left,.right{
         display: none;
     }
-    .carousel__button:hover{
-        background: rgba(var(--text-color), 0.06);
-    }
 }
 @media (hover: none){
     ::-webkit-scrollbar-track {
@@ -197,27 +191,36 @@ customElements.define('sm-carousel', class extends HTMLElement {
         this.nextArrow = this.shadowRoot.querySelector('.carousel__button--right')
         this.previousArrow = this.shadowRoot.querySelector('.carousel__button--left')
         this.indicatorsContainer = this.shadowRoot.querySelector('.indicators')
+        
+        this.scrollLeft = this.scrollLeft.bind(this)
+        this.scrollRight = this.scrollRight.bind(this)
+        this.handleIndicatorClick = this.handleIndicatorClick.bind(this)
+        this.showSlide = this.showSlide.bind(this)
+        this.nextSlide = this.nextSlide.bind(this)
+        this.autoPlay = this.autoPlay.bind(this)
+        this.startAutoPlay = this.startAutoPlay.bind(this)
+        this.stopAutoPlay = this.stopAutoPlay.bind(this)
     }
 
     static get observedAttributes() {
         return ['indicator', 'autoplay', 'interval']
     }
 
-    scrollLeft = () => {
+    scrollLeft(){
         this.carousel.scrollBy({
             left: -this.scrollDistance,
             behavior: 'smooth'
         })
     }
 
-    scrollRight = () => {
+    scrollRight(){
         this.carousel.scrollBy({
             left: this.scrollDistance,
             behavior: 'smooth'
         })
     }
 
-    handleIndicatorClick = (e) => {
+    handleIndicatorClick(e){
         if (e.target.closest('.dot')) {
             const slideNum = parseInt(e.target.closest('.dot').dataset.rank)
             if (this.activeSlideNum !== slideNum) {
@@ -226,20 +229,20 @@ customElements.define('sm-carousel', class extends HTMLElement {
         }
     }
 
-    showSlide = (slideNum) => {
+    showSlide(slideNum){
         this.carousel.scrollTo({
             left: (this.carouselItems[slideNum].getBoundingClientRect().left - this.carousel.getBoundingClientRect().left + this.carousel.scrollLeft),
             behavior: 'smooth'
         })
     }
 
-    nextSlide = () => {
+    nextSlide(){
         if (!this.carouselItems) return
         let showSlideNo = (this.activeSlideNum + 1) < this.carouselItems.length ? this.activeSlideNum + 1 : 0
         this.showSlide(showSlideNo)
     }
     
-    autoPlay = () => {
+    autoPlay(){
         this.nextSlide()
         if (this.isAutoPlaying) {
             this.autoPlayTimeout = setTimeout(() => {
@@ -248,11 +251,11 @@ customElements.define('sm-carousel', class extends HTMLElement {
         }
     }
 
-    startAutoPlay = () => {
+    startAutoPlay(){
         this.setAttribute('autoplay', '')
     }
 
-    stopAutoPlay = () => {
+    stopAutoPlay(){
         this.removeAttribute('autoplay')
     }
 
@@ -341,7 +344,7 @@ customElements.define('sm-carousel', class extends HTMLElement {
         this.indicatorsContainer.addEventListener('click', this.handleIndicatorClick)
     }
 
-    async attributeChangedCallback(name, oldValue, newValue) {
+    attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {            
             if (name === 'indicator') {
                 if (this.hasAttribute('indicator'))

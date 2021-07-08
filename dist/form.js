@@ -1,3 +1,4 @@
+const smForm = document.createElement('template')
 smForm.innerHTML = `
     <style>
     *{
@@ -33,8 +34,13 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.submitButton
 		this.resetButton
 		this.allRequiredValid = false
+
+		this.debounce = this.debounce.bind(this)
+		this.handleInput = this.handleInput.bind(this)
+		this.handleKeydown = this.handleKeydown.bind(this)
+		this.reset = this.reset.bind(this)
 	}
-	debounce = (callback, wait) => {
+	debounce(callback, wait){
 		let timeoutId = null;
 		return (...args) => {
 			window.clearTimeout(timeoutId);
@@ -43,7 +49,7 @@ customElements.define('sm-form', class extends HTMLElement {
 			}, wait);
 		};
 	}
-	handleInput = this.debounce((e) => {
+	handleInput(e) {
 		this.allRequiredValid = this.requiredElements.every(elem => elem.isValid)
 		if (!this.submitButton) return;
 		if (this.allRequiredValid) {
@@ -52,8 +58,8 @@ customElements.define('sm-form', class extends HTMLElement {
 		else {
 			this.submitButton.disabled = true;
 		}
-	}, 100)
-	handleKeydown = this.debounce((e) => {
+	}
+	handleKeydown(e) {
 		if (e.key === 'Enter') {
 			if (this.allRequiredValid) {
 				this.submitButton.click()
@@ -62,8 +68,8 @@ customElements.define('sm-form', class extends HTMLElement {
 				// implement show validity logic 
 			}
 		}
-	}, 100)
-	reset = () => {
+	}
+	reset(){
 		this.formElements.forEach(elem => elem.reset())
 	}
 	connectedCallback() {
@@ -77,10 +83,11 @@ customElements.define('sm-form', class extends HTMLElement {
 				this.resetButton.addEventListener('click', this.reset)
 			}
 		})
-		this.addEventListener('input', this.handleInput)
-		this.addEventListener('keydown', this.handleKeydown)
+		this.addEventListener('input', this.debounce(this.handleInput, 100))
+		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100))
 	}
 	disconnectedCallback() {
-		this.removeEventListener('input', this.handleInput)
+		this.removeEventListener('input', this.debounce(this.handleInput, 100))
+		this.removeEventListener('keydown', this.debounce(this.handleKeydown, 100))
 	}
 })

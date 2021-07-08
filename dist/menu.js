@@ -137,6 +137,7 @@ customElements.define('sm-menu', class extends HTMLElement {
         this.attachShadow({
             mode: 'open'
         }).append(smMenu.content.cloneNode(true))
+        this.expand = this.expand.bind(this)
     }
     static get observedAttributes() {
         return ['value']
@@ -147,7 +148,7 @@ customElements.define('sm-menu', class extends HTMLElement {
     set value(val) {
         this.setAttribute('value', val)
     }
-    expand = () => {
+    expand(){
         if (!this.open) {
             this.optionList.classList.remove('hide')
             this.optionList.classList.add('no-transformations')
