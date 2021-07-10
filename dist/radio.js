@@ -11,6 +11,11 @@ smRadio.innerHTML = `
         --gap: 0.5rem;
         --height: 1.4rem;
     }
+    :host([disabled]) {
+        opacity: 0.6;
+        user-select: none;
+        pointer-events: none;
+    }
     .hide{
         display: none !important;
     }

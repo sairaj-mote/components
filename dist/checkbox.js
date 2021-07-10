@@ -18,6 +18,8 @@ smCheckbox.innerHTML = `
     }
     :host([disabled]) {
         opacity: 0.6;
+        user-select: none;
+        pointer-events: none;
     }
     .checkbox {
         position: relative;

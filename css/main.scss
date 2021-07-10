@@ -60,7 +60,7 @@ body[data-theme='dark']{
 
 p {
     font-size: 0.8;
-    max-width: 60ch;
+    max-width: 75ch;
     line-height: 1.7;
     color: rgba(var(--text-color), 0.8);
     &:not(:last-of-type){
@@ -344,6 +344,9 @@ main{
 }
 #side_nav{
     h4{
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
         padding: 1rem 1.5rem;
     }
 }

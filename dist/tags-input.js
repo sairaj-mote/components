@@ -83,6 +83,7 @@ customElements.define('tags-input', class extends HTMLElement {
 		this.attachShadow({
 			mode: 'open'
 		}).append(tagsInput.content.cloneNode(true))
+		
 		this.input = this.shadowRoot.querySelector('input')
 		this.tagsWrapper = this.shadowRoot.querySelector('.tags-wrapper')
 		this.placeholder = this.shadowRoot.querySelector('.placeholder')
@@ -138,7 +139,8 @@ customElements.define('tags-input', class extends HTMLElement {
 							backgroundColor: 'initial'
 						},
 					], {
-						duration: 300
+						duration: 300,
+						easing: 'ease'
 					})
 				}
 				else {

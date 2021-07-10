@@ -229,7 +229,7 @@
                 <p id="insert_text"></p>
             </section>
 
-            <section id="notification_page" class="page hide-completely">
+            <section id="notifications_page" class="page hide-completely">
                 <h1 class="page__title">Notifications</h1>
                 <p class="description">
                     To start using SM Components
@@ -237,12 +237,12 @@
                 <h4>Example</h4>
 
                 <sm-button
-                    onclick="getRef('notification_drawer').push('Lorem ipsum dolor, consectetur adipisicing elit.')">
+                    onclick="notify('Lorem ipsum dolor, consectetur adipisicing elit.')">
                     push success notification</sm-button>
-                <sm-button onclick="getRef('notification_drawer').push('Lorem ipsum dolor, sit amet.')">
+                <sm-button onclick="notify('Lorem ipsum dolor, sit amet.')">
                     push error notification</sm-button>
                 <sm-button
-                    onclick="getRef('notification_drawer').push('Lorem ipsum dolor, sit amet consectetur adipisicing elit.', true)">
+                    onclick="notify('Lorem ipsum dolor, sit amet consectetur adipisicing elit.', '', {pinned: true})">
                     push pinned notification</sm-button>
             </section>
 
@@ -312,11 +312,6 @@
                     <strip-option value="tv series">TV series</strip-option>
                     <strip-option value="video">Video</strip-option>
                     <strip-option value="music">Music</strip-option>
-                    <strip-option value="software">Software</strip-option>
-                    <strip-option value="game">Game</strip-option>
-                    <strip-option value="image">Image</strip-option>
-                    <strip-option value="audio">Audio</strip-option>
-                    <strip-option value="misc">Misc</strip-option>
                 </strip-select>
             </section>
 
@@ -465,15 +460,13 @@
             notify(
                 "There seems to be a problem connecting to the internet, Please check you internet connection.",
                 "error",
-                "",
-                true
+               {sound: true}
             );
         window.addEventListener("offline", () => {
             notify(
                 "There seems to be a problem connecting to the internet, Please check you internet connection.",
                 "error",
-                true,
-                true
+                {pinned: true, sound: true}
             );
         });
         window.addEventListener("online", () => {
@@ -599,9 +592,10 @@
         }
 
         //Function for displaying toast notifications. pass in error for mode param if you want to show an error.
-        function notify(message, mode, pinned = false, sound) {
+        function notify(message, mode, options = {}) {
+            const {pinned = false, sound} = options
             if (mode === "error") console.error(message);
-            getRef("notification_drawer").push(message, pinned);
+            getRef("notification_drawer").push(message, {pinned});
             if (navigator.onLine && sound) {
                 getRef("notification_sound").currentTime = 0;
                 getRef("notification_sound").play();
@@ -754,7 +748,7 @@
                 })
             const targetListItem = document.querySelector(`.list__item[href="#${pageId}"]`)
             targetListItem.classList.add('list__item--active')
-            if (firstLoad && window.innerWidth > 640) {
+            if (firstLoad && window.innerWidth > 640 && targetListItem.getBoundingClientRect().top > getRef('side_nav').getBoundingClientRect().height){
                 getRef('side_nav').scrollTo({
                     top: (targetListItem.getBoundingClientRect().top - getRef('side_nav').getBoundingClientRect().top + getRef('side_nav').scrollTop),
                     behavior: 'smooth'
@@ -799,8 +793,8 @@
                 pageId: 'menu_page'
             },
             {
-                name: 'Notification',
-                pageId: 'notification_page'
+                name: 'Notifications',
+                pageId: 'notifications_page'
             },
             {
                 name: 'Popup',
