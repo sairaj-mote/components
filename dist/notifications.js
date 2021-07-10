@@ -222,25 +222,12 @@ customElements.define('sm-notifications', class extends HTMLElement {
         this.notification.style.transform = `translateX(0)`
     }
 
-    push(messageBody, type, pinned){
+    push(messageBody, pinned) {
         let notification = document.createElement('div'),
             composition = ``
         notification.classList.add('notification')
         if (pinned)
             notification.classList.add('pinned')
-        if (type === 'error') {
-            composition += `
-    <svg class="notification-icon icon error-icon" viewBox="0 0 64 64">
-            <path d="M32,4.73a3.17,3.17,0,0,1,2.76,1.59l13.9,24.09L62.57,54.49a3.19,3.19,0,0,1-2.76,4.78H4.19a3.19,3.19,0,0,1-2.76-4.78L15.34,30.41,29.24,6.32A3.17,3.17,0,0,1,32,4.73m0-1a4.14,4.14,0,0,0-3.62,2.09L14.47,29.91.57,54a4.19,4.19,0,0,0,3.62,6.28H59.81A4.19,4.19,0,0,0,63.43,54L49.53,29.91,35.62,5.82A4.14,4.14,0,0,0,32,3.73Z"/>
-            <line x1="32" y1="24" x2="32" y2="36"/>
-            <line x1="32" y1="46" x2="32" y2="48"/>
-    </svg>`
-        } else if (type === 'success') {
-            composition += `
-        <svg class="notification-icon icon success-icon" viewBox="0 0 64 64">
-            <polyline points="0.35 31.82 21.45 52.98 63.65 10.66"/>
-        </svg>`
-        }
         composition += `
                     <p>${messageBody}</p>
                     <svg class="icon close" viewBox="0 0 64 64">
@@ -314,7 +301,6 @@ customElements.define('sm-notifications', class extends HTMLElement {
             fill: "forwards",
             easing: "ease"
         }
-        this.fontSize = Number(window.getComputedStyle(document.body).getPropertyValue('font-size').match(/\d+/)[0])
         this.notification
         this.offset
         this.touchStartX = 0
@@ -342,16 +328,12 @@ customElements.define('sm-notifications', class extends HTMLElement {
                             this.notificationPanel.style.padding = '1.5rem 0 3rem 1.5rem';
                         else
                             this.notificationPanel.style.padding = '1rem 1rem 2rem 1rem';
-                    } else if (mutation.removedNodes.length && !this.notificationPanel.children.length) {
-                        this.notificationPanel.style.padding = 0;
                     }
                 }
             })
         })
         observer.observe(this.notificationPanel, {
-            attributes: true,
             childList: true,
-            subtree: true
         })
     }
 })

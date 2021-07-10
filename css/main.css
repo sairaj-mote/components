@@ -28,7 +28,7 @@ body {
 }
 
 body[data-theme=dark] {
-  --accent-color: #7952B3;
+  --accent-color: #976dd6;
   --green: #13ff5a;
   --text-color: 240, 240, 240;
   --text-color-light: 170, 170, 170;
@@ -154,6 +154,10 @@ ul {
 
 .grid {
   display: grid;
+}
+
+.grid-3 {
+  grid-template-columns: 1fr auto auto;
 }
 
 .flow-column {
@@ -434,19 +438,6 @@ main {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-ol {
-  padding: 0.6rem 1rem;
-}
-ol li {
-  margin-bottom: 1rem;
-}
-ol li:last-of-type {
-  margin-bottom: 0;
-}
-ol li::first-letter {
-  text-transform: capitalize;
-}
-
 #side_nav,
 .right {
   max-height: 100%;
@@ -454,8 +445,8 @@ ol li::first-letter {
   padding-bottom: 3rem;
 }
 
-#side_nav h3 {
-  padding: 1rem 1.5rem 1.5rem 1.5rem;
+#side_nav h4 {
+  padding: 1rem 1.5rem;
 }
 
 .right {
@@ -469,12 +460,12 @@ ol li::first-letter {
   list-style: none;
   display: flex;
   flex-direction: column;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
 }
 
 .list__item {
   display: flex;
-  padding: 0.6rem 1.5rem;
+  padding: 0.8rem 1.5rem;
   text-transform: capitalize;
 }
 .list__item--active {
@@ -505,8 +496,32 @@ sm-tab-header {
   flex-direction: column;
 }
 
+ol {
+  padding: 0.6rem 1rem;
+}
+ol li {
+  margin-bottom: 1rem;
+}
+ol li:last-of-type {
+  margin-bottom: 0;
+}
+ol li::first-letter {
+  text-transform: capitalize;
+}
+
 #total_components_count {
   font-size: 4rem;
+}
+
+#components_selection_list {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  padding: 1.5rem 0 3rem 0;
+}
+
+.comp-checkbox__title {
+  margin-left: 0.5rem;
 }
 
 @media screen and (max-width: 640px) {
@@ -536,6 +551,7 @@ sm-tab-header {
 }
 @media screen and (min-width: 640px) {
   #main_header {
+    padding: 1rem 1.5rem;
     grid-area: main-header;
   }
 
@@ -546,6 +562,14 @@ sm-tab-header {
   main {
     grid-template-columns: 14rem minmax(0, 1fr);
     grid-template-areas: "main-header main-header" ". .";
+  }
+
+  .right {
+    display: grid;
+    grid-template-columns: 1fr 90% 1fr;
+  }
+  .right > * {
+    grid-column: 2/3;
   }
 
   #overview_page {

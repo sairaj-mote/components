@@ -36,6 +36,7 @@ smCarousel.innerHTML = `
     -webkit-box-shadow: var(--arrow-box-shadow);
             box-shadow:  var(--arrow-box-shadow); 
     -webkit-tap-highlight-color: transparent;
+    transition: transform 0.3s;
     z-index: 1;
     border-radius: 3rem;
     padding: 0.5rem;
@@ -47,7 +48,7 @@ button:focus-visible{
     outline: rgba(var(--text-color), 1) 0.1rem solid;
 }
 .carousel__button:active{
-
+    transform: scale(0.9);
 }
 .carousel__button--left{
     left: var(--arrow-left);

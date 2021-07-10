@@ -266,6 +266,7 @@ stripOption.innerHTML = `
         padding: 0.5rem 0.8rem;
         transition: background 0.3s;
         border-radius: var(--border-radius);
+        box-shadow: 0 0 0 1px rgba(var(--text-color), .2) inset;
         -webkit-tap-highlight-color: transparent;
     }
     :host([active]) .strip-option{

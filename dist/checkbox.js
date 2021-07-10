@@ -11,14 +11,13 @@ smCheckbox.innerHTML = `
         display: -webkit-inline-box;
         display: -ms-inline-flexbox;
         display: inline-flex;
-        --height: 1.6rem;
-        --width: 1.6rem;
+        --height: 1.4rem;
+        --width: 1.4rem;
         --border-radius: 0.2rem;
         --border-color: rgba(var(--text-color), 0.7);
     }
     :host([disabled]) {
         opacity: 0.6;
-        pointer-events: none;
     }
     .checkbox {
         position: relative;
@@ -34,16 +33,19 @@ smCheckbox.innerHTML = `
         -webkit-tap-highlight-color: transparent;
     }
     
+    .checkbox:focus-visible{
+        outline: auto;
+    }
     .checkbox:active .icon,
     .checkbox:focus-within .icon{
-        box-shadow: 0 0 0 0.3rem var(--accent-color) inset;
+        box-shadow: 0 0 0 0.2rem var(--accent-color) inset;
     }
     
-    .checkbox input {
+    input {
         display: none;
     }
     
-    .checkbox .checkmark {
+    .checkmark {
         stroke-dashoffset: -65;
         stroke-dasharray: 65;
         -webkit-transition: stroke-dashoffset 0.3s; 
@@ -51,16 +53,16 @@ smCheckbox.innerHTML = `
         transition: stroke-dashoffset 0.3s;
     }
     
-    .checkbox input:checked ~ svg .checkmark {
+    :host([checked]) .checkmark {
         stroke-dashoffset: 0;
         stroke: rgba(var(--foreground-color), 1);
     }
-    .checkbox input:checked ~ .icon {
+    :host([checked]) .icon {
         stroke-width: 8; 
         stroke: var(--accent-color);
         background: var(--accent-color);
     }
-    .checkbox input:not(:checked) ~ .icon {
+    :host(:not([checked])) .icon {
         box-shadow: 0 0 0 0.2rem var(--border-color) inset;
     }
     
@@ -80,8 +82,7 @@ smCheckbox.innerHTML = `
         border-radius: var(--border-radius);
     }
 </style>
-<label class="checkbox" tabindex="0">
-    <input type="checkbox">
+<label class="checkbox">
     <svg class="icon" viewBox="0 0 64 64">
         <title>checkbox</title>
         <path class="checkmark" d="M50.52,19.56,26,44.08,13.48,31.56" />
@@ -96,22 +97,19 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         }).append(smCheckbox.content.cloneNode(true))
 
         this.checkbox = this.shadowRoot.querySelector('.checkbox');
-        this.input = this.shadowRoot.querySelector('input')
 
-        this.isChecked = false
-        this.isDisabled = false
-
+        this.reset = this.reset.bind(this)
         this.dispatch = this.dispatch.bind(this)
         this.handleKeyup = this.handleKeyup.bind(this)
-        this.handleChange = this.handleChange.bind(this)
+        this.handleClick = this.handleClick.bind(this)
     }
 
     static get observedAttributes() {
-        return ['disabled', 'checked']
+        return ['value', 'disabled', 'checked']
     }
 
     get disabled() {
-        return this.isDisabled
+        return this.hasAttribute('disabled')
     }
 
     set disabled(val) {
@@ -123,7 +121,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
     }
 
     get checked() {
-        return this.isChecked
+        return this.hasAttribute('checked')
     }
 
     set checked(value) {
@@ -136,12 +134,15 @@ customElements.define('sm-checkbox', class extends HTMLElement {
     }
 
     set value(val) {
-        this.val = val
-        this.setAttribute('value', value)
+        this.setAttribute('value', val)
     }
 
     get value() {
-        return getAttribute('value')
+        return this.getAttribute('value')
+    }
+
+    reset() {
+        this.removeAttribute('checked')
     }
 
     dispatch(){
@@ -151,55 +152,43 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         }))
     }
     handleKeyup(e){
-        if ((e.code === "Enter" || e.code === "Space") && this.isDisabled == false) {
-            if (this.hasAttribute('checked')) {
-                this.input.checked = false
-                this.removeAttribute('checked')
-            }
-            else {
-                this.input.checked = true
-                this.setAttribute('checked', '')
-            }
+        if (e.code === "Space") {
+            this.click()
         }
     }
-    handleChange(e){
-        if (this.input.checked) {
-            this.setAttribute('checked', '')
-        }
-        else {
-            this.removeAttribute('checked')
-        }
+    handleClick(e){
+        this.toggleAttribute('checked')
     }
     
     connectedCallback() {
-        this.val = ''
+        if (!this.hasAttribute('disabled')) {
+            this.setAttribute('tabindex', '0')
+        }
+        this.setAttribute('role', 'checkbox')
+        if (!this.hasAttribute('checked')) {
+            this.setAttribute('aria-checked', 'false')
+        }
         this.addEventListener('keyup', this.handleKeyup)
-        this.input.addEventListener('change', this.handleChange)
+        this.addEventListener('click', this.handleClick)
     }
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            if (name === 'disabled') {
-                if (newValue === 'true') {
-                    this.isDisabled = true
-                } else {
-                    this.isDisabled = false
-                }
+            if (name === 'checked') {
+                this.setAttribute('aria-checked', this.hasAttribute('checked'))
+                this.dispatch()
             }
-            else if (name === 'checked') {
-                if (this.hasAttribute('checked')) {
-                    this.isChecked = true
-                    this.input.checked = true
+            else if (name === 'disabled') {
+                if (this.hasAttribute('disabled')) {
+                    this.removeAttribute('tabindex')
                 }
                 else {
-                    this.input.checked = false
-                    this.isChecked = false
+                    this.setAttribute('tabindex', '0')
                 }
-                this.dispatch()
             }
         }
     }
     disconnectedCallback() {
         this.removeEventListener('keyup', this.handleKeyup)
-        this.removeEventListener('change', this.handleChange)
+        this.removeEventListener('change', this.handleClick)
     }
 })

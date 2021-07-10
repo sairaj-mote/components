@@ -266,7 +266,7 @@ customElements.define('sm-input',
         }
 
         get isValid() {
-            if (this.hasAttribute('data-flo-id') || this.hasAttribute('data-private-key')) {
+            if (this.customValidation) {
                 return this.validationFunction(this.input.value)
             }
             else {

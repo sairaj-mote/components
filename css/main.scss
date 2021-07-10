@@ -24,7 +24,7 @@ body {
     background: var(--background-color);
 }
 body[data-theme='dark']{
-    --accent-color: #7952B3;
+    --accent-color: #976dd6;
     --green: #13ff5a;
     --text-color: 240, 240, 240;
     --text-color-light: 170, 170, 170;
@@ -131,6 +131,9 @@ ul{
 }
 .grid{
     display: grid;
+}
+.grid-3{
+    grid-template-columns: 1fr auto auto;
 }
 .flow-column{
     grid-auto-flow: column;
@@ -333,18 +336,6 @@ main{
     bottom: 0;
     background-color: rgba(0,0,0, 0.5);
 }
-ol{
-    padding: 0.6rem 1rem;
-    li{
-        margin-bottom: 1rem;
-        &:last-of-type{
-            margin-bottom: 0;
-        }
-        &::first-letter{
-            text-transform: capitalize;
-        }
-    }
-}
 #side_nav,
 .right{
     max-height: 100%;
@@ -352,8 +343,8 @@ ol{
     padding-bottom: 3rem;
 }
 #side_nav{
-    h3{
-        padding: 1rem 1.5rem 1.5rem 1.5rem;
+    h4{
+        padding: 1rem 1.5rem;
     }
 }
 .right{
@@ -366,11 +357,11 @@ ol{
     list-style: none;
     display: flex;
     flex-direction: column;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
 }
 .list__item{
     display: flex;
-    padding: 0.6rem 1.5rem;
+    padding: 0.8rem 1.5rem;
     text-transform: capitalize;
     &--active{
         color: var(--accent-color);
@@ -396,9 +387,31 @@ sm-tab-header{
     display: flex;
     flex-direction: column;
 }
-
+.page__title{
+}
+ol{
+    padding: 0.6rem 1rem;
+    li{
+        margin-bottom: 1rem;
+        &:last-of-type{
+            margin-bottom: 0;
+        }
+        &::first-letter{
+            text-transform: capitalize;
+        }
+    }
+}
 #total_components_count{
     font-size: 4rem;
+}
+#components_selection_list{
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    padding: 1.5rem 0 3rem 0;
+}
+.comp-checkbox__title{
+    margin-left: 0.5rem;
 }
 @media screen and (max-width: 640px){
     main{
@@ -425,6 +438,7 @@ sm-tab-header{
 }
 @media screen and (min-width: 640px){
     #main_header{
+        padding: 1rem 1.5rem;
         grid-area: main-header;
     }
     #side_nav_button{
@@ -434,6 +448,13 @@ sm-tab-header{
         grid-template-columns: 14rem minmax(0, 1fr);
         grid-template-areas: 'main-header main-header' '. .';
     }   
+    .right{
+        display: grid;
+        grid-template-columns: 1fr 90% 1fr;
+        & > * {
+            grid-column: 2/3;
+        }
+    }
     #overview_page{
         display: grid;
         gap: 1.5rem;

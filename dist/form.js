@@ -75,7 +75,7 @@ customElements.define('sm-form', class extends HTMLElement {
 	connectedCallback() {
 		const slot = this.shadowRoot.querySelector('slot')
 		slot.addEventListener('slotchange', e => {
-			this.formElements = [...this.querySelectorAll('sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-checkbox')]
+			this.formElements = [...this.querySelectorAll('sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')]
 			this.requiredElements = this.formElements.filter(elem => elem.hasAttribute('required'))
 			this.submitButton = e.target.assignedElements().find(elem => elem.getAttribute('variant') === 'primary' || elem.getAttribute('type') === 'submit');
 			this.resetButton = e.target.assignedElements().find(elem => elem.getAttribute('type') === 'reset');
